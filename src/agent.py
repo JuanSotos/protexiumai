@@ -189,7 +189,7 @@ class Agent:
                     tool_id=tool_id, nivel=spec.nivel, ejecutada=False, ok=False, resumen=resultado["error"]
                 )
 
-        resultado = executor.execute(tool_id, params)
+        resultado = executor.execute(tool_id, params, proveedor=self._perfil.proveedor)
         self._agregar_resultado_tool(tool_call.id, resultado)
         nivel = spec.nivel if spec is not None else "desconocido"
         resumen = "ejecutado correctamente" if resultado["ok"] else str(resultado.get("error"))

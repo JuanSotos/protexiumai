@@ -111,8 +111,9 @@ def _asegurar_agente(codigo_proveedor: str) -> None:
 
 def _calcular_semaforo() -> tuple[str, str, dict[str, Any], dict[str, Any]]:
     """Consulta Defender y firewall directamente (herramientas de lectura) y deriva un color/mensaje."""
-    defender = executor.execute("get_defender_status", {})
-    firewall = executor.execute("get_firewall_status", {})
+    # Sin proveedor LLM real: es una consulta directa para el semáforo de la sidebar.
+    defender = executor.execute("get_defender_status", {}, proveedor=None)
+    firewall = executor.execute("get_firewall_status", {}, proveedor=None)
 
     if not defender["ok"] or not firewall["ok"]:
         detalle = defender.get("error") or firewall.get("error") or "No se pudo consultar el estado."

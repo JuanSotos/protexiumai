@@ -158,6 +158,7 @@ def _auditar(
     resultado: dict[str, Any],
     motivo_rechazo: str | None,
     estricto: bool,
+    proveedor: str | None = None,
 ) -> None:
     """Registra la auditoría de una llamada.
 
@@ -173,6 +174,7 @@ def _auditar(
             params=params,
             resultado=resultado,
             motivo_rechazo=motivo_rechazo,
+            proveedor=proveedor,
         )
     except OSError as error:
         if estricto:
@@ -183,7 +185,7 @@ def _auditar(
         )
 
 
-def execute(tool_id: str, params: dict[str, Any]) -> dict[str, Any]:
+def execute(tool_id: str, params: dict[str, Any], *, proveedor: str | None = None) -> dict[str, Any]:
     """Ejecuta de forma segura una herramienta de la WHITELIST y audita la llamada."""
     inicio = time.monotonic()
     marca_tiempo = datetime.now(timezone.utc).isoformat()
@@ -203,6 +205,7 @@ def execute(tool_id: str, params: dict[str, Any]) -> dict[str, Any]:
             resultado=resultado,
             motivo_rechazo=motivo,
             estricto=False,
+            proveedor=proveedor,
         )
         return resultado
 
@@ -267,6 +270,7 @@ def execute(tool_id: str, params: dict[str, Any]) -> dict[str, Any]:
                 resultado=intento,
                 motivo_rechazo=None,
                 estricto=True,
+                proveedor=proveedor,
             )
         except OSError as error:
             return _construir_resultado(
@@ -294,7 +298,7 @@ def execute(tool_id: str, params: dict[str, Any]) -> dict[str, Any]:
             duracion_s=time.monotonic() - inicio,
             error="No se ha encontrado powershell.exe. Este equipo requiere Windows con PowerShell en el PATH.",
         )
-        _auditar(tool_id=tool_id, params=params, resultado=resultado, motivo_rechazo=None, estricto=False)
+        _auditar(tool_id=tool_id, params=params, resultado=resultado, motivo_rechazo=None, estricto=False, proveedor=proveedor)
         return resultado
     except subprocess.TimeoutExpired:
         resultado = _construir_resultado(
@@ -305,7 +309,7 @@ def execute(tool_id: str, params: dict[str, Any]) -> dict[str, Any]:
             duracion_s=time.monotonic() - inicio,
             error=f"El comando ha tardado más de {spec.timeout_s} segundos y se ha cancelado.",
         )
-        _auditar(tool_id=tool_id, params=params, resultado=resultado, motivo_rechazo=None, estricto=False)
+        _auditar(tool_id=tool_id, params=params, resultado=resultado, motivo_rechazo=None, estricto=False, proveedor=proveedor)
         return resultado
 
     if proceso.returncode != 0:
@@ -318,7 +322,7 @@ def execute(tool_id: str, params: dict[str, Any]) -> dict[str, Any]:
             duracion_s=time.monotonic() - inicio,
             error=f"PowerShell devolvió un error al ejecutar '{tool_id}' ({error_ps}).",
         )
-        _auditar(tool_id=tool_id, params=params, resultado=resultado, motivo_rechazo=None, estricto=False)
+        _auditar(tool_id=tool_id, params=params, resultado=resultado, motivo_rechazo=None, estricto=False, proveedor=proveedor)
         return resultado
 
     salida = proceso.stdout.strip()
@@ -333,7 +337,7 @@ def execute(tool_id: str, params: dict[str, Any]) -> dict[str, Any]:
             duracion_s=time.monotonic() - inicio,
             error=f"La salida de PowerShell para '{tool_id}' no es un JSON válido: {salida!r}",
         )
-        _auditar(tool_id=tool_id, params=params, resultado=resultado, motivo_rechazo=None, estricto=False)
+        _auditar(tool_id=tool_id, params=params, resultado=resultado, motivo_rechazo=None, estricto=False, proveedor=proveedor)
         return resultado
 
     datos = _normalizar_datos_lista(tool_id, datos)
@@ -345,5 +349,5 @@ def execute(tool_id: str, params: dict[str, Any]) -> dict[str, Any]:
         duracion_s=time.monotonic() - inicio,
         data=datos,
     )
-    _auditar(tool_id=tool_id, params=params, resultado=resultado, motivo_rechazo=None, estricto=False)
+    _auditar(tool_id=tool_id, params=params, resultado=resultado, motivo_rechazo=None, estricto=False, proveedor=proveedor)
     return resultado

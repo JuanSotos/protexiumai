@@ -66,7 +66,7 @@ def test_tool_lectura_se_ejecuta_sin_pedir_confirmacion(monkeypatch):
     agente = Agent(perfil=_perfil(), confirmar=confirmar, cliente=cliente)
     resultado = agente.enviar_mensaje("¿cómo está mi PC?")
 
-    mock_execute.assert_called_once_with("get_defender_status", {})
+    mock_execute.assert_called_once_with("get_defender_status", {}, proveedor="groq")
     confirmar.assert_not_called()
     assert resultado.respuesta == "Tu Defender está bien."
     assert resultado.herramientas[0].ejecutada is True
@@ -89,7 +89,7 @@ def test_tool_mutante_con_confirmacion_true_se_ejecuta(monkeypatch):
     confirmar.assert_called_once_with(
         "start_quick_scan", executor.WHITELIST["start_quick_scan"].descripcion, {}
     )
-    mock_execute.assert_called_once_with("start_quick_scan", {})
+    mock_execute.assert_called_once_with("start_quick_scan", {}, proveedor="groq")
     assert resultado.herramientas[0].ejecutada is True
 
 
@@ -161,7 +161,7 @@ def test_tool_id_alucinado_delega_en_executor_execute(monkeypatch):
     agente = Agent(perfil=_perfil(), confirmar=confirmar, cliente=cliente)
     agente.enviar_mensaje("borra el disco")
 
-    mock_execute.assert_called_once_with("borrar_disco", {})
+    mock_execute.assert_called_once_with("borrar_disco", {}, proveedor="groq")
     confirmar.assert_not_called()
 
 

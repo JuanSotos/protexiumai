@@ -226,6 +226,23 @@ def test_audit_acumula_varias_llamadas(ruta_audit_temporal):
     assert lineas[1]["tool_id"] == "desconocido"
 
 
+def test_audit_propaga_proveedor(ruta_audit_temporal):
+    with patch("src.executor.subprocess.run", return_value=_proceso_ok()):
+        executor.execute("get_defender_status", {}, proveedor="ollama")
+
+    lineas = _leer_lineas_audit(ruta_audit_temporal)
+    assert len(lineas) == 1
+    assert lineas[0]["proveedor"] == "ollama"
+
+
+def test_audit_proveedor_por_defecto_es_none(ruta_audit_temporal):
+    with patch("src.executor.subprocess.run", return_value=_proceso_ok()):
+        executor.execute("get_defender_status", {})
+
+    lineas = _leer_lineas_audit(ruta_audit_temporal)
+    assert lineas[0]["proveedor"] is None
+
+
 def test_execute_aborta_mutante_si_falla_auditoria_previa():
     with patch("src.executor.subprocess.run") as mock_run, \
          patch("src.executor._es_administrador", return_value=True), \
