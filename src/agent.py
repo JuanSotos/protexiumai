@@ -134,12 +134,19 @@ class Agent:
         herramientas_del_turno: list[ResultadoHerramienta] = []
 
         for _ in range(MAX_ITERACIONES_POR_TURNO):
-            respuesta = self._cliente.chat.completions.create(
-                model=self._perfil.modelo,
-                messages=self._historial,
-                tools=self._tools,
-                max_completion_tokens=MAX_TOKENS_RESPUESTA,
-            )
+            argumentos_llamada: dict[str, Any] = {
+                "model": self._perfil.modelo,
+                "messages": self._historial,
+                "tools": self._tools,
+                "max_completion_tokens": MAX_TOKENS_RESPUESTA,
+            }
+            if self._perfil.proveedor == "groq":
+                # Los modelos openai/gpt-oss-* de Groq son de razonamiento: sin limitar el
+                # esfuerzo de razonamiento, reservan un presupuesto de tokens que por sí
+                # solo supera el límite de tokens por minuto del tier gratuito (ver
+                # src/config.py). No aplica a ollama, que no soporta este parámetro.
+                argumentos_llamada["reasoning_effort"] = "low"
+            respuesta = self._cliente.chat.completions.create(**argumentos_llamada)
             mensaje = respuesta.choices[0].message
 
             if not mensaje.tool_calls:

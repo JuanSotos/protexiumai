@@ -9,9 +9,15 @@ from dotenv import load_dotenv
 
 GROQ_BASE_URL = "https://api.groq.com/openai/v1"
 # NOTA: CLAUDE.md especifica "llama-3.3-70b-versatile", pero Groq lo retiró de
-# su catálogo. "openai/gpt-oss-120b" (la alternativa más comparable) supera el
-# límite de tokens por minuto del tier gratuito de esta cuenta con el tamaño
-# de prompt de ProtexiumAI (~8.6k tokens); "openai/gpt-oss-20b" sí entra.
+# su catálogo, y el catálogo actual de esta cuenta ya no ofrece ningún modelo
+# de chat sin razonamiento con soporte de function calling (ni
+# "llama-3.1-8b-instant" ni ningún otro "llama-3.x" están disponibles). Todos
+# los modelos con "tools" en supported_features son de razonamiento
+# (openai/gpt-oss-*, qwen/qwen3.x-27b) y, sin más, reservan un presupuesto de
+# tokens de razonamiento que por sí solo supera el límite de tokens por minuto
+# (8000) del tier gratuito. La combinación que sí entra es "openai/gpt-oss-20b"
+# con reasoning_effort="low" en la llamada (ver src/agent.py): con el prompt
+# de ProtexiumAI completo (~400 tokens) el consumo real baja a ~440 tokens.
 GROQ_MODELO = "openai/gpt-oss-20b"
 
 OLLAMA_BASE_URL_DEFECTO = "http://localhost:11434/v1"
