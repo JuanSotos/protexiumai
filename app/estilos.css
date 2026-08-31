@@ -1,0 +1,1756 @@
+/*
+ProtexiumAI — hoja de estilos del rediseño (design_handoff_protexiumai_ui/).
+Selectores data-testid verificados contra Streamlit 1.62.0; si una actualización
+de Streamlit cambia su DOM interno, este es el primer sitio a revisar.
+*/
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Lora:wght@400;600&display=swap');
+
+/* ---------- 1. Tokens de diseño ---------- */
+
+/*
+Streamlit no ejecuta <script> insertado vía unsafe_allow_html (dangerouslySetInnerHTML
+no corre <script>), así que el tema no puede activarse escribiendo un atributo por JS.
+En su lugar, cuando el tema activo es "dark" se pinta un marcador invisible en el
+DOM (ver _inyectar_estilos en streamlit_app.py) y :has() lo detecta desde stApp,
+que es ancestro tanto de la sidebar como del contenido principal.
+*/
+
+:root, [data-testid="stApp"] {
+  --p-bg: #DADAD8;
+  --p-surface: #E0E0DE;
+  --p-panel: #D2D2D0;
+  --p-ink: #292928;
+  --p-mute: #6B6B69;
+  --p-line: rgba(0, 0, 0, .085);
+  --p-line2: rgba(0, 0, 0, .16);
+  --p-gold: #0A6DD6;
+  --p-gold-soft: rgba(10, 109, 214, .42);
+  --p-gold-tint: rgba(10, 109, 214, .07);
+  --p-ok: #0F7B0F;
+  --p-warn: #9D5D00;
+  --p-bad: #C42B1C;
+  --p-bad-soft: rgba(196, 43, 28, .42);
+  --p-bad-tint: rgba(196, 43, 28, .06);
+  --p-shadow: 0 8px 24px rgba(0, 0, 0, .10);
+
+  --font-display: "Cormorant Garamond", ui-serif, Georgia, serif;
+  --font-body: "Lora", ui-serif, Georgia, serif;
+
+  --sp-1: 4.6px;
+  --sp-2: 9.2px;
+  --sp-3: 13.8px;
+  --sp-4: 18.4px;
+  --sp-6: 27.6px;
+  --sp-8: 36.8px;
+}
+
+/* El marcador se pinta dentro de <body>, así que :has() lo alcanza también desde
+   :root. Hace falta: html y body son ANCESTROS de stApp, y sin esta parte del
+   selector se quedaban con la paleta clara y asomaban por los lados del
+   contenedor inferior a pantalla completa. */
+:root:has(.pxa-theme-dark-marker),
+[data-testid="stApp"]:has(.pxa-theme-dark-marker) {
+  --p-bg: #202020;
+  --p-surface: #2C2C2C;
+  --p-panel: #272727;
+  --p-ink: #FFFFFF;
+  --p-mute: #A0A0A0;
+  --p-line: rgba(255, 255, 255, .0698);
+  --p-line2: rgba(255, 255, 255, .18);
+  --p-gold: #5CC8FF;
+  --p-gold-soft: rgba(92, 200, 255, .42);
+  --p-gold-tint: rgba(92, 200, 255, .08);
+  --p-ok: #6CCB5F;
+  --p-warn: #FCE100;
+  --p-bad: #FF99A4;
+  --p-bad-soft: rgba(255, 153, 164, .42);
+  --p-bad-tint: rgba(255, 153, 164, .07);
+  --p-shadow: 0 12px 40px rgba(0, 0, 0, .55);
+}
+
+.pxa-theme-dark-marker {
+  display: none;
+}
+
+/* ---------- 2. Base tipográfica y cromado nativo de Streamlit ---------- */
+
+/* config.toml solo declara un tema de partida; el conmutador Claro/Oscuro cambia
+   las variables de arriba, así que todos los contenedores nativos tienen que leer
+   los tokens para que el modo oscuro no deje islas claras. */
+
+html, body,
+[data-testid="stAppViewContainer"],
+[data-testid="stApp"],
+[data-testid="stMain"],
+[data-testid="stBottomBlockContainer"],
+[data-testid="stBottom"] {
+  background: var(--p-bg) !important;
+  color: var(--p-ink);
+}
+
+[data-testid="stHeader"],
+[data-testid="stToolbar"],
+[data-testid="stDecoration"],
+[data-testid="stStatusWidget"] {
+  background: var(--p-bg) !important;
+  color: var(--p-ink) !important;
+}
+
+/* Streamlit pinta un envoltorio sin data-testid dentro de la barra inferior (y de
+   la cabecera) con el backgroundColor de config.toml, que es el del tema claro.
+   Se apunta por estructura porque su clase generada cambia entre versiones. */
+[data-testid="stBottom"] > div,
+[data-testid="stHeader"] > div {
+  background: var(--p-bg) !important;
+}
+
+/* La fuente de texto se hereda desde los contenedores raíz. No se usa un
+   selector comodín: su especificidad (0,2,0) ganaba a todas las reglas de
+   display y dejaba la interfaz entera en Lora, sin Cormorant Garamond. */
+[data-testid="stAppViewContainer"],
+[data-testid="stSidebar"],
+[data-testid="stBottom"] {
+  font-family: var(--font-body);
+}
+
+[data-testid="stAppViewContainer"] button,
+[data-testid="stAppViewContainer"] input,
+[data-testid="stAppViewContainer"] textarea,
+[data-testid="stAppViewContainer"] summary,
+[data-testid="stBottom"] textarea {
+  font-family: var(--font-body);
+}
+
+/* Las piezas de display, con la especificidad suficiente para ganar a las
+   reglas propias de Streamlit (que son de tipo [clase] + etiqueta). */
+[data-testid="stAppViewContainer"] .pxa-brand-name,
+[data-testid="stAppViewContainer"] .pxa-semaforo-texto h3,
+[data-testid="stAppViewContainer"] .pxa-cabecera-fecha,
+[data-testid="stAppViewContainer"] .pxa-bienvenida h1,
+[data-testid="stAppViewContainer"] .pxa-titular,
+[data-testid="stAppViewContainer"] .pxa-permiso-titular,
+[data-testid="stAppViewContainer"] .pxa-pantalla-cabecera h2,
+[data-testid="stAppViewContainer"] [class*="st-key-pxa_agotado_"] h2,
+[data-testid="stAppViewContainer"] [class*="st-key-pxa_fallo_"] h2,
+[data-testid="stAppViewContainer"] [class*="st-key-pxa_offline_"] h2,
+[data-testid="stAppViewContainer"] [class*="st-key-pxa_btn_confirmar"] button {
+  font-family: var(--font-display);
+}
+
+[data-testid="stMainBlockContainer"] {
+  padding-top: var(--sp-4);
+  padding-bottom: var(--sp-2);
+  max-width: 900px;
+}
+
+[data-testid="stMarkdownContainer"] p {
+  color: var(--p-ink);
+}
+
+/* Streamlit compensa el margen inferior de los <p> de markdown con un
+   margin-bottom:-1rem en el contenedor. Nuestros bloques propios (HTML inyectado)
+   no llevan ese margen, así que la compensación se comía 16 px de su altura: el
+   rótulo "Dónde se procesa" medía 0,8 px en vez de 17 y su texto se desbordaba
+   por debajo, quedando tapado por la tarjeta siguiente. */
+[data-testid="stMarkdownContainer"]:has(> [class*="pxa-"]) {
+  margin-bottom: 0 !important;
+}
+
+[data-testid="stCaptionContainer"],
+[data-testid="stCaptionContainer"] p {
+  color: var(--p-mute) !important;
+}
+
+::selection {
+  background: var(--p-gold-soft);
+}
+
+:focus-visible {
+  outline: 2px solid var(--p-gold);
+  outline-offset: 2px;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -.01em;
+}
+
+.pxa-tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+.pxa-microlabel {
+  font-family: var(--font-body);
+  font-size: 10.5px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--p-mute);
+}
+
+.pxa-microlabel.pxa-label-gold { color: var(--p-gold); }
+.pxa-microlabel.pxa-warn { color: var(--p-warn); }
+
+.pxa-filete {
+  width: 56px;
+  height: 1px;
+  background: var(--p-gold-soft);
+  margin: var(--sp-4) auto;
+}
+
+.pxa-filete-ancho {
+  width: 100%;
+  background: var(--p-line);
+  margin: var(--sp-2) 0;
+}
+
+.pxa-titular {
+  font-family: var(--font-display);
+  font-size: 29px;
+  font-weight: 400;
+  line-height: 1.2;
+  margin: 0 0 var(--sp-2) 0;
+}
+
+.pxa-texto-bad { color: var(--p-bad); }
+.pxa-punto { color: var(--p-gold); }
+
+/* ---------- 3. Barra lateral ---------- */
+
+[data-testid="stSidebar"],
+[data-testid="stSidebarContent"],
+[data-testid="stSidebarUserContent"] {
+  background: var(--p-panel) !important;
+  color: var(--p-ink);
+}
+
+[data-testid="stSidebar"] {
+  width: 272px !important;
+  min-width: 272px !important;
+  border-right: 1px solid var(--p-line);
+}
+
+/* La barra lateral no scrollea entera: marca arriba y bloque de Apariencia abajo
+   quedan fijos, y solo la zona intermedia tiene scroll propio (igual que el
+   mockup: flex en columna con `flex:1;min-height:0;overflow:auto` en medio). */
+[data-testid="stSidebarContent"] {
+  padding: var(--sp-6) var(--sp-3) var(--sp-2) var(--sp-3) !important;
+  height: 100%;
+  overflow: hidden !important;
+  display: flex;
+  flex-direction: column;
+}
+
+[data-testid="stSidebarUserContent"] {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  /* Streamlit reserva 96 px al pie de la barra; aquí el espacio lo gobierna el
+     bloque fijo de Apariencia. */
+  padding-bottom: 0 !important;
+}
+
+/* Streamlit mete un <div> sin identificar y un stLayoutWrapper por cada
+   st.container(key=...): la cadena flex tiene que atravesarlos todos o la altura
+   no se propaga y la barra entera vuelve a scrollear. */
+[data-testid="stSidebarUserContent"] > div {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  height: auto;
+}
+
+[data-testid="stSidebarUserContent"] > div > [data-testid="stVerticalBlock"] {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+[data-testid="stSidebar"] [data-testid="stLayoutWrapper"]:has(> [class*="st-key-pxa_zona_scroll"]) {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+[data-testid="stSidebar"] [data-testid="stLayoutWrapper"]:has(> [class*="st-key-pxa_pie_sidebar"]) {
+  flex: 0 0 auto;
+}
+
+/* La barra lateral está siempre a la vista: se retira el control de plegado.
+   Por debajo del punto de ruptura Streamlit la pliega por su cuenta, así que ahí
+   el control se conserva para poder volver a abrirla. */
+@media (min-width: 769px) {
+  [data-testid="stSidebarCollapseButton"],
+  [data-testid="stExpandSidebarButton"],
+  [data-testid="stSidebarCollapsedControl"] {
+    display: none !important;
+  }
+}
+
+/* Streamlit separa cada bloque 16 px; la barra lateral usa la escala del diseño
+   para que quepa el mismo contenido que el mockup. */
+[data-testid="stSidebar"] [data-testid="stVerticalBlock"] {
+  gap: var(--sp-1);
+}
+
+.pxa-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-1);
+}
+
+.pxa-brand-mark {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid var(--p-gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.pxa-brand-mark span {
+  width: 11px;
+  height: 11px;
+  border: 1px solid var(--p-gold);
+  transform: rotate(45deg);
+}
+
+.pxa-brand-name {
+  font-family: var(--font-display);
+  font-size: 25px;
+  font-weight: 600;
+}
+
+.pxa-brand-name em {
+  font-style: normal;
+  color: var(--p-gold);
+}
+
+p.pxa-brand-sub {
+  font-family: var(--font-body);
+  font-size: 11.5px;
+  color: var(--p-mute);
+  max-width: 190px;
+  line-height: 1.4;
+  margin: 0 0 var(--sp-2) 0;
+  border-bottom: 1px solid var(--p-line);
+  padding-bottom: var(--sp-2);
+}
+
+/* Zona con scroll propio: del estado del equipo al proveedor. El bloque de
+   Apariencia queda fijo al pie (más abajo, .st-key-pxa_pie_sidebar). */
+/* En un contenedor con scroll los hijos no deben encogerse: han de desbordar
+   para que el scroll tenga sentido. */
+[class*="st-key-pxa_zona_scroll"] > *,
+[class*="st-key-pxa_pie_sidebar"] > * {
+  flex-shrink: 0;
+}
+
+[class*="st-key-pxa_zona_scroll"] {
+  flex: 1 1 auto;
+  height: auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 6px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--p-line2) transparent;
+}
+
+.pxa-sidebar-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-2);
+  margin: 0 0 var(--sp-2) 0;
+}
+
+.pxa-hora {
+  font-size: 9.5px;
+  letter-spacing: .1em;
+  color: var(--p-mute);
+}
+
+/* Semáforo con las ondas del ADDENDUM-01 */
+
+.pxa-semaforo {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-2);
+}
+
+.pxa-onda-contenedor {
+  width: 44px;
+  height: 44px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.pxa-onda-ring {
+  position: absolute;
+  inset: 0;
+  border: 1px solid var(--e, var(--p-gold));
+  border-radius: 50%;
+  animation: pxaOnda 3s cubic-bezier(.22, .61, .36, 1) infinite;
+}
+
+.pxa-onda-ring:nth-child(2) { animation-delay: 1s; }
+.pxa-onda-ring:nth-child(3) { animation-delay: 2s; }
+
+.pxa-ring-static {
+  position: absolute;
+  inset: 0;
+  border: 1px solid var(--e, var(--p-gold));
+  border-radius: 50%;
+  opacity: .32;
+}
+
+/* §10 · "Protegido por otro antivirus": mismo verde, anillo discontinuo. */
+.pxa-ring-static.pxa-discontinuo {
+  border-style: dashed;
+  opacity: .55;
+}
+
+/* §10 · "No he podido comprobarlo": sin dato no hay vigilancia que representar. */
+.pxa-onda-contenedor.pxa-sin-ondas .pxa-onda-ring {
+  animation: none;
+  opacity: 0;
+}
+
+@keyframes pxaOnda {
+  0%   { transform: scale(.16); opacity: .7; }
+  70%  { opacity: .14; }
+  100% { transform: scale(1);  opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pxa-onda-ring { animation: none; opacity: 0; }
+  .pxa-dot { animation: none; opacity: .7; }
+}
+
+.pxa-ring-inner {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1px solid var(--e, var(--p-gold));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pxa-dot-centro {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--e, var(--p-gold));
+}
+
+.pxa-semaforo-texto h3 {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 400;
+  margin: 0;
+  line-height: 1.15;
+}
+
+.pxa-semaforo-texto p {
+  font-size: 11px;
+  color: var(--p-mute);
+  margin: 2px 0 0 0;
+  line-height: 1.45;
+}
+
+.pxa-checks {
+  margin-bottom: 0;
+  border-top: 1px solid var(--p-line);
+}
+
+.pxa-checks-row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--sp-2);
+  padding: 5px 0;
+  border-bottom: 1px solid var(--p-line);
+  font-size: 11.5px;
+}
+
+.pxa-checks-row span:first-child { color: var(--p-ink); }
+.pxa-checks-row span:last-child { color: var(--p-mute); }
+.pxa-checks-row.pxa-ok span:last-child { color: var(--p-ok); }
+.pxa-checks-row.pxa-warn span:last-child { color: var(--p-warn); }
+.pxa-checks-row.pxa-na span:last-child { color: var(--p-mute); font-style: italic; }
+
+/* §9 · Estado de administrador de la sesión */
+
+.pxa-sesion {
+  border-top: 1px solid var(--p-line);
+  padding-top: var(--sp-2);
+  margin-top: var(--sp-1);
+}
+
+.pxa-sesion-valor {
+  font-size: 11px;
+  letter-spacing: .02em;
+  color: var(--p-mute);
+}
+
+.pxa-sesion-valor.pxa-warn { color: var(--p-warn); }
+
+p.pxa-sesion-texto {
+  font-size: 10.5px;
+  color: var(--p-mute);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* §8 · Cola de órdenes */
+
+.pxa-cola {
+  border: 1px solid var(--p-gold-soft);
+  border-radius: 4px;
+  background: var(--p-gold-tint);
+  padding: var(--sp-2) var(--sp-3);
+  margin: var(--sp-3) 0;
+}
+
+.pxa-cola-texto {
+  font-size: 12px;
+  line-height: 1.45;
+  margin-top: 3px;
+}
+
+/* Tarjetas de proveedor: el contenedor con key ES la tarjeta y el botón real de
+   Streamlit vive dentro sin contorno, para que se lea como una sola pieza
+   clicable. El punto de selección lo pone el CSS delante de la etiqueta. */
+[class*="st-key-pxa_prov_"] {
+  border: 1px solid var(--p-line);
+  border-radius: 4px;
+  padding: 11px 13.8px;
+  margin-bottom: var(--sp-2);
+  gap: 3px !important;
+}
+
+[class*="st-key-pxa_prov_"][class*="_on"] {
+  border-color: var(--p-gold);
+  background: var(--p-gold-tint);
+}
+
+/* Lleva el prefijo del contenedor de elemento: sin él, el reset general de
+   botones (más específico) le devolvía su propio contorno y se veía una caja
+   dentro de la tarjeta. */
+div[data-testid="stElementContainer"][class*="st-key-pxa_provbtn_"] button {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  text-align: left !important;
+  justify-content: flex-start !important;
+  padding: 0 !important;
+  width: 100% !important;
+  min-height: 0 !important;
+  font-size: 13px !important;
+}
+
+div[data-testid="stElementContainer"][class*="st-key-pxa_provbtn_"] button > div,
+div[data-testid="stElementContainer"][class*="st-key-pxa_provbtn_"] button > div > span,
+[class*="st-key-pxa_provbtn_"] button [data-testid="stMarkdownContainer"],
+[class*="st-key-pxa_provbtn_"] button p {
+  width: 100%;
+  text-align: left;
+}
+
+/* Punto de 5 px: relleno en la tarjeta activa, hueco en la inactiva. */
+[class*="st-key-pxa_provbtn_"] button p {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+[class*="st-key-pxa_provbtn_"] button p::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  flex: none;
+  border-radius: 50%;
+  border: 1px solid var(--p-mute);
+}
+
+[class*="st-key-pxa_prov_"][class*="_on"] [class*="st-key-pxa_provbtn_"] button p::before {
+  background: var(--p-gold);
+  border-color: var(--p-gold);
+}
+
+[class*="st-key-pxa_prov_"][class*="_off"] [class*="st-key-pxa_provbtn_"] button {
+  color: var(--p-mute) !important;
+}
+
+[class*="st-key-pxa_prov_"] [data-testid="stCaptionContainer"] {
+  font-size: 10.5px;
+  color: var(--p-mute);
+  line-height: 1.45;
+}
+
+p.pxa-nota-proveedor,
+p.pxa-aviso {
+  font-size: 10.5px;
+  color: var(--p-mute);
+  line-height: 1.5;
+  margin: var(--sp-1) 0 0 0;
+}
+
+p.pxa-aviso { font-style: italic; }
+
+/* Pie fijo de la barra lateral: conversación nueva + apariencia */
+
+[class*="st-key-pxa_pie_sidebar"] {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  background: var(--p-panel);
+  border-top: 1px solid var(--p-line);
+  padding-top: var(--sp-3);
+  margin-top: var(--sp-3);
+}
+
+p.pxa-contrato {
+  font-size: 10.5px;
+  color: var(--p-mute);
+  font-style: italic;
+  margin-top: var(--sp-2);
+  line-height: 1.5;
+}
+
+/* ---------- 4. Botones (reset general de contorno) ---------- */
+
+div[data-testid="stElementContainer"] button {
+  background: transparent !important;
+  border: 1px solid var(--p-line2) !important;
+  border-radius: 4px !important;
+  color: var(--p-ink) !important;
+  box-shadow: none !important;
+  font-family: var(--font-body);
+  transition: border-color 150ms ease-out, background-color 150ms ease-out, color 150ms ease-out;
+}
+
+div[data-testid="stElementContainer"] button:hover:not(:disabled) {
+  border-color: var(--p-ink) !important;
+  background: var(--p-gold-tint) !important;
+}
+
+div[data-testid="stElementContainer"] button:focus,
+div[data-testid="stElementContainer"] button:focus-visible,
+div[data-testid="stElementContainer"] button:active:not(:hover) {
+  background: transparent !important;
+}
+
+div[data-testid="stElementContainer"] button:disabled {
+  opacity: .45 !important;
+}
+
+.st-key-pxa_nueva button,
+.st-key-pxa_recomprobar_todo button {
+  font-size: 11.5px;
+  letter-spacing: .06em;
+}
+
+/* Los dos botones del estado comparten una fila de 272 px: texto ajustado. */
+.st-key-pxa_actualizar button,
+.st-key-pxa_ver_detalle button,
+.st-key-pxa_actualizar button p,
+.st-key-pxa_ver_detalle button p {
+  font-size: 10.5px;
+  letter-spacing: .04em;
+  /* Si no cabe, parte por el espacio; nunca por la mitad de una palabra. */
+  word-break: keep-all;
+  overflow-wrap: normal;
+  line-height: 1.3;
+}
+
+.st-key-pxa_actualizar button,
+.st-key-pxa_ver_detalle button {
+  padding-left: 6px !important;
+  padding-right: 6px !important;
+}
+
+.st-key-pxa_actualizar button:hover:not(:disabled),
+.st-key-pxa_ver_detalle button:hover:not(:disabled),
+.st-key-pxa_nueva button:hover:not(:disabled),
+.st-key-pxa_recomprobar_todo button:hover:not(:disabled) {
+  border-color: var(--p-gold) !important;
+  color: var(--p-gold) !important;
+}
+
+/* Conmutador de tema: dos botones pegados dentro de un mismo contorno, con el
+   rótulo "Apariencia" a su izquierda en la misma fila. */
+[data-testid="stHorizontalBlock"]:has([class*="st-key-pxa_tema_"]) {
+  gap: 0 !important;
+  align-items: center;
+}
+
+[data-testid="stHorizontalBlock"]:has([class*="st-key-pxa_tema_"]) [data-testid="stColumn"] {
+  min-width: 0;
+}
+
+/* El contorno y las esquinas los lleva la pastilla (los dos envoltorios de
+   columna); los botones van sin borde dentro. Streamlit no admite columnas
+   anidadas en la barra lateral, así que no hay un div propio que envuelva a los
+   dos: el efecto de caja única se consigue partiendo el radio y quitando el
+   filete central. */
+[data-testid="stColumn"]:has([class*="st-key-pxa_tema_"]) {
+  border: 1px solid var(--p-line2);
+  overflow: hidden;
+}
+
+[data-testid="stColumn"]:has([class*="st-key-pxa_tema_light_"]) {
+  border-radius: 4px 0 0 4px;
+  border-right: 0;
+}
+
+[data-testid="stColumn"]:has([class*="st-key-pxa_tema_dark_"]) {
+  border-radius: 0 4px 4px 0;
+}
+
+div[data-testid="stElementContainer"][class*="st-key-pxa_tema_"] button {
+  width: 100% !important;
+  padding: 5px 11px !important;
+  min-height: 0 !important;
+  height: 26px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  font-family: var(--font-body);
+  letter-spacing: .08em;
+  white-space: nowrap;
+}
+
+/* El tamaño hay que fijarlo en el propio <p>: la regla de Streamlit para los
+   párrafos de markdown gana a la del botón y lo dejaba en 14 px. */
+div[data-testid="stElementContainer"][class*="st-key-pxa_tema_"] button [data-testid="stMarkdownContainer"],
+div[data-testid="stElementContainer"][class*="st-key-pxa_tema_"] button p {
+  width: 100%;
+  text-align: center;
+  font-size: 9.5px !important;
+  letter-spacing: .08em;
+  line-height: 1.4;
+}
+
+/* En reposo y en TODOS los estados interactivos: el color va en el texto, nunca
+   en un relleno. Sin fijar los estados, los lavados propios de Streamlit
+   (:hover, :focus-visible, :active) tapan el tinte. */
+div[data-testid="stElementContainer"][class*="st-key-pxa_tema_"] button,
+div[data-testid="stElementContainer"][class*="st-key-pxa_tema_"] button:hover,
+div[data-testid="stElementContainer"][class*="st-key-pxa_tema_"] button:focus,
+div[data-testid="stElementContainer"][class*="st-key-pxa_tema_"] button:focus-visible,
+div[data-testid="stElementContainer"][class*="st-key-pxa_tema_"] button:active {
+  background: transparent !important;
+  color: var(--p-mute) !important;
+}
+
+div[data-testid="stElementContainer"][class*="st-key-pxa_tema_"][class*="_on"] button,
+div[data-testid="stElementContainer"][class*="st-key-pxa_tema_"][class*="_on"] button:hover,
+div[data-testid="stElementContainer"][class*="st-key-pxa_tema_"][class*="_on"] button:focus,
+div[data-testid="stElementContainer"][class*="st-key-pxa_tema_"][class*="_on"] button:focus-visible,
+div[data-testid="stElementContainer"][class*="st-key-pxa_tema_"][class*="_on"] button:active {
+  background: var(--p-gold-tint) !important;
+  color: var(--p-gold) !important;
+}
+
+div[data-testid="stElementContainer"][class*="st-key-pxa_filtro_"][class*="_on"] button,
+div[data-testid="stElementContainer"][class*="st-key-pxa_filtro_"][class*="_on"] button:hover,
+div[data-testid="stElementContainer"][class*="st-key-pxa_filtro_"][class*="_on"] button:focus-visible,
+div[data-testid="stElementContainer"][class*="st-key-pxa_filtro_"][class*="_on"] button:active {
+  background: var(--p-gold-tint) !important;
+  color: var(--p-gold) !important;
+  border-color: var(--p-gold-soft) !important;
+}
+
+[class*="st-key-pxa_filtro_"] button {
+  font-size: 11px !important;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+[class*="st-key-pxa_btn_confirmar"] button {
+  border-color: var(--p-gold) !important;
+  color: var(--p-gold) !important;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 15px;
+}
+
+/* El hover tampoco rellena: el acento vive en el borde y en el texto. */
+[class*="st-key-pxa_btn_confirmar"] button:hover:not(:disabled) {
+  background: var(--p-gold-tint) !important;
+  border-color: var(--p-gold) !important;
+  color: var(--p-gold) !important;
+}
+
+[class*="st-key-pxa_btn_confirmar_bad"] button {
+  border-color: var(--p-bad) !important;
+  color: var(--p-bad) !important;
+}
+
+[class*="st-key-pxa_btn_confirmar_bad"] button:hover:not(:disabled) {
+  background: var(--p-bad-tint) !important;
+  border-color: var(--p-bad) !important;
+  color: var(--p-bad) !important;
+}
+
+[class*="st-key-pxa_btn_reintentar"] button,
+[class*="st-key-pxa_btn_fallo_reintentar"] button,
+[class*="st-key-pxa_btn_comova"] button,
+[class*="st-key-pxa_btn_paso"] button {
+  border-color: var(--p-gold) !important;
+  color: var(--p-gold) !important;
+}
+
+[class*="st-key-pxa_btn_confirmar"] button p,
+[class*="st-key-pxa_btn_cancelar"] button p {
+  white-space: nowrap;
+  word-break: keep-all;
+}
+
+[class*="st-key-pxa_btn_cancelar"] button,
+[class*="st-key-pxa_btn_modolocal"] button,
+[class*="st-key-pxa_btn_dejar_esperar"] button {
+  font-size: 13.5px;
+}
+
+/* Enlaces de texto: botones que deben leerse como el enlace del mockup. Llevan el
+   prefijo del contenedor para ganar en especificidad al reset general de botones. */
+div[data-testid="stElementContainer"][class*="st-key-pxa_ir_catalogo"] button,
+div[data-testid="stElementContainer"][class*="st-key-pxa_ir_auditoria"] button,
+div[data-testid="stElementContainer"][class*="st-key-pxa_volver_"] button {
+  border: none !important;
+  border-bottom: 1px solid var(--p-line2) !important;
+  border-radius: 0 !important;
+  padding: 0 0 2px 0 !important;
+  font-size: 11px !important;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--p-mute) !important;
+  width: auto !important;
+}
+
+div[data-testid="stElementContainer"][class*="st-key-pxa_ir_catalogo"] button:hover,
+div[data-testid="stElementContainer"][class*="st-key-pxa_ir_auditoria"] button:hover,
+div[data-testid="stElementContainer"][class*="st-key-pxa_volver_"] button:hover {
+  background: transparent !important;
+  color: var(--p-gold) !important;
+  border-color: var(--p-gold) !important;
+}
+
+/* ---------- 5. Cabecera principal y fila fina de estado ---------- */
+
+.pxa-cabecera {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: var(--sp-4) 0;
+  border-bottom: 1px solid var(--p-line);
+  margin-bottom: var(--sp-4);
+}
+
+.pxa-cabecera-fecha {
+  font-family: var(--font-display);
+  font-size: 20px;
+}
+
+/* ---------- 6. Estado vacío / bienvenida ---------- */
+
+.pxa-bienvenida {
+  text-align: center;
+  padding: var(--sp-8) var(--sp-4) var(--sp-4);
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.pxa-bienvenida h1 {
+  font-family: var(--font-display);
+  font-size: 46px;
+  font-weight: 400;
+  line-height: 1.08;
+  margin: 0;
+}
+
+.pxa-bienvenida p.pxa-intro {
+  font-size: 14.5px;
+  line-height: 1.7;
+  color: var(--p-mute);
+  max-width: 430px;
+  margin: var(--sp-3) auto;
+}
+
+[class*="st-key-pxa_sugerencias"] {
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+[class*="st-key-pxa_sug_"] button {
+  text-align: left !important;
+  justify-content: space-between !important;
+  padding: 13.8px 18.4px !important;
+  font-size: 14.5px !important;
+  border-color: var(--p-line) !important;
+}
+
+[class*="st-key-pxa_sug_"] button:hover:not(:disabled) {
+  border-color: var(--p-gold) !important;
+}
+
+/* La etiqueta del botón va envuelta en varios contenedores ajustados al texto;
+   se estiran para que la flecha pueda irse al borde derecho. */
+[class*="st-key-pxa_sug_"] button > div,
+[class*="st-key-pxa_sug_"] button > div > span,
+[class*="st-key-pxa_sug_"] button [data-testid="stMarkdownContainer"],
+[class*="st-key-pxa_sug_"] button p {
+  width: 100%;
+  text-align: left;
+}
+
+[class*="st-key-pxa_sug_"] button p::after {
+  content: "→";
+  float: right;
+  color: var(--p-gold);
+  letter-spacing: .1em;
+}
+
+/* El estilo de enlace encoge el contenedor del botón, así que centrar el texto
+   no basta: el contenedor se estira y centra su contenido. */
+[class*="st-key-pxa_ir_catalogo"] {
+  width: 100% !important;
+  margin-top: var(--sp-3);
+}
+
+[class*="st-key-pxa_ir_catalogo"] [data-testid="stButton"] {
+  display: flex;
+  justify-content: center;
+}
+
+/* ---------- 7. Conversación ---------- */
+
+/* El mensaje del usuario es HTML propio (ver _renderizar_burbuja_usuario): un
+   bloque que se ajusta al texto hasta el 62 % del ancho de la conversación y se
+   empuja a la derecha con margin-left:auto. Sin anchos en píxeles. */
+.pxa-msg-usuario {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin-left: auto;
+  width: fit-content;
+  max-width: 62%;
+  margin-bottom: var(--sp-6);
+  gap: 6px;
+}
+
+.pxa-msg-usuario .pxa-microlabel {
+  font-size: 9.5px;
+  letter-spacing: .19em;
+  text-align: right;
+}
+
+.pxa-burbuja {
+  border: 1px solid var(--p-line2);
+  border-radius: 4px;
+  padding: 11px var(--sp-4);
+  background: transparent;
+  font-size: 14.5px;
+  line-height: 1.5;
+  text-align: left;
+}
+
+[class*="st-key-pxa_asis_"] {
+  max-width: 76%;
+  margin-bottom: var(--sp-3);
+}
+
+[class*="st-key-pxa_asis_"] [data-testid="stMarkdownContainer"] p {
+  font-size: 15px;
+  line-height: 1.75;
+  text-align: justify;
+  text-wrap: pretty;
+  margin: 0 0 var(--sp-2) 0;
+}
+
+/* Tablas que devuelve el modelo: filete del sistema, sin rellenos ni cebra. */
+[class*="st-key-pxa_asis_"] [data-testid="stMarkdownContainer"] table {
+  width: 100%;
+  border-collapse: collapse;
+  background: transparent;
+  margin: var(--sp-2) 0 var(--sp-3);
+  font-size: 13.5px;
+}
+
+[class*="st-key-pxa_asis_"] [data-testid="stMarkdownContainer"] thead th {
+  font-size: 9.5px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  font-weight: 400;
+  color: var(--p-mute);
+  text-align: left;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--p-line2);
+  padding: var(--sp-2) var(--sp-3);
+}
+
+[class*="st-key-pxa_asis_"] [data-testid="stMarkdownContainer"] tbody td {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--p-line);
+  padding: var(--sp-2) var(--sp-3);
+  line-height: 1.6;
+  text-align: left;
+  vertical-align: top;
+}
+
+[class*="st-key-pxa_asis_"] [data-testid="stMarkdownContainer"] tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Una tabla ancha scrollea dentro de su caja; nunca desplaza la página. */
+[class*="st-key-pxa_asis_"] [data-testid="stMarkdownContainer"] > div:has(> table),
+[class*="st-key-pxa_asis_"] [data-testid="stTable"] {
+  overflow-x: auto;
+}
+
+.pxa-firma {
+  display: flex;
+  align-items: baseline;
+  gap: 11px;
+  margin-bottom: var(--sp-1);
+}
+
+/* §11 · Marca de proveedor por turno */
+.pxa-microlabel.pxa-proveedor {
+  font-size: 9.5px;
+  letter-spacing: .14em;
+}
+
+.pxa-pensando {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-2) 0;
+}
+
+.pxa-dots { display: flex; gap: 4px; }
+
+.pxa-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--p-gold);
+  animation: pxaPulse 1.4s ease-in-out infinite;
+}
+
+.pxa-dot:nth-child(2) { animation-delay: .2s; }
+.pxa-dot:nth-child(3) { animation-delay: .4s; }
+
+@keyframes pxaPulse {
+  0%, 100% { opacity: .25; }
+  50% { opacity: .9; }
+}
+
+.pxa-pensando-texto {
+  font-style: italic;
+  font-size: 13px;
+  color: var(--p-mute);
+}
+
+/* ---------- 8. Tarjeta de permiso pendiente ---------- */
+
+[class*="st-key-pxa_permiso_"] {
+  max-width: 680px;
+  border: 1px solid var(--p-gold);
+  border-radius: 4px;
+  background: var(--p-gold-tint);
+  margin: var(--sp-4) 0;
+  padding-bottom: var(--sp-4);
+}
+
+/* §6 · Variante irreversible: mismo molde, otro color. Sigue siendo contorno. */
+[class*="st-key-pxa_permiso_irr_"] {
+  border-color: var(--p-bad);
+  background: var(--p-bad-tint);
+}
+
+[class*="st-key-pxa_permiso_"] [data-testid="stExpander"],
+[class*="st-key-pxa_permiso_"] [data-testid="stHorizontalBlock"],
+[class*="st-key-pxa_permiso_"] [data-testid="stElementContainer"] {
+  margin-left: var(--sp-6);
+  margin-right: var(--sp-6);
+  width: auto;
+}
+
+.pxa-permiso-cabecera {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-6);
+  border-bottom: 1px solid var(--p-gold-soft);
+}
+
+[class*="st-key-pxa_permiso_irr_"] .pxa-permiso-cabecera {
+  border-bottom-color: var(--p-bad-soft);
+}
+
+.pxa-permiso-cabecera .pxa-microlabel { color: var(--p-gold); }
+[class*="st-key-pxa_permiso_irr_"] .pxa-permiso-cabecera .pxa-microlabel { color: var(--p-bad); }
+
+.pxa-pills { display: flex; gap: 6px; }
+
+.pxa-nivel-pill {
+  font-size: 9.5px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  border: 1px solid var(--p-gold-soft);
+  border-radius: 2px;
+  padding: 3px 11px;
+  white-space: nowrap;
+  color: var(--p-gold);
+}
+
+[class*="st-key-pxa_permiso_irr_"] .pxa-nivel-pill {
+  border-color: var(--p-bad-soft);
+  color: var(--p-bad);
+}
+
+.pxa-nivel-pill.pxa-pill-bad {
+  border-color: var(--p-bad);
+  color: var(--p-bad);
+}
+
+.pxa-permiso-cuerpo { padding: 22px var(--sp-6); }
+
+.pxa-permiso-orden {
+  font-size: 9.5px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--p-mute);
+  margin-bottom: 6px;
+}
+
+.pxa-permiso-titular {
+  font-family: var(--font-display);
+  font-size: 29px;
+  font-weight: 400;
+  line-height: 1.15;
+  margin: 0 0 var(--sp-4) 0;
+}
+
+.pxa-def-row {
+  display: flex;
+  gap: 22px;
+  padding: 11px 0;
+  border-top: 1px solid var(--p-line);
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+
+.pxa-def-row.pxa-def-ultima { border-bottom: 1px solid var(--p-line); }
+
+.pxa-def-row .pxa-def-label {
+  flex: 0 0 120px;
+  font-size: 9.5px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--p-mute);
+}
+
+.pxa-detalle-row {
+  display: flex;
+  gap: var(--sp-4);
+  padding: 5px 0;
+  font-size: 12px;
+}
+
+.pxa-detalle-row .pxa-detalle-label {
+  flex: 0 0 120px;
+  color: var(--p-mute);
+  font-size: 9.5px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  padding-top: 3px;
+}
+
+.pxa-detalle-row .pxa-detalle-valor {
+  word-break: break-word;
+  line-height: 1.5;
+}
+
+.pxa-lista-alcance {
+  font-size: 12px;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--p-line);
+  word-break: break-all;
+  font-variant-numeric: tabular-nums;
+}
+
+.pxa-nota-irreversible {
+  border: 1px dashed var(--p-bad-soft);
+  border-radius: 4px;
+  padding: 11px var(--sp-3);
+  margin: var(--sp-3) var(--sp-6) 0;
+  font-size: 12.5px;
+  line-height: 1.6;
+}
+
+.pxa-admin-aviso {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border-top: 1px solid var(--p-line);
+  padding: 11px var(--sp-6) 0;
+  margin: var(--sp-3) 0 0;
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--p-mute);
+}
+
+p.pxa-permiso-nota {
+  font-style: italic;
+  font-size: 11.5px;
+  color: var(--p-mute);
+  margin-left: var(--sp-3);
+}
+
+/* ---------- 9. Recibo del turno ---------- */
+
+[class*="st-key-pxa_recibo_"] {
+  max-width: 720px;
+  border: 1px solid var(--p-line);
+  border-radius: 4px;
+  margin-top: var(--sp-2);
+  margin-bottom: var(--sp-6);
+}
+
+[class*="st-key-pxa_recibo_"] [data-testid="stElementContainer"]:last-child {
+  padding: 11px var(--sp-4);
+}
+
+.pxa-recibo-cabecera {
+  display: flex;
+  justify-content: space-between;
+  padding: 11px var(--sp-4);
+  border-bottom: 1px solid var(--p-line);
+  font-size: 11px;
+  color: var(--p-mute);
+}
+
+.pxa-recibo-fila {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-4);
+  padding: var(--sp-3) var(--sp-4);
+  border-bottom: 1px solid var(--p-line);
+}
+
+.pxa-recibo-marca {
+  font-size: 14px;
+  color: var(--p-gold);
+  flex-shrink: 0;
+  width: 14px;
+  text-align: center;
+}
+
+.pxa-recibo-fila.pxa-error .pxa-recibo-marca { color: var(--p-bad); }
+
+.pxa-recibo-cuerpo { flex: 1; }
+.pxa-recibo-titulo { font-size: 14.5px; }
+
+.pxa-recibo-meta {
+  font-size: 11px;
+  color: var(--p-mute);
+}
+
+.pxa-recibo-autor {
+  font-size: 10.5px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--p-mute);
+  white-space: nowrap;
+}
+
+/* §13 · Siguiente paso tras un trabajo que no devuelve informe */
+[class*="st-key-pxa_paso_"] { margin: var(--sp-2) 0 var(--sp-4); }
+
+/* ---------- 10. Ejecutando, tiempo agotado, fallos y sin conexión ---------- */
+
+[class*="st-key-pxa_ejecutando"] {
+  max-width: 680px;
+  border: 1px solid var(--p-line2);
+  border-radius: 4px;
+  background: var(--p-panel);
+  padding: 22px var(--sp-6);
+  margin: var(--sp-4) 0;
+}
+
+.pxa-ejec-cabecera {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+}
+
+.pxa-reloj {
+  font-size: 13px;
+  color: var(--p-mute);
+  text-align: right;
+  margin-top: -18px;
+}
+
+p.pxa-ejec-expectativa {
+  font-size: 13.5px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+p.pxa-ejec-autorizacion {
+  font-size: 12px;
+  color: var(--p-mute);
+  line-height: 1.6;
+  margin: 6px 0 0;
+}
+
+[class*="st-key-pxa_agotado_"],
+[class*="st-key-pxa_fallo_"],
+[class*="st-key-pxa_offline_"] {
+  max-width: 680px;
+  margin: var(--sp-4) 0 var(--sp-6);
+  border: 1px solid var(--p-line2);
+  border-radius: 4px;
+  background: var(--p-panel);
+  padding: 22px var(--sp-6);
+}
+
+[class*="st-key-pxa_agotado_"] { border-color: var(--p-line); }
+
+[class*="st-key-pxa_agotado_"] h2,
+[class*="st-key-pxa_fallo_"] h2,
+[class*="st-key-pxa_offline_"] h2 {
+  font-family: var(--font-display);
+  font-size: 29px;
+  font-weight: 400;
+  line-height: 1.2;
+  margin: var(--sp-2) 0;
+}
+
+p.pxa-fallo-texto {
+  font-size: 14.5px;
+  line-height: 1.7;
+  margin: 0 0 var(--sp-2) 0;
+}
+
+[class*="st-key-pxa_offline_"] [data-testid="stMarkdownContainer"] p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--p-mute);
+}
+
+/* ---------- 11. Pantallas: estado en detalle, auditoría y catálogo ---------- */
+
+.pxa-pantalla-cabecera {
+  margin: var(--sp-3) 0 var(--sp-4);
+}
+
+.pxa-pantalla-cabecera h2 {
+  font-family: var(--font-display);
+  font-size: 29px;
+  font-weight: 400;
+  line-height: 1.2;
+  margin: 0;
+}
+
+p.pxa-pantalla-sub {
+  font-size: 12.5px;
+  color: var(--p-mute);
+  line-height: 1.6;
+  margin: 4px 0 0;
+}
+
+[class*="st-key-pxa_bloque_"] { margin-bottom: 22px; }
+
+.pxa-bloque-cabecera {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-2);
+}
+
+.pxa-bloque-meta {
+  font-size: 10.5px;
+  color: var(--p-mute);
+}
+
+.pxa-bloque-tabla {
+  border: 1px solid var(--p-line);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.pxa-estado-fila {
+  display: flex;
+  gap: var(--sp-4);
+  align-items: baseline;
+  padding: var(--sp-2) var(--sp-4);
+  border-bottom: 1px solid var(--p-line);
+}
+
+.pxa-estado-etiqueta { flex: 1; font-size: 13px; }
+
+.pxa-estado-valor {
+  font-size: 13px;
+  text-align: right;
+  color: var(--p-ink);
+}
+
+.pxa-valor-warn { color: var(--p-warn); }
+
+/* §9 · "Necesito administrador" se distingue del valor normal y del "no aplica" */
+.pxa-valor-admin {
+  font-size: 12.5px;
+  color: var(--p-mute);
+  border-bottom: 1px dotted var(--p-line2);
+}
+
+.pxa-valor-na {
+  font-size: 12.5px;
+  color: var(--p-mute);
+  font-style: italic;
+}
+
+.pxa-bloque-pie {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-2) var(--sp-4);
+}
+
+.pxa-bloque-pregunta {
+  font-size: 11px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--p-gold);
+  border-bottom: 1px solid var(--p-gold-soft);
+}
+
+.pxa-bloque-nota {
+  font-size: 10.5px;
+  color: var(--p-mute);
+  text-align: right;
+}
+
+.pxa-bloque-pendiente {
+  border: 1px dashed var(--p-line2);
+  border-radius: 4px;
+  padding: var(--sp-4);
+  font-size: 13.5px;
+}
+
+.pxa-bloque-pendiente-texto div:last-child {
+  font-size: 11.5px;
+  color: var(--p-mute);
+  line-height: 1.55;
+  margin-top: 3px;
+}
+
+[class*="st-key-pxa_consultar_"] button {
+  border-color: var(--p-gold) !important;
+  color: var(--p-gold) !important;
+  font-size: 12.5px !important;
+}
+
+/* Auditoría */
+
+[class*="st-key-pxa_aud_"] {
+  border: 1px solid var(--p-line);
+  border-top: none;
+  padding: 0;
+}
+
+[class*="st-key-pxa_aud_0"] { border-top: 1px solid var(--p-line); border-radius: 4px 4px 0 0; }
+
+.pxa-aud-fila {
+  display: flex;
+  gap: var(--sp-4);
+  align-items: baseline;
+  padding: 11px var(--sp-4) 2px;
+}
+
+.pxa-aud-hora {
+  width: 58px;
+  flex: none;
+  font-size: 11.5px;
+  color: var(--p-mute);
+}
+
+.pxa-aud-marca {
+  width: 14px;
+  flex: none;
+  font-size: 12px;
+  text-align: center;
+  color: var(--p-mute);
+}
+
+.pxa-aud-sin-hacer .pxa-aud-marca,
+.pxa-aud-sin-hacer .pxa-aud-resultado { color: var(--p-warn); }
+
+.pxa-aud-cuerpo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.pxa-aud-titulo { font-size: 14px; }
+
+.pxa-aud-resultado {
+  font-size: 11px;
+  color: var(--p-mute);
+  letter-spacing: .02em;
+}
+
+.pxa-aud-autor {
+  width: 112px;
+  flex: none;
+  font-size: 10.5px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--p-mute);
+  text-align: right;
+}
+
+.pxa-aud-proveedor {
+  width: 52px;
+  flex: none;
+  font-size: 10.5px;
+  color: var(--p-mute);
+  text-align: right;
+}
+
+p.pxa-nota-registro {
+  font-size: 11.5px;
+  color: var(--p-mute);
+  line-height: 1.6;
+  max-width: 720px;
+  margin-top: var(--sp-3);
+}
+
+/* Catálogo */
+
+[class*="st-key-pxa_grupo_"] { margin-bottom: var(--sp-4); }
+
+[class*="st-key-pxa_grupo_"] .pxa-microlabel {
+  border-bottom: 1px solid var(--p-line);
+  padding-bottom: 6px;
+}
+
+div[data-testid="stElementContainer"][class*="st-key-pxa_cat_"] button {
+  border: none !important;
+  border-bottom: 1px solid var(--p-line) !important;
+  border-radius: 0 !important;
+  text-align: left !important;
+  justify-content: flex-start !important;
+  padding: 7px 0 !important;
+  font-size: 13px !important;
+}
+
+[class*="st-key-pxa_cat_"] button > div,
+[class*="st-key-pxa_cat_"] button > div > span,
+[class*="st-key-pxa_cat_"] button [data-testid="stMarkdownContainer"],
+[class*="st-key-pxa_cat_"] button p {
+  width: 100%;
+  text-align: left;
+}
+
+div[data-testid="stElementContainer"][class*="st-key-pxa_cat_"] button:hover:not(:disabled) {
+  background: transparent !important;
+  color: var(--p-gold) !important;
+}
+
+[class*="st-key-pxa_cat_permiso_"] button p::before {
+  content: "· ";
+  color: var(--p-gold);
+}
+
+/* ---------- 12. Barra de entrada ---------- */
+
+[data-testid="stChatInput"],
+.stChatInput {
+  border: 1px solid var(--p-line) !important;
+  background: var(--p-panel) !important;
+  border-radius: 4px !important;
+}
+
+/* El envoltorio interior de la caja de entrada también sale pintado con el color
+   secundario de config.toml (claro): se fuerza al token del tema activo. */
+[data-testid="stChatInput"] > div,
+[data-testid="stChatInput"] > div > div {
+  background: var(--p-panel) !important;
+}
+
+[data-testid="stChatInput"] textarea,
+.stChatInput textarea {
+  font-family: var(--font-body) !important;
+  color: var(--p-ink) !important;
+  background: transparent !important;
+}
+
+[data-testid="stChatInput"] textarea::placeholder {
+  color: var(--p-mute) !important;
+  opacity: 1;
+}
+
+[data-testid="stChatInput"] button,
+[data-testid="stChatInput"] button:hover,
+[data-testid="stChatInput"] button:focus,
+[data-testid="stChatInput"] button:focus-visible,
+[data-testid="stChatInput"] button:active {
+  background: transparent !important;
+  color: var(--p-gold) !important;
+}
+
+[data-testid="stBottomBlockContainer"] {
+  max-width: 900px;
+  padding-bottom: 30px !important;
+}
+
+.pxa-inputbar-caption {
+  position: fixed;
+  left: 272px;
+  right: 0;
+  box-sizing: border-box;
+  bottom: 8px;
+  z-index: 100;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 var(--sp-4);
+  display: flex;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  font-size: 10.5px;
+  color: var(--p-mute);
+}
+
+/* Streamlit conserva el hueco de la barra lateral aunque esté plegada, así que
+   el desplazamiento de 272 px vale en los dos casos y la línea queda siempre
+   alineada con la caja de entrada. */
+
+.pxa-inputbar-caption .pxa-accion {
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--p-gold);
+  white-space: nowrap;
+}
+
+/* ---------- 13. Bloques plegables (un solo nivel) ---------- */
+
+[data-testid="stExpander"] {
+  border: none !important;
+  background: transparent !important;
+}
+
+[data-testid="stExpander"] details,
+[data-testid="stExpander"] summary {
+  background: transparent !important;
+  border: none !important;
+}
+
+[data-testid="stExpander"] summary {
+  font-size: 11px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--p-mute) !important;
+  text-decoration: underline;
+}
+
+[data-testid="stExpander"] summary:hover { color: var(--p-gold) !important; }
+
+[data-testid="stSidebar"] [data-testid="stExpanderDetails"] p {
+  font-size: 11.5px;
+  line-height: 1.55;
+  color: var(--p-mute);
+}
+
+[data-testid="stExpanderDetails"] {
+  border: 1px solid var(--p-line);
+  border-radius: 4px;
+  background: var(--p-bg);
+  padding: var(--sp-4) !important;
+}
+
+[data-baseweb="popover"] ul,
+[data-testid="stMainMenuPopover"] {
+  background: var(--p-panel) !important;
+  color: var(--p-ink) !important;
+}
+
+/* ---------- 14. Comportamiento responsive (§14) ---------- */
+
+/* Por debajo del punto de ruptura de Streamlit la barra lateral se superpone y
+   el área principal ocupa todo el ancho: la línea del contrato deja de llevar el
+   desplazamiento de 272 px y se le da sitio para dos líneas. */
+@media (max-width: 768px) {
+  .pxa-inputbar-caption {
+    left: 0;
+    flex-wrap: wrap;
+  }
+
+  [data-testid="stBottomBlockContainer"] {
+    padding-bottom: 46px !important;
+  }
+}
+
+/* Auditoría: por debajo de 720 px se ocultan autor y proveedor de la fila;
+   siguen visibles en el detalle plegado. La hora y el nombre nunca se ocultan. */
+@media (max-width: 720px) {
+  .pxa-aud-autor,
+  .pxa-aud-proveedor { display: none; }
+
+  [class*="st-key-pxa_grupo_"] { margin-bottom: var(--sp-3); }
+
+  /* El catálogo cae a una columna; el resto de filas horizontales no se tocan. */
+  [data-testid="stHorizontalBlock"]:has([class*="st-key-pxa_grupo_"]) {
+    flex-direction: column;
+  }
+
+  [data-testid="stHorizontalBlock"]:has([class*="st-key-pxa_grupo_"]) > div {
+    width: 100% !important;
+    flex: 1 1 100% !important;
+  }
+}
+
+/* Estado en detalle: el valor cae a una segunda línea alineada a la izquierda. */
+@media (max-width: 560px) {
+  .pxa-estado-fila { flex-direction: column; gap: 2px; }
+  .pxa-estado-valor { text-align: left; }
+  .pxa-bloque-pie { flex-direction: column; align-items: flex-start; }
+  .pxa-bloque-nota { text-align: left; }
+}
+
+/* Tarjeta de permiso: los botones se apilan, con "Sí" siempre arriba. */
+@media (max-width: 420px) {
+  [class*="st-key-pxa_permiso_"] [data-testid="stHorizontalBlock"] {
+    flex-direction: column;
+  }
+
+  [class*="st-key-pxa_permiso_"] [data-testid="stHorizontalBlock"] > div {
+    width: 100% !important;
+    flex: 1 1 100% !important;
+  }
+  .pxa-def-row { flex-direction: column; gap: 4px; }
+  .pxa-def-row .pxa-def-label { flex: none; }
+  .pxa-permiso-nota { margin-left: 0; }
+}

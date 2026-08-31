@@ -18,3 +18,6 @@ logs/
 
 # Streamlit
 .streamlit/
+# ...salvo el tema, que forma parte del diseño (ADDENDUM-02 §1) y debe viajar con el repositorio.
+!.streamlit/
+!.streamlit/config.toml
