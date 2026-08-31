@@ -119,6 +119,200 @@ def test_tool_mutante_con_confirmacion_false_no_ejecuta_y_audita(monkeypatch, ru
     assert lineas[0]["resultado"]["ok"] is False
 
 
+def test_tool_start_full_scan_con_confirmacion_true_se_ejecuta(monkeypatch):
+    tool_call = _tool_call("call_1", "start_full_scan", "{}")
+    cliente = Mock()
+    cliente.chat.completions.create = Mock(
+        side_effect=[_completion_con_tool_calls([tool_call]), _completion_final("Análisis completo iniciado.")]
+    )
+    mock_execute = Mock(return_value=_resultado_ok("start_full_scan"))
+    monkeypatch.setattr(executor, "execute", mock_execute)
+    confirmar = Mock(return_value=True)
+
+    agente = Agent(perfil=_perfil(), confirmar=confirmar, cliente=cliente)
+    resultado = agente.enviar_mensaje("hazme un análisis completo")
+
+    confirmar.assert_called_once_with(
+        "start_full_scan", executor.WHITELIST["start_full_scan"].descripcion, {}
+    )
+    mock_execute.assert_called_once_with("start_full_scan", {}, proveedor="groq")
+    assert resultado.herramientas[0].ejecutada is True
+
+
+def test_tool_start_full_scan_con_confirmacion_false_no_ejecuta_y_audita(monkeypatch, ruta_audit_temporal):
+    tool_call = _tool_call("call_1", "start_full_scan", "{}")
+    cliente = Mock()
+    cliente.chat.completions.create = Mock(
+        side_effect=[_completion_con_tool_calls([tool_call]), _completion_final("De acuerdo, no lo inicio.")]
+    )
+    mock_execute = Mock()
+    monkeypatch.setattr(executor, "execute", mock_execute)
+    confirmar = Mock(return_value=False)
+    perfil = _perfil()
+
+    agente = Agent(perfil=perfil, confirmar=confirmar, cliente=cliente)
+    resultado = agente.enviar_mensaje("hazme un análisis completo")
+
+    mock_execute.assert_not_called()
+    assert resultado.herramientas[0].ejecutada is False
+    assert resultado.herramientas[0].ok is False
+
+    lineas = _leer_lineas_audit(ruta_audit_temporal)
+    assert len(lineas) == 1
+    assert lineas[0]["tool_id"] == "start_full_scan"
+    assert lineas[0]["motivo_rechazo"] == "usuario_rechazo"
+    assert lineas[0]["proveedor"] == perfil.proveedor
+    assert lineas[0]["resultado"]["ok"] is False
+
+
+def test_tool_start_custom_scan_con_confirmacion_true_se_ejecuta(monkeypatch):
+    tool_call = _tool_call("call_1", "start_custom_scan", '{"ruta": "Descargas"}')
+    cliente = Mock()
+    cliente.chat.completions.create = Mock(
+        side_effect=[_completion_con_tool_calls([tool_call]), _completion_final("Análisis de Descargas iniciado.")]
+    )
+    mock_execute = Mock(return_value=_resultado_ok("start_custom_scan"))
+    monkeypatch.setattr(executor, "execute", mock_execute)
+    confirmar = Mock(return_value=True)
+
+    agente = Agent(perfil=_perfil(), confirmar=confirmar, cliente=cliente)
+    resultado = agente.enviar_mensaje("analiza mi carpeta de Descargas")
+
+    confirmar.assert_called_once_with(
+        "start_custom_scan", executor.WHITELIST["start_custom_scan"].descripcion, {"ruta": "Descargas"}
+    )
+    mock_execute.assert_called_once_with("start_custom_scan", {"ruta": "Descargas"}, proveedor="groq")
+    assert resultado.herramientas[0].ejecutada is True
+
+
+def test_tool_start_custom_scan_con_confirmacion_false_no_ejecuta_y_audita(monkeypatch, ruta_audit_temporal):
+    tool_call = _tool_call("call_1", "start_custom_scan", '{"ruta": "Descargas"}')
+    cliente = Mock()
+    cliente.chat.completions.create = Mock(
+        side_effect=[_completion_con_tool_calls([tool_call]), _completion_final("De acuerdo, no lo inicio.")]
+    )
+    mock_execute = Mock()
+    monkeypatch.setattr(executor, "execute", mock_execute)
+    confirmar = Mock(return_value=False)
+    perfil = _perfil()
+
+    agente = Agent(perfil=perfil, confirmar=confirmar, cliente=cliente)
+    resultado = agente.enviar_mensaje("analiza mi carpeta de Descargas")
+
+    mock_execute.assert_not_called()
+    assert resultado.herramientas[0].ejecutada is False
+    assert resultado.herramientas[0].ok is False
+
+    lineas = _leer_lineas_audit(ruta_audit_temporal)
+    assert len(lineas) == 1
+    assert lineas[0]["tool_id"] == "start_custom_scan"
+    assert lineas[0]["motivo_rechazo"] == "usuario_rechazo"
+    assert lineas[0]["proveedor"] == perfil.proveedor
+    assert lineas[0]["resultado"]["ok"] is False
+
+
+def test_tool_set_block_all_incoming_con_confirmacion_true_se_ejecuta(monkeypatch):
+    tool_call = _tool_call(
+        "call_1", "set_block_all_incoming", '{"profile": "Private", "allow_inbound_rules": "False"}'
+    )
+    cliente = Mock()
+    cliente.chat.completions.create = Mock(
+        side_effect=[_completion_con_tool_calls([tool_call]), _completion_final("Entrantes bloqueadas.")]
+    )
+    mock_execute = Mock(return_value=_resultado_ok("set_block_all_incoming"))
+    monkeypatch.setattr(executor, "execute", mock_execute)
+    confirmar = Mock(return_value=True)
+
+    agente = Agent(perfil=_perfil(), confirmar=confirmar, cliente=cliente)
+    resultado = agente.enviar_mensaje("bloquea todas las conexiones entrantes en la red privada")
+
+    confirmar.assert_called_once_with(
+        "set_block_all_incoming",
+        executor.WHITELIST["set_block_all_incoming"].descripcion,
+        {"profile": "Private", "allow_inbound_rules": "False"},
+    )
+    mock_execute.assert_called_once_with(
+        "set_block_all_incoming",
+        {"profile": "Private", "allow_inbound_rules": "False"},
+        proveedor="groq",
+    )
+    assert resultado.herramientas[0].ejecutada is True
+
+
+def test_tool_set_block_all_incoming_con_confirmacion_false_no_ejecuta_y_audita(monkeypatch, ruta_audit_temporal):
+    tool_call = _tool_call(
+        "call_1", "set_block_all_incoming", '{"profile": "Private", "allow_inbound_rules": "False"}'
+    )
+    cliente = Mock()
+    cliente.chat.completions.create = Mock(
+        side_effect=[_completion_con_tool_calls([tool_call]), _completion_final("De acuerdo, no he cambiado nada.")]
+    )
+    mock_execute = Mock()
+    monkeypatch.setattr(executor, "execute", mock_execute)
+    confirmar = Mock(return_value=False)
+    perfil = _perfil()
+
+    agente = Agent(perfil=perfil, confirmar=confirmar, cliente=cliente)
+    resultado = agente.enviar_mensaje("bloquea todas las conexiones entrantes en la red privada")
+
+    mock_execute.assert_not_called()
+    assert resultado.herramientas[0].ejecutada is False
+    assert resultado.herramientas[0].ok is False
+
+    lineas = _leer_lineas_audit(ruta_audit_temporal)
+    assert len(lineas) == 1
+    assert lineas[0]["tool_id"] == "set_block_all_incoming"
+    assert lineas[0]["motivo_rechazo"] == "usuario_rechazo"
+    assert lineas[0]["proveedor"] == perfil.proveedor
+    assert lineas[0]["resultado"]["ok"] is False
+
+
+def test_tool_restore_firewall_defaults_con_confirmacion_true_se_ejecuta(monkeypatch):
+    tool_call = _tool_call("call_1", "restore_firewall_defaults", "{}")
+    cliente = Mock()
+    cliente.chat.completions.create = Mock(
+        side_effect=[_completion_con_tool_calls([tool_call]), _completion_final("Firewall restaurado.")]
+    )
+    mock_execute = Mock(return_value=_resultado_ok("restore_firewall_defaults"))
+    monkeypatch.setattr(executor, "execute", mock_execute)
+    confirmar = Mock(return_value=True)
+
+    agente = Agent(perfil=_perfil(), confirmar=confirmar, cliente=cliente)
+    resultado = agente.enviar_mensaje("restaura el firewall a los valores de fábrica")
+
+    confirmar.assert_called_once_with(
+        "restore_firewall_defaults", executor.WHITELIST["restore_firewall_defaults"].descripcion, {}
+    )
+    mock_execute.assert_called_once_with("restore_firewall_defaults", {}, proveedor="groq")
+    assert resultado.herramientas[0].ejecutada is True
+
+
+def test_tool_restore_firewall_defaults_con_confirmacion_false_no_ejecuta_y_audita(monkeypatch, ruta_audit_temporal):
+    tool_call = _tool_call("call_1", "restore_firewall_defaults", "{}")
+    cliente = Mock()
+    cliente.chat.completions.create = Mock(
+        side_effect=[_completion_con_tool_calls([tool_call]), _completion_final("De acuerdo, no lo restauro.")]
+    )
+    mock_execute = Mock()
+    monkeypatch.setattr(executor, "execute", mock_execute)
+    confirmar = Mock(return_value=False)
+    perfil = _perfil()
+
+    agente = Agent(perfil=perfil, confirmar=confirmar, cliente=cliente)
+    resultado = agente.enviar_mensaje("restaura el firewall a los valores de fábrica")
+
+    mock_execute.assert_not_called()
+    assert resultado.herramientas[0].ejecutada is False
+    assert resultado.herramientas[0].ok is False
+
+    lineas = _leer_lineas_audit(ruta_audit_temporal)
+    assert len(lineas) == 1
+    assert lineas[0]["tool_id"] == "restore_firewall_defaults"
+    assert lineas[0]["motivo_rechazo"] == "usuario_rechazo"
+    assert lineas[0]["proveedor"] == perfil.proveedor
+    assert lineas[0]["resultado"]["ok"] is False
+
+
 def test_argumentos_invalidos_no_llama_a_execute_y_continua(monkeypatch, ruta_audit_temporal):
     tool_call = _tool_call("call_1", "get_defender_status", "{esto no es json")
     cliente = Mock()

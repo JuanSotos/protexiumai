@@ -50,6 +50,26 @@ def test_tool_con_parametros_genera_enum_correcto():
     assert parametros["required"] == ["profile", "enabled"]
 
 
+def test_tool_start_custom_scan_genera_enum_correcto():
+    schema = generar_tools_schema()
+    por_nombre = {t["function"]["name"]: t["function"] for t in schema}
+    parametros = por_nombre["start_custom_scan"]["parameters"]
+
+    assert parametros["properties"]["ruta"] == {
+        "type": "string",
+        "enum": ["Descargas", "Escritorio", "Documentos"],
+    }
+    assert parametros["required"] == ["ruta"]
+
+
+def test_tool_start_full_scan_sin_parametros():
+    schema = generar_tools_schema()
+    por_nombre = {t["function"]["name"]: t["function"] for t in schema}
+    parametros = por_nombre["start_full_scan"]["parameters"]
+    assert parametros["properties"] == {}
+    assert parametros["required"] == []
+
+
 def test_schema_es_json_serializable():
     schema = generar_tools_schema()
     json.dumps(schema)
