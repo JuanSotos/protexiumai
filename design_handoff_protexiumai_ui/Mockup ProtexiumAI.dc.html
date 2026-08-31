@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="stylesheet" href="_ds/classical-81d72e55-b1b2-48cd-a4e1-e0a738865a97/styles.css">
+<script src="_ds/classical-81d72e55-b1b2-48cd-a4e1-e0a738865a97/_ds_bundle.js"></script>
+<meta name="design_doc_mode" content="canvas">
+<style>
+body{margin:0;background:#bebebc}
+.pxa{--p-bg:#dadad8;--p-surface:#e0e0de;--p-panel:#d2d2d0;--p-ink:#292928;--p-mute:#6b6b69;--p-line:rgba(0,0,0,.085);--p-line2:rgba(0,0,0,.16);--p-gold:#0a6dd6;--p-gold-soft:rgba(10,109,214,.42);--p-gold-tint:rgba(10,109,214,.07);--p-ok:#0f7b0f;--p-warn:#9d5d00;--p-bad:#c42b1c;--p-bad-soft:rgba(196,43,28,.42);--p-bad-tint:rgba(196,43,28,.06);--p-shadow:0 8px 24px rgba(0,0,0,.10)}
+.pxa[data-p="dark"]{--p-bg:#202020;--p-surface:#2c2c2c;--p-panel:#272727;--p-ink:#ffffff;--p-mute:#a0a0a0;--p-line:rgba(255,255,255,.0698);--p-line2:rgba(255,255,255,.18);--p-gold:#5cc8ff;--p-gold-soft:rgba(92,200,255,.42);--p-gold-tint:rgba(92,200,255,.08);--p-ok:#6ccb5f;--p-warn:#fce100;--p-bad:#ff99a4;--p-bad-soft:rgba(255,153,164,.42);--p-bad-tint:rgba(255,153,164,.07);--p-shadow:0 12px 40px rgba(0,0,0,.55)}
+.pxa,.pxa *{box-sizing:border-box}
+@keyframes pxaPulse{0%,100%{opacity:.25}50%{opacity:.9}}
+@keyframes pxaOnda{0%{transform:scale(.16);opacity:.7}70%{opacity:.14}100%{transform:scale(1);opacity:0}}
+@media (prefers-reduced-motion:reduce){.pxa *{animation:none!important}}
+</style>
+</helmet>
+
+<div class="pxa" data-p="{{ theme }}" style="min-height:100vh;display:flex;align-items:flex-start;justify-content:flex-start;padding:32px;font-family:var(--font-body);background:#bebebc">
+<div style="width:1180px;height:820px;flex:none;display:flex;background:var(--p-bg);color:var(--p-ink);border:1px solid var(--p-line2);border-radius:8px;overflow:hidden;box-shadow:var(--p-shadow)">
+
+  <aside style="width:272px;flex:none;display:flex;flex-direction:column;background:var(--p-panel);border-right:1px solid var(--p-line);position:relative">
+    <div style="position:absolute;inset:0 auto 0 0;width:1px;background:linear-gradient(180deg,transparent,var(--p-gold-soft) 22%,var(--p-gold-soft) 78%,transparent)"></div>
+
+    <div style="padding:27.6px 27.6px 18.4px;display:flex;flex-direction:column;gap:9.2px">
+      <div style="display:flex;align-items:center;gap:13.8px">
+        <div style="width:30px;height:30px;flex:none;border:1px solid var(--p-gold);border-radius:50%;display:flex;align-items:center;justify-content:center">
+          <div style="width:11px;height:11px;border:1px solid var(--p-gold);transform:rotate(45deg)"></div>
+        </div>
+        <div style="font-family:var(--font-heading);font-size:25px;line-height:1;letter-spacing:.02em">Protexium<span style="color:var(--p-gold)">AI</span></div>
+      </div>
+      <div style="font-size:11.5px;line-height:1.5;color:var(--p-mute);max-width:190px">Asistente de seguridad para Windows&nbsp;11</div>
+    </div>
+
+    <div style="height:1px;background:var(--p-line)"></div>
+
+    <div style="flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column">
+    <div style="--e:{{ estadoColor }};padding:18.4px 27.6px;display:flex;flex-direction:column;gap:13.8px">
+      <div style="display:flex;align-items:baseline;justify-content:space-between">
+        <div style="font-size:9.5px;letter-spacing:.19em;text-transform:uppercase;color:var(--p-mute)">Estado del equipo</div>
+        <div style="font-size:9.5px;letter-spacing:.1em;color:var(--p-mute);font-variant-numeric:tabular-nums">10:04</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:13.8px">
+        <div style="width:44px;height:44px;flex:none;position:relative;display:flex;align-items:center;justify-content:center">
+          <div style="position:absolute;inset:0;border:1px solid var(--e,var(--p-gold));border-radius:50%;animation:pxaOnda 3s cubic-bezier(.22,.61,.36,1) infinite"></div>
+          <div style="position:absolute;inset:0;border:1px solid var(--e,var(--p-gold));border-radius:50%;animation:pxaOnda 3s cubic-bezier(.22,.61,.36,1) 1s infinite"></div>
+          <div style="position:absolute;inset:0;border:1px solid var(--e,var(--p-gold));border-radius:50%;animation:pxaOnda 3s cubic-bezier(.22,.61,.36,1) 2s infinite"></div>
+          <div style="position:absolute;inset:0;border:1px solid var(--e,var(--p-gold));border-radius:50%;opacity:.32"></div>
+          <div style="width:26px;height:26px;border:1px solid var(--e,var(--p-gold));border-radius:50%;display:flex;align-items:center;justify-content:center">
+            <div style="width:7px;height:7px;border-radius:50%;background:var(--e,var(--p-gold))"></div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:2px">
+          <div style="font-family:var(--font-heading);font-size:20px;line-height:1.1">{{ estadoTitulo }}</div>
+          <div style="font-size:11px;color:var(--p-mute);line-height:1.45">{{ estadoNota }}</div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column">
+        <div style="height:1px;background:var(--p-line)"></div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0;font-size:11.5px"><span>Vigilancia en tiempo real</span><span style="color:var(--p-mute)">activa</span></div>
+        <div style="height:1px;background:var(--p-line)"></div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0;font-size:11.5px"><span>Firmas de virus</span><span style="color:var(--p-mute)">al día</span></div>
+        <div style="height:1px;background:var(--p-line)"></div>
+        <div style="display:flex;justify-content:space-between;padding:6px 0;font-size:11.5px"><span>Firewall</span><span style="color:var(--e,var(--p-gold))">{{ firewallValor }}</span></div>
+        <div style="height:1px;background:var(--p-line)"></div>
+      </div>
+      <div style="display:flex;gap:9.2px">
+        <button style="flex:1;border:1px solid var(--p-line2);background:transparent;color:var(--p-ink);font-family:var(--font-body);font-size:11.5px;letter-spacing:.06em;padding:8px;border-radius:4px;cursor:pointer" style-hover="border-color:var(--p-gold);color:var(--p-gold)">Volver a comprobar</button>
+        <button onClick="{{ irDetalle }}" style="flex:1;border:1px solid var(--p-line2);background:transparent;color:var(--p-ink);font-family:var(--font-body);font-size:11.5px;letter-spacing:.06em;padding:8px;border-radius:4px;cursor:pointer" style-hover="border-color:var(--p-gold);color:var(--p-gold)">Ver el detalle</button>
+      </div>
+    </div>
+
+    <div style="height:1px;background:var(--p-line)"></div>
+
+    <div style="padding:13.8px 27.6px;display:flex;flex-direction:column;gap:5px">
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:9.2px">
+        <div style="font-size:9.5px;letter-spacing:.19em;text-transform:uppercase;color:var(--p-mute)">Esta sesión</div>
+        <div style="font-size:11px;color:var(--p-warn);letter-spacing:.02em">Sin administrador</div>
+      </div>
+      <div style="font-size:10.5px;color:var(--p-mute);line-height:1.5">Como <span style="font-variant-numeric:tabular-nums">juan</span>, usuario estándar. 4 comprobaciones y 8 acciones no estarán disponibles.</div>
+      <span style="font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--p-mute);border-bottom:1px solid var(--p-line2);align-self:flex-start;cursor:pointer">Qué significa</span>
+    </div>
+
+    <sc-if value="{{ hayCola }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:0 27.6px 13.8px">
+        <div style="border:1px solid var(--p-gold-soft);border-radius:4px;padding:9.2px 13.8px;display:flex;flex-direction:column;gap:3px;background:var(--p-gold-tint)">
+          <div style="font-size:9.5px;letter-spacing:.19em;text-transform:uppercase;color:var(--p-gold)">Esperando tu decisión</div>
+          <div style="font-size:12px;line-height:1.45">{{ colaTexto }}</div>
+        </div>
+      </div>
+    </sc-if>
+
+    <div style="height:1px;background:var(--p-line)"></div>
+
+    <div style="padding:18.4px 27.6px;display:flex;flex-direction:column;gap:9.2px">
+      <div style="font-size:9.5px;letter-spacing:.19em;text-transform:uppercase;color:var(--p-mute)">Dónde se procesa</div>
+      <div style="border:1px solid var(--p-gold);border-radius:4px;padding:11px 13.8px;display:flex;flex-direction:column;gap:3px;background:var(--p-gold-tint)">
+        <div style="display:flex;align-items:center;gap:8px;font-size:13px"><span style="width:5px;height:5px;border-radius:50%;background:var(--p-gold)"></span>En la nube · Groq</div>
+        <div style="font-size:10.5px;color:var(--p-mute);line-height:1.45">Tus preguntas salen del equipo</div>
+      </div>
+      <div style="border:1px solid var(--p-line);border-radius:4px;padding:11px 13.8px;display:flex;flex-direction:column;gap:3px;cursor:pointer" style-hover="border-color:var(--p-line2)">
+        <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--p-mute)"><span style="width:5px;height:5px;border-radius:50%;border:1px solid var(--p-mute)"></span>En este equipo · Ollama</div>
+        <div style="font-size:10.5px;color:var(--p-mute);line-height:1.45">Nada sale de tu ordenador</div>
+      </div>
+      <div style="font-size:10.5px;color:var(--p-mute);line-height:1.5">Si cambias de sitio, empiezo una conversación nueva.</div>
+    </div>
+    </div>
+
+    <div style="flex:none;border-top:1px solid var(--p-line);background:var(--p-panel);padding:13.8px 27.6px 18.4px;display:flex;flex-direction:column;gap:11px">
+      <button style="border:1px solid var(--p-line2);background:transparent;color:var(--p-ink);font-family:var(--font-body);font-size:11.5px;letter-spacing:.06em;padding:8px;border-radius:4px;cursor:pointer" style-hover="border-color:var(--p-gold);color:var(--p-gold)">Empezar una conversación nueva</button>
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div style="font-size:9.5px;letter-spacing:.19em;text-transform:uppercase;color:var(--p-mute)">Apariencia</div>
+        <div style="display:flex;border:1px solid var(--p-line2);border-radius:4px;overflow:hidden">
+          <button onClick="{{ setClaro }}" style="border:0;padding:5px 11px;font-family:var(--font-body);font-size:10.5px;letter-spacing:.08em;cursor:pointer;background:{{ bgClaro }};color:{{ fgClaro }}">Claro</button>
+          <button onClick="{{ setOscuro }}" style="border:0;padding:5px 11px;font-family:var(--font-body);font-size:10.5px;letter-spacing:.08em;cursor:pointer;background:{{ bgOscuro }};color:{{ fgOscuro }}">Oscuro</button>
+        </div>
+      </div>
+      <div style="font-size:10.5px;color:var(--p-mute);line-height:1.5">Nunca cambio un ajuste de tu equipo sin tu permiso.</div>
+    </div>
+  </aside>
+
+  <main style="flex:1;display:flex;flex-direction:column;min-width:0">
+    <header style="padding:13.8px 36.8px;display:flex;align-items:center;justify-content:space-between;gap:18.4px;border-bottom:1px solid var(--p-line)">
+      <div style="display:flex;flex-direction:column;gap:2px;flex:none">
+        <div style="font-size:9.5px;letter-spacing:.19em;text-transform:uppercase;color:var(--p-mute)">Sesión</div>
+        <div style="font-family:var(--font-heading);font-size:20px;line-height:1.1;font-variant-numeric:tabular-nums">31 · VIII · 2026</div>
+      </div>
+      <nav style="display:flex;flex-wrap:wrap;justify-content:flex-end;gap:5px;max-width:640px">
+        <sc-for list="{{ pantallas }}" as="p" hint-placeholder-count="6">
+          <button onClick="{{ p.ir }}" style="{{ p.estilo }}">{{ p.nombre }}</button>
+        </sc-for>
+      </nav>
+    </header>
+
+    <div style="flex:1;overflow:hidden;display:flex;flex-direction:column">
+
+      <sc-if value="{{ esBienvenida }}" hint-placeholder-val="{{ true }}">
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:36.8px 92px;gap:18.4px">
+          <div style="width:56px;height:1px;background:var(--p-gold-soft)"></div>
+          <h1 style="margin:0;font-weight:400;font-size:46px;letter-spacing:-.01em;line-height:1.08">Buenas tardes</h1>
+          <p style="margin:0;max-width:430px;font-size:14.5px;line-height:1.7;color:var(--p-mute)">Pregúntame por tu equipo con tus propias palabras. Yo lo reviso y te lo explico sin tecnicismos.</p>
+          <div style="width:56px;height:1px;background:var(--p-gold-soft)"></div>
+          <div style="display:flex;flex-direction:column;gap:9.2px;width:100%;max-width:520px;margin-top:9.2px">
+            <div style="font-size:9.5px;letter-spacing:.19em;text-transform:uppercase;color:var(--p-mute)">Para empezar</div>
+            <sc-for list="{{ sugerencias }}" as="s" hint-placeholder-count="3">
+              <div style="border:1px solid var(--p-line);border-radius:4px;padding:13.8px 18.4px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;text-align:left" style-hover="border-color:var(--p-gold);background:var(--p-gold-tint)">
+                <span style="font-size:14.5px">{{ s.texto }}</span>
+                <span style="font-size:11px;color:var(--p-gold);letter-spacing:.1em">→</span>
+              </div>
+            </sc-for>
+            <button onClick="{{ irCatalogo }}" style="align-self:center;margin-top:4px;border:0;background:transparent;font-family:var(--font-body);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--p-mute);border-bottom:1px solid var(--p-line2);cursor:pointer;padding:0 0 2px" style-hover="color:var(--p-gold);border-color:var(--p-gold)">Ver todo lo que puedo mirar</button>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ esConversacion }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1;padding:27.6px 36.8px;display:flex;flex-direction:column;gap:27.6px;overflow:auto">
+          <div style="align-self:flex-end;max-width:62%;display:flex;flex-direction:column;gap:6px;align-items:flex-end">
+            <div style="font-size:9.5px;letter-spacing:.19em;text-transform:uppercase;color:var(--p-mute)">Tú</div>
+            <div style="border:1px solid var(--p-line2);border-radius:4px;padding:11px 18.4px;font-size:14.5px">¿Cómo está mi PC?</div>
+          </div>
+          <div style="max-width:76%;display:flex;flex-direction:column;gap:9.2px">
+            <div style="display:flex;align-items:baseline;gap:11px">
+              <div style="font-size:9.5px;letter-spacing:.19em;text-transform:uppercase;color:var(--p-gold)">Protexium</div>
+              <div style="font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--p-mute)">· respondido en la nube</div>
+            </div>
+            <p style="margin:0;font-size:15px;line-height:1.75;text-align:justify;text-wrap:pretty">Tu equipo está bien. Windows Defender está vigilando en tiempo real y sus firmas se actualizaron ayer, así que reconoce las amenazas recientes. El firewall está encendido en tu red de casa y en la del trabajo.</p>
+            <p style="margin:0;font-size:15px;line-height:1.75;text-align:justify">Hay un solo punto flojo: en redes públicas —cafeterías, aeropuertos— el firewall está apagado. Si quieres, lo enciendo.</p>
+            <div style="display:flex;align-items:center;gap:11px;margin-top:4px">
+              <div style="font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--p-mute);border-bottom:1px solid var(--p-line2);padding-bottom:2px;cursor:pointer">Qué he consultado · 2 lecturas</div>
+            </div>
+          </div>
+          <div style="align-self:flex-end;max-width:62%;display:flex;flex-direction:column;gap:6px;align-items:flex-end">
+            <div style="font-size:9.5px;letter-spacing:.19em;text-transform:uppercase;color:var(--p-mute)">Tú</div>
+            <div style="border:1px solid var(--p-line2);border-radius:4px;padding:11px 18.4px;font-size:14.5px">¿Y amenazas, hay alguna?</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:13.8px">
+            <div style="display:flex;gap:5px">
+              <span style="width:4px;height:4px;border-radius:50%;background:var(--p-gold);animation:pxaPulse 1.4s ease-in-out infinite"></span>
+              <span style="width:4px;height:4px;border-radius:50%;background:var(--p-gold);animation:pxaPulse 1.4s ease-in-out .2s infinite"></span>
+              <span style="width:4px;height:4px;border-radius:50%;background:var(--p-gold);animation:pxaPulse 1.4s ease-in-out .4s infinite"></span>
+            </div>
+            <div style="font-size:13px;color:var(--p-mute);font-style:italic">Estoy mirando las amenazas detectadas · solo miro, no cambio nada</div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ esPermiso }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1;padding:27.6px 36.8px;display:flex;flex-direction:column;gap:18.4px;overflow:auto">
+          <div style="align-self:flex-end;max-width:62%;display:flex;flex-direction:column;gap:6px;align-items:flex-end">
+            <div style="font-size:9.5px;letter-spacing:.19em;text-transform:uppercase;color:var(--p-mute)">Tú</div>
+            <div style="border:1px solid var(--p-line2);border-radius:4px;padding:11px 18.4px;font-size:14.5px">{{ permisoPregunta }}</div>
+          </div>
+          <div style="--c:{{ permisoColor }};--ct:{{ permisoTinte }};--cs:{{ permisoFilete }};border:1px solid var(--c);border-radius:4px;background:var(--ct);max-width:680px">
+            <div style="padding:13.8px 27.6px;display:flex;align-items:center;justify-content:space-between;gap:13.8px;border-bottom:1px solid var(--cs)">
+              <div style="font-size:9.5px;letter-spacing:.19em;text-transform:uppercase;color:var(--c)">{{ permisoRotulo }}</div>
+              <div style="display:flex;align-items:center;gap:6px">
+                <div style="font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--c);border:1px solid var(--cs);border-radius:2px;padding:3px 11px;white-space:nowrap">{{ nivelEtiqueta }}</div>
+                <sc-if value="{{ esIrreversible }}" hint-placeholder-val="{{ false }}">
+                  <div style="font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--p-bad);border:1px solid var(--p-bad);border-radius:2px;padding:3px 11px;white-space:nowrap">Sin vuelta atrás</div>
+                </sc-if>
+              </div>
+            </div>
+            <div style="padding:22px 27.6px;display:flex;flex-direction:column;gap:18.4px">
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <div style="font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--p-mute)">{{ permisoPosicion }}</div>
+                <h2 style="margin:0;font-weight:400;font-size:29px;line-height:1.15;letter-spacing:-.01em">{{ permisoTitulo }}</h2>
+              </div>
+              <div style="display:flex;flex-direction:column">
+                <div style="height:1px;background:var(--cs)"></div>
+                <div style="display:flex;gap:22px;padding:11px 0"><div style="width:120px;flex:none;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--p-mute)">Sobre qué</div><div style="font-size:13.5px;line-height:1.6">{{ permisoAlcance }}</div></div>
+                <div style="height:1px;background:var(--p-line)"></div>
+                <div style="display:flex;gap:22px;padding:11px 0"><div style="width:120px;flex:none;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--p-mute)">Qué consigues</div><div style="font-size:13.5px;line-height:1.6">{{ permisoConsigues }}</div></div>
+                <div style="height:1px;background:var(--p-line)"></div>
+                <div style="display:flex;gap:22px;padding:11px 0"><div style="width:120px;flex:none;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--p-mute)">Se deshace</div><div style="font-size:13.5px;line-height:1.6;color:{{ permisoDeshaceColor }}">{{ permisoDeshace }}</div></div>
+                <div style="height:1px;background:var(--p-line)"></div>
+              </div>
+              <div style="display:flex;gap:18.4px;align-items:center">
+                <button onClick="{{ alternarDetalle }}" style="border:0;background:transparent;padding:0 0 2px;cursor:pointer;font-family:var(--font-body);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--p-mute);border-bottom:1px solid var(--p-line2)" style-hover="color:var(--p-gold);border-color:var(--p-gold)">{{ detalleEtiqueta }}</button>
+                <sc-if value="{{ esIrreversible }}" hint-placeholder-val="{{ false }}">
+                  <span style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--p-bad);border-bottom:1px solid var(--p-bad-soft);padding-bottom:2px;cursor:pointer">Ver qué se va a borrar · 2</span>
+                </sc-if>
+              </div>
+              <sc-if value="{{ detalle }}" hint-placeholder-val="{{ false }}">
+                <div style="border:1px solid var(--p-line);border-radius:4px;padding:18.4px;display:flex;flex-direction:column;gap:9.2px;background:var(--p-bg)">
+                  <sc-for list="{{ detalleFilas }}" as="f" hint-placeholder-count="5">
+                    <div style="display:flex;gap:18.4px;font-size:12px"><span style="width:120px;flex:none;color:var(--p-mute);letter-spacing:.1em;text-transform:uppercase;font-size:9.5px;padding-top:3px">{{ f.k }}</span><span style="font-variant-numeric:tabular-nums;line-height:1.5">{{ f.v }}</span></div>
+                  </sc-for>
+                </div>
+              </sc-if>
+              <sc-if value="{{ esIrreversible }}" hint-placeholder-val="{{ false }}">
+                <div style="border:1px dashed var(--p-bad-soft);border-radius:4px;padding:11px 13.8px;font-size:12.5px;line-height:1.6;color:var(--p-ink)">Esto no se puede deshacer. Si prefieres verlas antes, pídemelo y te las enseño una a una sin tocar nada.</div>
+              </sc-if>
+              <div style="display:flex;gap:13.8px;align-items:center;flex-wrap:wrap">
+                <button style="flex:none;border:1px solid var(--c);background:transparent;color:var(--c);font-family:var(--font-heading);font-weight:600;font-size:15px;letter-spacing:.03em;padding:11px 27.6px;border-radius:4px;cursor:pointer" style-hover="background:var(--cs);color:var(--p-ink)">{{ permisoSi }}</button>
+                <button style="flex:none;border:1px solid var(--p-line2);background:transparent;color:var(--p-ink);font-family:var(--font-body);font-size:13.5px;padding:11px 22px;border-radius:4px;cursor:pointer" style-hover="border-color:var(--p-ink)">No, déjalo</button>
+                <div style="font-size:11.5px;color:var(--p-mute);font-style:italic;margin-left:auto">Nada ocurre hasta que pulses.</div>
+              </div>
+              <div style="border-top:1px solid var(--p-line);padding-top:11px;display:flex;gap:9.2px;align-items:baseline">
+                <span style="font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--p-warn);flex:none">Necesita administrador</span>
+                <span style="font-size:12px;line-height:1.55;color:var(--p-mute)">Ahora mismo la sesión es de usuario estándar. Cierra ProtexiumAI y vuelve a abrirlo como administrador para poder autorizarlo. No te pediré nunca tu contraseña.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ esEjecutando }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1;padding:27.6px 36.8px;display:flex;flex-direction:column;gap:18.4px;overflow:auto">
+          <div style="max-width:680px;border:1px solid var(--p-line2);border-radius:4px;padding:22px 27.6px;display:flex;flex-direction:column;gap:13.8px;background:var(--p-panel)">
+            <div style="display:flex;align-items:center;gap:13.8px">
+              <div style="display:flex;gap:5px">
+                <span style="width:4px;height:4px;border-radius:50%;background:var(--p-gold);animation:pxaPulse 1.4s ease-in-out infinite"></span>
+                <span style="width:4px;height:4px;border-radius:50%;background:var(--p-gold);animation:pxaPulse 1.4s ease-in-out .2s infinite"></span>
+                <span style="width:4px;height:4px;border-radius:50%;background:var(--p-gold);animation:pxaPulse 1.4s ease-in-out .4s infinite"></span>
+              </div>
+              <div style="font-size:9.5px;letter-spacing:.19em;text-transform:uppercase;color:var(--p-gold)">Trabajando en tu equipo</div>
+              <div style="margin-left:auto;font-size:13px;color:var(--p-mute);font-variant-numeric:tabular-nums">04:12 transcurridos</div>
+            </div>
+            <h2 style="margin:0;font-weight:400;font-size:29px;line-height:1.2">Estoy analizando el equipo entero</h2>
+            <div style="height:1px;background:var(--p-line)"></div>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <div style="font-size:13.5px;line-height:1.6">Un análisis completo puede tardar hasta una hora. Puedes seguir usando el ordenador; te aviso al terminar.</div>
+              <div style="font-size:12px;color:var(--p-mute);line-height:1.6">Lo autorizaste tú a las <span style="font-variant-numeric:tabular-nums">10:07</span>. Puedo pararlo cuando quieras.</div>
+            </div>
+            <div style="display:flex;gap:13.8px;align-items:center">
+              <button style="border:1px solid var(--p-line2);background:transparent;color:var(--p-ink);font-family:var(--font-body);font-size:13px;padding:9px 18.4px;border-radius:4px;cursor:pointer" style-hover="border-color:var(--p-ink)">Para el análisis</button>
+              <span style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--p-mute);border-bottom:1px solid var(--p-line2);cursor:pointer">Ver el detalle técnico</span>
+            </div>
+          </div>
+          <div style="max-width:680px;display:flex;flex-direction:column;gap:9.2px">
+            <div style="font-size:9.5px;letter-spacing:.19em;text-transform:uppercase;color:var(--p-mute)">Y si se agota el tiempo</div>
+            <div style="border:1px solid var(--p-line);border-radius:4px;padding:18.4px 22px;display:flex;flex-direction:column;gap:9.2px">
+              <div style="font-family:var(--font-heading);font-size:22px;line-height:1.2">El análisis sigue en marcha por su cuenta</div>
+              <p style="margin:0;font-size:13.5px;line-height:1.65;color:var(--p-mute)">He dejado de esperar al llegar a una hora, pero Windows lo sigue haciendo en segundo plano. No es un fallo tuyo ni del equipo: pregúntame dentro de un rato y miro cómo ha quedado.</p>
+              <div style="display:flex;gap:13.8px;margin-top:4px">
+                <button style="border:1px solid var(--p-gold);background:transparent;color:var(--p-gold);font-family:var(--font-heading);font-weight:600;font-size:14px;padding:9px 22px;border-radius:4px;cursor:pointer" style-hover="background:var(--p-gold-soft);color:var(--p-ink)">Mira cómo va</button>
+                <button style="border:1px solid var(--p-line2);background:transparent;color:var(--p-ink);font-family:var(--font-body);font-size:13px;padding:9px 18.4px;border-radius:4px;cursor:pointer" style-hover="border-color:var(--p-ink)">Déjalo por ahora</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ esResultado }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1;padding:27.6px 36.8px;display:flex;flex-direction:column;gap:18.4px;overflow:auto">
+          <div style="max-width:720px;display:flex;flex-direction:column;gap:11px">
+            <div style="display:flex;align-items:baseline;gap:11px">
+              <div style="font-size:9.5px;letter-spacing:.19em;text-transform:uppercase;color:var(--p-gold)">Protexium</div>
+              <div style="font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--p-mute)">· respondido en este equipo</div>
+            </div>
+            <h2 style="margin:0;font-weight:400;font-size:29px;line-height:1.2">Ya está: el análisis rápido ha terminado sin encontrar nada.</h2>
+            <p style="margin:0;font-size:15px;line-height:1.75;text-align:justify;color:var(--p-mute)">Windows no devuelve un informe al acabar, solo confirma que ha ido bien. Si quieres estar seguro, puedo mirar ahora la lista de amenazas detectadas.</p>
+            <div style="display:flex;gap:11px;margin-top:2px">
+              <button style="border:1px solid var(--p-gold);background:transparent;color:var(--p-gold);font-family:var(--font-body);font-size:13px;padding:8px 18.4px;border-radius:4px;cursor:pointer" style-hover="background:var(--p-gold-tint)">¿Ha encontrado algo?</button>
+            </div>
+          </div>
+          <div style="max-width:720px;border:1px solid var(--p-line);border-radius:4px;overflow:hidden">
+            <div style="padding:11px 18.4px;display:flex;justify-content:space-between;border-bottom:1px solid var(--p-line)">
+              <span style="font-size:9.5px;letter-spacing:.19em;text-transform:uppercase;color:var(--p-mute)">Qué he hecho</span>
+              <span style="font-size:9.5px;letter-spacing:.14em;color:var(--p-mute);font-variant-numeric:tabular-nums">3 pasos · 10:03</span>
+            </div>
+            <sc-for list="{{ pasos }}" as="paso" hint-placeholder-count="3">
+              <div style="padding:13.8px 18.4px;display:flex;gap:18.4px;align-items:baseline;border-bottom:1px solid var(--p-line)">
+                <span style="width:14px;flex:none;font-size:12px;color:var(--p-gold);text-align:center">{{ paso.marca }}</span>
+                <div style="flex:1;display:flex;flex-direction:column;gap:3px">
+                  <div style="font-size:14.5px">{{ paso.titulo }}</div>
+                  <div style="font-size:11px;color:var(--p-mute);letter-spacing:.02em">{{ paso.meta }}</div>
+                </div>
+                <span style="font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--p-mute)">{{ paso.autor }}</span>
+              </div>
+            </sc-for>
+            <div style="padding:11px 18.4px"><button onClick="{{ irAuditoria }}" style="border:0;background:transparent;padding:0 0 2px;font-family:var(--font-body);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--p-mute);border-bottom:1px solid var(--p-line2);cursor:pointer" style-hover="color:var(--p-gold);border-color:var(--p-gold)">Ver el registro de auditoría</button></div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ esDetalle }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1;padding:27.6px 36.8px;display:flex;flex-direction:column;gap:22px;overflow:auto">
+          <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:18.4px">
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <h2 style="margin:0;font-weight:400;font-size:29px;line-height:1.2">Estado del equipo en detalle</h2>
+              <div style="font-size:12.5px;color:var(--p-mute);line-height:1.6">Todo lo que puedo mirar sin cambiar nada. Consultado a las <span style="font-variant-numeric:tabular-nums">10:04</span>.</div>
+            </div>
+            <button style="flex:none;border:1px solid var(--p-line2);background:transparent;color:var(--p-ink);font-family:var(--font-body);font-size:12px;padding:8px 18.4px;border-radius:4px;cursor:pointer" style-hover="border-color:var(--p-gold);color:var(--p-gold)">Volver a comprobarlo todo</button>
+          </div>
+
+          <sc-for list="{{ bloques }}" as="b" hint-placeholder-count="3">
+            <div style="display:flex;flex-direction:column;gap:9.2px">
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:13.8px">
+                <div style="font-size:9.5px;letter-spacing:.19em;text-transform:uppercase;color:var(--p-mute)">{{ b.titulo }}</div>
+                <div style="font-size:10.5px;color:var(--p-mute);font-variant-numeric:tabular-nums">{{ b.meta }}</div>
+              </div>
+              <sc-if value="{{ b.consultado }}" hint-placeholder-val="{{ true }}">
+                <div style="border:1px solid var(--p-line);border-radius:4px;overflow:hidden">
+                  <sc-for list="{{ b.filas }}" as="f" hint-placeholder-count="4">
+                    <div style="display:flex;gap:18.4px;align-items:baseline;padding:9.2px 18.4px;border-bottom:1px solid var(--p-line)">
+                      <span style="flex:1;font-size:13px">{{ f.etiqueta }}</span>
+                      <span style="{{ f.estilo }}">{{ f.valor }}</span>
+                    </div>
+                  </sc-for>
+                  <div style="padding:9.2px 18.4px;display:flex;justify-content:space-between;align-items:center;gap:13.8px">
+                    <span style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--p-gold);border-bottom:1px solid var(--p-gold-soft);cursor:pointer">{{ b.pregunta }}</span>
+                    <span style="font-size:10.5px;color:var(--p-mute)">{{ b.nota }}</span>
+                  </div>
+                </div>
+              </sc-if>
+              <sc-if value="{{ b.pendiente }}" hint-placeholder-val="{{ false }}">
+                <div style="border:1px dashed var(--p-line2);border-radius:4px;padding:18.4px;display:flex;align-items:center;justify-content:space-between;gap:18.4px">
+                  <div style="display:flex;flex-direction:column;gap:3px">
+                    <div style="font-size:13.5px">Sin consultar todavía</div>
+                    <div style="font-size:11.5px;color:var(--p-mute);line-height:1.55">{{ b.nota }}</div>
+                  </div>
+                  <button onClick="{{ b.consultar }}" style="flex:none;border:1px solid var(--p-gold);background:transparent;color:var(--p-gold);font-family:var(--font-body);font-size:12.5px;padding:9px 18.4px;border-radius:4px;cursor:pointer" style-hover="background:var(--p-gold-tint)">Consultar ahora</button>
+                </div>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ esAuditoria }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1;padding:27.6px 36.8px;display:flex;flex-direction:column;gap:18.4px;overflow:auto">
+          <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:18.4px">
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <h2 style="margin:0;font-weight:400;font-size:29px;line-height:1.2">Registro de la sesión</h2>
+              <div style="font-size:12.5px;color:var(--p-mute);line-height:1.6">Todo lo que he intentado hacer queda aquí, lo hiciera o no. <span style="font-variant-numeric:tabular-nums">5</span> entradas: <span style="font-variant-numeric:tabular-nums">3</span> hechas, <span style="font-variant-numeric:tabular-nums">2</span> sin hacer.</div>
+            </div>
+            <div style="display:flex;flex:none;border:1px solid var(--p-line2);border-radius:4px;overflow:hidden">
+              <button style="border:0;padding:7px 15px;font-family:var(--font-body);font-size:11px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;background:var(--p-gold-tint);color:var(--p-gold)">Todo</button>
+              <button style="border:0;padding:7px 15px;font-family:var(--font-body);font-size:11px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;background:transparent;color:var(--p-mute)">Solo sin hacer</button>
+            </div>
+          </div>
+          <div style="border:1px solid var(--p-line);border-radius:4px;overflow:hidden">
+            <sc-for list="{{ auditoria }}" as="a" hint-placeholder-count="5">
+              <div style="display:flex;gap:18.4px;align-items:baseline;padding:13.8px 18.4px;border-bottom:1px solid var(--p-line)">
+                <span style="width:58px;flex:none;font-size:11.5px;color:var(--p-mute);font-variant-numeric:tabular-nums">{{ a.hora }}</span>
+                <span style="width:14px;flex:none;font-size:12px;text-align:center;color:{{ a.color }}">{{ a.marca }}</span>
+                <div style="flex:1;display:flex;flex-direction:column;gap:3px">
+                  <div style="font-size:14px">{{ a.titulo }}</div>
+                  <div style="font-size:11px;color:{{ a.color }};letter-spacing:.02em">{{ a.resultado }}</div>
+                </div>
+                <span style="width:112px;flex:none;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--p-mute);text-align:right">{{ a.autor }}</span>
+                <span style="width:52px;flex:none;font-size:10.5px;color:var(--p-mute);text-align:right">{{ a.proveedor }}</span>
+              </div>
+            </sc-for>
+            <div style="padding:13.8px 18.4px;background:var(--p-panel);display:flex;flex-direction:column;gap:9.2px">
+              <div style="font-size:9.5px;letter-spacing:.19em;text-transform:uppercase;color:var(--p-mute)">▾ Detalle de la entrada de las 10:03:41</div>
+              <sc-for list="{{ auditoriaDetalle }}" as="d" hint-placeholder-count="4">
+                <div style="display:flex;gap:18.4px;font-size:12px"><span style="width:120px;flex:none;color:var(--p-mute);letter-spacing:.1em;text-transform:uppercase;font-size:9.5px;padding-top:3px">{{ d.k }}</span><span style="font-variant-numeric:tabular-nums;line-height:1.5">{{ d.v }}</span></div>
+              </sc-for>
+            </div>
+          </div>
+          <div style="font-size:11.5px;color:var(--p-mute);line-height:1.6;max-width:720px">El registro se guarda en tu equipo, en formato de texto, y no se envía a ningún sitio.</div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ esCatalogo }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1;padding:27.6px 36.8px;display:flex;flex-direction:column;gap:18.4px;overflow:auto">
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <h2 style="margin:0;font-weight:400;font-size:29px;line-height:1.2">Qué puedes preguntarme</h2>
+            <div style="font-size:12.5px;color:var(--p-mute);line-height:1.6">Casi todo son consultas: las miro y te lo cuento. Las marcadas con <span style="color:var(--p-gold)">·</span> te pedirán permiso antes de tocar nada.</div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:18.4px 27.6px">
+            <sc-for list="{{ catalogo }}" as="g" hint-placeholder-count="6">
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <div style="font-size:9.5px;letter-spacing:.19em;text-transform:uppercase;color:var(--p-mute)">{{ g.titulo }}</div>
+                <div style="border-top:1px solid var(--p-line)">
+                  <sc-for list="{{ g.preguntas }}" as="q" hint-placeholder-count="3">
+                    <div style="display:flex;gap:9.2px;align-items:baseline;padding:7px 0;border-bottom:1px solid var(--p-line);cursor:pointer" style-hover="color:var(--p-gold)">
+                      <span style="width:7px;flex:none;font-size:12px;color:{{ q.color }}">{{ q.marca }}</span>
+                      <span style="font-size:13px;line-height:1.5">{{ q.texto }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ esFallo }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1;padding:27.6px 36.8px;display:flex;flex-direction:column;gap:18.4px;overflow:auto">
+          <div style="max-width:680px;border:1px solid var(--p-line2);border-radius:4px;padding:22px 27.6px;display:flex;flex-direction:column;gap:13.8px;background:var(--p-panel)">
+            <div style="font-size:9.5px;letter-spacing:.19em;text-transform:uppercase;color:var(--p-mute)">No he podido terminar</div>
+            <h2 style="margin:0;font-weight:400;font-size:29px;line-height:1.2">El equipo ha tardado más de lo que puedo esperar</h2>
+            <div style="height:1px;background:var(--p-line)"></div>
+            <p style="margin:0;font-size:14.5px;line-height:1.7">Tu equipo sigue igual de protegido y no he cambiado nada. Solo se ha quedado a medias la consulta que te iba a responder.</p>
+            <div style="display:flex;gap:13.8px;margin-top:4px">
+              <button style="border:1px solid var(--p-gold);background:transparent;color:var(--p-gold);font-family:var(--font-heading);font-weight:600;font-size:14px;padding:9px 22px;border-radius:4px;cursor:pointer" style-hover="background:var(--p-gold-soft);color:var(--p-ink)">Inténtalo otra vez</button>
+              <button style="border:1px solid var(--p-line2);background:transparent;color:var(--p-ink);font-family:var(--font-body);font-size:13px;padding:9px 18.4px;border-radius:4px;cursor:pointer" style-hover="border-color:var(--p-ink)">Déjalo</button>
+            </div>
+            <span style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--p-mute);border-bottom:1px solid var(--p-line2);align-self:flex-start;cursor:pointer">Ver el detalle técnico</span>
+          </div>
+          <div style="max-width:680px;display:flex;flex-direction:column;gap:9.2px">
+            <div style="font-size:9.5px;letter-spacing:.19em;text-transform:uppercase;color:var(--p-mute)">El mismo molde, otros casos</div>
+            <div style="border:1px solid var(--p-line);border-radius:4px;overflow:hidden">
+              <sc-for list="{{ fallos }}" as="f" hint-placeholder-count="5">
+                <div style="padding:11px 18.4px;display:flex;flex-direction:column;gap:2px;border-bottom:1px solid var(--p-line)">
+                  <div style="font-size:13.5px">{{ f.titulo }}</div>
+                  <div style="font-size:11.5px;color:var(--p-mute);line-height:1.55">{{ f.nota }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+    </div>
+
+    <footer style="padding:13.8px 36.8px 18.4px;border-top:1px solid var(--p-line);display:flex;flex-direction:column;gap:9.2px">
+      <div style="display:flex;align-items:center;gap:18.4px;border:1px solid var(--p-line);border-radius:4px;padding:13.8px 18.4px;background:var(--p-panel)">
+        <span style="font-size:13px;color:var(--p-mute)">{{ entradaTexto }}</span>
+        <span style="margin-left:auto;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--p-gold)">{{ entradaAccion }}</span>
+      </div>
+      <div style="font-size:10.5px;color:var(--p-mute);letter-spacing:.04em">Lectura sin permiso · acciones y cambios, solo con tu clic · todo queda registrado</div>
+    </footer>
+  </main>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;light&quot;,&quot;dark&quot;],&quot;default&quot;:&quot;light&quot;,&quot;tsType&quot;:&quot;'light'|'dark'&quot;},&quot;nivel&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Cambia un ajuste&quot;,&quot;Borra datos&quot;,&quot;Analiza el equipo&quot;],&quot;default&quot;:&quot;Cambia un ajuste&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+const PANTALLAS = [
+  ["bienvenida", "Inicio"],
+  ["conversacion", "Conversación"],
+  ["propuesta", "Permiso"],
+  ["irreversible", "Irreversible"],
+  ["ejecutando", "Ejecutando"],
+  ["resultado", "Resultado"],
+  ["detalle", "Estado"],
+  ["auditoria", "Auditoría"],
+  ["catalogo", "Catálogo"],
+  ["fallo", "Fallos"],
+];
+
+const V = {
+  ok: "font-size:13px;color:var(--p-ink);text-align:right",
+  warn: "font-size:13px;color:var(--p-warn);text-align:right",
+  admin: "font-size:12.5px;color:var(--p-mute);text-align:right;border-bottom:1px dotted var(--p-line2)",
+  na: "font-size:12.5px;color:var(--p-mute);font-style:italic;text-align:right",
+};
+
+const BLOQUES = [
+  {
+    id: "defender", titulo: "Windows Defender", meta: "12 comprobaciones",
+    pregunta: "Pregúntame por Defender", nota: "Todo esto se consulta sin permisos especiales",
+    filas: [
+      ["Vigilancia en tiempo real", "Activada", "ok"],
+      ["Antivirus", "Activado", "ok"],
+      ["Servicio de Defender", "En marcha", "ok"],
+      ["Firmas de virus", "Al día · 30 VIII, 06:14", "ok"],
+      ["Último análisis rápido", "Hace 3 días", "ok"],
+      ["Último análisis completo", "Hace 26 días", "warn"],
+      ["Protección en la nube", "Activada", "ok"],
+      ["Envío de muestras", "Solo muestras seguras", "ok"],
+      ["Acceso controlado a carpetas", "Desactivado", "warn"],
+      ["Bloqueo de apps no deseadas", "Activado", "ok"],
+      ["Exclusiones configuradas", "Necesito administrador", "admin"],
+      ["Amenazas que permitiste", "Ninguna", "ok"],
+    ],
+  },
+  {
+    id: "firewall", titulo: "Firewall y red", meta: "7 comprobaciones",
+    pregunta: "Pregúntame por el firewall", nota: "Encenderlo o apagarlo sí me pedirá permiso",
+    filas: [
+      ["Red de casa (privada)", "Encendido", "ok"],
+      ["Red del trabajo (dominio)", "Encendido", "ok"],
+      ["Redes públicas", "Apagado", "warn"],
+      ["Red activa ahora", "Red de casa · MOVISTAR_A4C1", "ok"],
+      ["Bloquea todas las entradas", "No", "ok"],
+      ["Avisa al bloquear una app", "Sí", "ok"],
+      ["Reglas de entrada permitidas", "42 activas", "ok"],
+    ],
+  },
+  {
+    id: "dispositivo", titulo: "Seguridad del dispositivo", meta: "6 comprobaciones · las más lentas",
+    pregunta: "Pregúntame por el cifrado y el arranque", nota: "Cuatro de las seis necesitan administrador y tardan unos segundos.",
+    filas: [
+      ["Procesador de seguridad (TPM)", "Necesito administrador", "admin"],
+      ["Arranque seguro", "Necesito administrador", "admin"],
+      ["Cifrado del disco C:", "Necesito administrador", "admin"],
+      ["Cifrado del disco D:", "Necesito administrador", "admin"],
+      ["Aislamiento del núcleo", "Integridad de memoria activada", "ok"],
+      ["Protección contra exploits", "DEP, ASLR y CFG activados", "ok"],
+    ],
+  },
+  {
+    id: "salud", titulo: "Rendimiento y salud", meta: "4 comprobaciones",
+    pregunta: "Pregúntame por el espacio y la batería", nota: "",
+    filas: [
+      ["Espacio libre · Disco C:", "118 GB libres de 476", "ok"],
+      ["Espacio libre · Disco D:", "12 GB libres de 931", "warn"],
+      ["Batería", "Este equipo no tiene batería", "na"],
+      ["Servicio de hora de Windows", "En marcha", "ok"],
+    ],
+  },
+  {
+    id: "cuenta", titulo: "Cuenta", meta: "2 comprobaciones",
+    pregunta: "Pregúntame por mis límites", nota: "",
+    filas: [
+      ["Sesión iniciada como", "juan", "ok"],
+      ["Permisos", "Usuario estándar · sin elevación", "warn"],
+    ],
+  },
+];
+
+const CATALOGO = [
+  ["Windows Defender", [
+    ["¿Cómo está mi PC?", 0], ["¿Tengo algún virus detectado?", 0],
+    ["¿Están al día las definiciones?", 0], ["Analiza mi carpeta de Descargas", 1],
+    ["Actualiza las definiciones de virus", 1],
+  ]],
+  ["Firewall y red", [
+    ["¿Tengo el firewall encendido?", 0], ["¿A qué red estoy conectado?", 0],
+    ["¿Qué aplicaciones pueden entrar?", 0], ["Enciende el firewall en redes públicas", 1],
+  ]],
+  ["Seguridad del dispositivo", [
+    ["¿Está cifrado mi disco?", 0], ["¿Tengo el arranque seguro activado?", 0],
+    ["¿Mi equipo tiene chip de seguridad?", 0], ["¿Está protegido el núcleo del sistema?", 0],
+  ]],
+  ["Rendimiento y salud", [
+    ["¿Me queda espacio en el disco?", 0], ["¿Cómo está la batería?", 0],
+    ["¿Tiene el equipo la hora bien puesta?", 0],
+  ]],
+  ["Si algo va mal", [
+    ["Me ha salido una alerta rara", 0], ["¿Por qué va lento mi ordenador?", 0],
+    ["Analiza el equipo entero", 1], ["Quita las amenazas que has encontrado", 1],
+  ]],
+  ["Sobre lo que haces", [
+    ["¿Qué has hecho en esta sesión?", 0], ["¿Qué puedes cambiar sin preguntarme?", 0],
+    ["¿Sale algo de mi ordenador?", 0],
+  ]],
+];
+
+class Component extends DCLogic {
+  state = { theme: null, screen: "propuesta", detalle: false, consultados: { dispositivo: false } };
+
+  get theme() { return this.state.theme ?? this.props.theme ?? "light"; }
+
+  renderVals() {
+    const dark = this.theme === "dark";
+    const s = this.state.screen;
+    const irreversible = s === "irreversible";
+    const permiso = s === "propuesta" || irreversible;
+    const pill = (on) => `border:1px solid ${on ? "var(--p-gold-soft)" : "var(--p-line)"};border-radius:4px;padding:6px 13px;font-family:var(--font-body);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;background:${on ? "var(--p-gold-tint)" : "transparent"};color:${on ? "var(--p-gold)" : "var(--p-mute)"}`;
+
+    const atencion = permiso || s === "detalle";
+    return {
+      theme: this.theme,
+      esBienvenida: s === "bienvenida",
+      esConversacion: s === "conversacion",
+      esPermiso: permiso,
+      esIrreversible: irreversible,
+      esEjecutando: s === "ejecutando",
+      esResultado: s === "resultado",
+      esDetalle: s === "detalle",
+      esAuditoria: s === "auditoria",
+      esCatalogo: s === "catalogo",
+      esFallo: s === "fallo",
+
+      estadoTitulo: atencion ? "Requiere atención" : "Equipo protegido",
+      estadoNota: atencion ? "El firewall está apagado en redes públicas" : "Defender y el firewall están activos",
+      estadoColor: atencion ? "var(--p-warn)" : "var(--p-ok)",
+      firewallValor: atencion ? "2 de 3 redes" : "3 de 3 redes",
+      hayCola: permiso,
+      colaTexto: irreversible ? "Orden 2 de 2 · la anterior ya la autorizaste" : "Orden 1 de 3 · las otras dos esperan su turno",
+
+      permisoPregunta: irreversible ? "Quítalas, por favor" : "Enciéndelo, por favor",
+      permisoRotulo: irreversible ? "Necesito tu permiso · esto no se deshace" : "Necesito tu permiso",
+      permisoPosicion: irreversible ? "Orden 2 de 2" : "Orden 1 de 3",
+      nivelEtiqueta: irreversible ? "Borra datos" : (this.props.nivel ?? "Cambia un ajuste"),
+      permisoColor: irreversible ? "var(--p-bad)" : "var(--p-gold)",
+      permisoTinte: irreversible ? "var(--p-bad-tint)" : "var(--p-gold-tint)",
+      permisoFilete: irreversible ? "var(--p-bad-soft)" : "var(--p-gold-soft)",
+      permisoTitulo: irreversible
+        ? "Voy a eliminar las 2 amenazas que ha encontrado Defender"
+        : "Voy a encender el firewall cuando te conectes a redes públicas",
+      permisoAlcance: irreversible
+        ? "2 archivos en cuarentena · Trojan:Win32/Wacatac y PUA:Win32/Presenoker"
+        : "Solo el perfil de redes públicas. Tu red de casa y la del trabajo se quedan como están.",
+      permisoConsigues: irreversible
+        ? "Los archivos infectados desaparecen del equipo en lugar de seguir aislados en cuarentena."
+        : "Tu equipo volverá a filtrar las conexiones cuando te conectes a un wifi que no es tuyo.",
+      permisoDeshace: irreversible ? "No. Una vez borrados no puedo recuperarlos." : "Sí. Pídeme lo contrario y lo apago.",
+      permisoDeshaceColor: irreversible ? "var(--p-bad)" : "var(--p-ink)",
+      permisoSi: irreversible ? "Sí, bórralas" : "Sí, adelante",
+      detalle: this.state.detalle,
+      detalleEtiqueta: this.state.detalle ? "Ocultar el detalle técnico" : "Ver el detalle técnico",
+      alternarDetalle: () => this.setState((x) => ({ detalle: !x.detalle })),
+      detalleFilas: irreversible
+        ? [
+            { k: "Herramienta", v: "remove_all_threats" },
+            { k: "Nivel", v: "mutante · irreversible · requiere administrador" },
+            { k: "Comando", v: "Remove-MpThreat" },
+            { k: "Parámetros", v: "ninguno" },
+            { k: "Auditoría", v: "se registra antes de ejecutarse" },
+          ]
+        : [
+            { k: "Herramienta", v: "set_firewall_profile" },
+            { k: "Nivel", v: "mutante · requiere administrador" },
+            { k: "Parámetros", v: "perfil = Public · activar = True" },
+            { k: "Comando", v: "Set-NetFirewallProfile -Profile Public -Enabled True" },
+            { k: "Auditoría", v: "se registra antes de ejecutarse" },
+          ],
+
+      entradaTexto: permiso
+        ? "Responde arriba para seguir escribiendo"
+        : s === "ejecutando"
+        ? "Puedes escribirme mientras tanto"
+        : "Escribe tu pregunta…",
+      entradaAccion: permiso ? "En espera" : "Enviar",
+
+      setClaro: () => this.setState({ theme: "light" }),
+      setOscuro: () => this.setState({ theme: "dark" }),
+      bgClaro: dark ? "transparent" : "var(--p-gold-tint)",
+      fgClaro: dark ? "var(--p-mute)" : "var(--p-gold)",
+      bgOscuro: dark ? "var(--p-gold-tint)" : "transparent",
+      fgOscuro: dark ? "var(--p-gold)" : "var(--p-mute)",
+      irDetalle: () => this.setState({ screen: "detalle" }),
+      irAuditoria: () => this.setState({ screen: "auditoria" }),
+      irCatalogo: () => this.setState({ screen: "catalogo" }),
+      pantallas: PANTALLAS.map(([id, nombre]) => ({
+        nombre, estilo: pill(s === id),
+        ir: () => this.setState({ screen: id, detalle: false }),
+      })),
+
+      sugerencias: [
+        { texto: "¿Cómo está mi PC?" },
+        { texto: "Me ha salido una alerta rara" },
+        { texto: "¿Está cifrado mi disco?" },
+      ],
+      pasos: [
+        { marca: "✓", titulo: "He mirado el estado de Defender", meta: "get_defender_status · lectura", autor: "sin permiso" },
+        { marca: "✓", titulo: "He analizado el equipo por encima", meta: "start_quick_scan · acción", autor: "lo autorizaste tú" },
+        { marca: "—", titulo: "No he quitado ninguna amenaza", meta: "remove_all_threats · mutante", autor: "lo rechazaste tú" },
+      ],
+
+      bloques: BLOQUES.map((b) => {
+        const consultado = this.state.consultados[b.id] !== false;
+        return {
+          titulo: b.titulo,
+          meta: consultado ? b.meta : "sin consultar",
+          nota: b.nota,
+          pregunta: b.pregunta,
+          consultado,
+          pendiente: !consultado,
+          consultar: () => this.setState((x) => ({ consultados: { ...x.consultados, [b.id]: true } })),
+          filas: b.filas.map(([etiqueta, valor, e]) => ({ etiqueta, valor, estilo: V[e] })),
+        };
+      }),
+
+      auditoria: [
+        { hora: "10:03:41", marca: "✓", color: "var(--p-mute)", titulo: "He encendido el firewall en redes públicas", resultado: "Hecho en 1,2 s", autor: "lo autorizaste tú", proveedor: "Nube" },
+        { hora: "10:03:12", marca: "✓", color: "var(--p-mute)", titulo: "He mirado el estado del firewall", resultado: "Hecho en 0,4 s", autor: "sin permiso", proveedor: "Nube" },
+        { hora: "10:02:58", marca: "—", color: "var(--p-warn)", titulo: "No he analizado el equipo", resultado: "Sin hacer · me dijiste que no", autor: "lo rechazaste tú", proveedor: "Nube" },
+        { hora: "09:58:02", marca: "—", color: "var(--p-warn)", titulo: "No he podido mirar el cifrado del disco", resultado: "Sin hacer · hace falta abrir como administrador", autor: "límite del sistema", proveedor: "Local" },
+        { hora: "09:57:30", marca: "✓", color: "var(--p-mute)", titulo: "He mirado el espacio libre de los discos", resultado: "Hecho en 0,8 s", autor: "sin permiso", proveedor: "Local" },
+      ],
+      auditoriaDetalle: [
+        { k: "Herramienta", v: "set_firewall_profile" },
+        { k: "Parámetros", v: "perfil = Public · activar = True" },
+        { k: "Comando", v: "Set-NetFirewallProfile -Profile Public -Enabled True" },
+        { k: "Resultado", v: "correcto · 1,24 s" },
+        { k: "Proveedor", v: "Groq · llama-3.3-70b" },
+      ],
+
+      catalogo: CATALOGO.map(([titulo, preguntas]) => ({
+        titulo,
+        preguntas: preguntas.map(([texto, pide]) => ({
+          texto,
+          marca: pide ? "·" : "",
+          color: pide ? "var(--p-gold)" : "transparent",
+        })),
+      })),
+
+      fallos: [
+        { titulo: "No encuentro PowerShell en el equipo", nota: "Tu equipo sigue protegido. Sin PowerShell no puedo consultar nada; suele arreglarse reiniciando Windows." },
+        { titulo: "No he entendido lo que me ha devuelto el equipo", nota: "Tu equipo sigue protegido. La respuesta llegó en un formato que no sé leer; puedo intentarlo otra vez." },
+        { titulo: "Esto necesita abrir la app como administrador", nota: "Tu equipo sigue protegido y no he cambiado nada. Nunca te pediré la contraseña." },
+        { titulo: "Me he liado dando vueltas y no he llegado a nada", nota: "Tu equipo sigue protegido. Prueba a preguntármelo de otra forma, más concreta." },
+        { titulo: "Windows me ha dado un error al ejecutar la orden", nota: "Tu equipo sigue protegido. El cambio no se ha aplicado; te dejo el error exacto en el detalle." },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

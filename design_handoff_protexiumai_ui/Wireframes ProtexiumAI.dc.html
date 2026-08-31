@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics><meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&family=Architects+Daughter&display=swap">
+<style>
+body{margin:0;background:#f0eee9;font-family:system-ui,sans-serif}
+.dv-turn{padding:40px 44px 32px;border-bottom:1px solid rgba(0,0,0,.08);scroll-margin-top:16px}
+.dv-thd{display:flex;align-items:baseline;gap:10px;margin:0 0 20px}
+.dv-tid{font:600 10px ui-monospace,Menlo,monospace;padding:3px 7px;background:#1a1a1a;color:#fff;border-radius:4px;text-decoration:none}
+.dv-tname{font:600 13px/1.2 system-ui,sans-serif;color:#1a1a1a}
+.dv-opts{display:flex;flex-wrap:wrap;gap:28px;align-items:flex-start}
+.dv-opt{flex:none;display:flex;flex-direction:column;gap:9px;scroll-margin-top:16px}
+.dv-oid{font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(0,0,0,.08);color:#1a1a1a;border-radius:5px;text-decoration:none}
+.dv-olabel{display:flex;align-items:baseline;gap:8px;font:400 11px/1.3 system-ui,sans-serif;color:rgba(0,0,0,.55);max-width:520px}
+.dv-card{max-width:100%;background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.06);overflow:hidden}
+.dv-opt:target .dv-oid{background:#2a78d6;color:#fff}
+.dv-next{margin:22px 0 0;font:12px/1.5 system-ui,sans-serif;color:rgba(0,0,0,.5)}
+.dv-sub{margin:26px 0 14px;font:600 10px ui-monospace,Menlo,monospace;letter-spacing:.1em;text-transform:uppercase;color:rgba(0,0,0,.4)}
+.scr,.scr *{box-sizing:border-box}
+.scr{font-family:'Kalam',cursive;color:#232220;background:#fdfcfa;display:flex;flex-direction:column}
+.ln{height:7px;border-radius:2px;background:#dedbd4}
+.ln.d{background:#3a3835;opacity:.45}
+.bx{border:1.4px dashed #b8b4ab;border-radius:4px;background:#f7f5f2}
+.sol{border:1.4px solid #2a2825;border-radius:4px;background:#fff}
+.pill{display:inline-flex;align-items:center;gap:5px;border:1.4px solid #2a2825;border-radius:999px;padding:3px 9px;font:400 11px 'Kalam',cursive}
+.lbl{font:400 9px ui-monospace,Menlo,monospace;letter-spacing:.09em;text-transform:uppercase;color:#8d887e}
+.note{font:12px 'Architects Daughter',cursive;color:#a2572c}
+.hair{height:1px;background:#ddd9d1}
+.dot{width:13px;height:13px;border-radius:999px;border:1.6px solid #2a2825}
+.t{font:400 12.5px/1.35 'Kalam',cursive}
+.t14{font:400 14px/1.3 'Kalam',cursive}
+.t11{font:400 11px/1.35 'Kalam',cursive;color:#6b665e}
+.hatch{background:repeating-linear-gradient(45deg,#e6e3dc 0 3px,#f3f1ec 3px 7px)}
+</style></helmet>
+
+<section class="dv-turn" id="t2">
+<div class="dv-thd"><a class="dv-tid" href="#t2">2</a><span class="dv-tname">Dirección elegida — barra lateral vestida (<a class="dv-oid" href="#1a">1a</a>) + confirmación en línea (<a class="dv-oid" href="#1e">1e</a>), pantalla por pantalla</span></div>
+<p class="dv-olabel" style="max-width:640px;margin:-8px 0 18px">Todos los estados en el mismo marco, con las herramientas reales de la whitelist. Prioridad: que alguien sin conocimientos técnicos entienda de un vistazo qué pasa y que nada se ejecuta sin su clic.</p>
+<div class="dv-opts">
+
+<div class="dv-opt" id="2a">
+<div class="dv-olabel"><a class="dv-oid" href="#2a">2a</a>Bienvenida. El chat vacío se sustituye por una portada: qué es, cómo está el equipo y tres preguntas para empezar.</div>
+<div class="dv-card scr" style="width:520px;height:620px;flex-direction:row">
+  <div style="width:150px;border-right:1px solid #ddd9d1;padding:16px 13px;display:flex;flex-direction:column;gap:13px;background:#f7f5f2">
+    <div class="t14">◇ ProtexiumAI</div><div class="t11">Asistente de seguridad para Windows 11</div>
+    <div class="hair"></div>
+    <div class="lbl">Estado del equipo</div>
+    <div class="sol" style="padding:10px;display:flex;flex-direction:column;gap:7px">
+      <div style="display:flex;align-items:center;gap:7px"><div class="dot"></div><div class="t">Protegido</div></div>
+      <div class="t11">Defender y firewall activos</div>
+      <div class="bx" style="padding:4px 0;text-align:center"><span class="t11">↻ Comprobar</span></div>
+    </div>
+    <div class="hair"></div>
+    <div class="lbl">Modo</div>
+    <div class="sol" style="padding:6px 8px"><span class="t11">◉ Nube</span></div>
+    <div class="bx" style="padding:6px 8px"><span class="t11">○ Local</span></div>
+    <div class="t11" style="margin-top:auto">Nunca cambio nada sin tu permiso</div>
+  </div>
+  <div style="flex:1;display:flex;flex-direction:column">
+    <div style="flex:1;padding:30px 26px;display:flex;flex-direction:column;gap:15px;justify-content:center;text-align:center;align-items:center">
+      <div style="font:400 24px 'Kalam',cursive">Hola</div>
+      <div class="t" style="max-width:250px">Pregúntame por tu equipo con tus propias palabras. Yo miro y te lo explico.</div>
+      <div class="hair" style="width:70px"></div>
+      <div class="lbl">Para empezar</div>
+      <div style="width:100%;display:flex;flex-direction:column;gap:8px">
+        <div class="bx" style="padding:10px 12px;text-align:left"><span class="t">¿Cómo está mi PC?</span></div>
+        <div class="bx" style="padding:10px 12px;text-align:left"><span class="t">Me salió una alerta rara</span></div>
+        <div class="bx" style="padding:10px 12px;text-align:left"><span class="t">¿Tengo el firewall encendido?</span></div>
+      </div>
+    </div>
+    <div style="padding:12px 26px 18px;border-top:1px solid #ddd9d1"><div class="bx" style="padding:11px 13px"><span class="t11">Escribe tu pregunta…</span></div></div>
+  </div>
+</div>
+</div>
+
+<div class="dv-opt" id="2b">
+<div class="dv-olabel"><a class="dv-oid" href="#2b">2b</a>Conversación en curso. Mientras trabaja dice qué está mirando y que es solo lectura, en vez de un «pensando…» opaco.</div>
+<div class="dv-card scr" style="width:520px;height:620px;flex-direction:row">
+  <div style="width:150px;border-right:1px solid #ddd9d1;padding:16px 13px;display:flex;flex-direction:column;gap:13px;background:#f7f5f2">
+    <div class="t14">◇ ProtexiumAI</div>
+    <div class="hair"></div>
+    <div class="lbl">Estado del equipo</div>
+    <div class="sol" style="padding:10px;display:flex;flex-direction:column;gap:6px"><div style="display:flex;align-items:center;gap:7px"><div class="dot"></div><div class="t">Protegido</div></div><div class="t11">hace 1 min</div></div>
+  </div>
+  <div style="flex:1;display:flex;flex-direction:column">
+    <div style="flex:1;padding:18px 22px;display:flex;flex-direction:column;gap:16px">
+      <div style="align-self:flex-end;width:78%;display:flex;flex-direction:column;gap:6px">
+        <div class="lbl" style="text-align:right">Tú</div>
+        <div class="bx" style="padding:10px 12px"><span class="t">¿Cómo está mi PC?</span></div>
+      </div>
+      <div style="width:88%;display:flex;flex-direction:column;gap:7px">
+        <div class="lbl">Protexium</div>
+        <div class="ln" style="width:100%"></div><div class="ln" style="width:96%"></div><div class="ln" style="width:100%"></div><div class="ln" style="width:52%"></div>
+        <div class="bx" style="padding:7px 10px;margin-top:4px;align-self:flex-start"><span class="t11">▸ Qué he consultado (2 lecturas)</span></div>
+      </div>
+      <div style="align-self:flex-end;width:60%;display:flex;flex-direction:column;gap:6px">
+        <div class="lbl" style="text-align:right">Tú</div>
+        <div class="bx" style="padding:10px 12px"><span class="t">¿Y las amenazas?</span></div>
+      </div>
+      <div class="sol" style="padding:11px 13px;display:flex;gap:10px;align-items:center;align-self:flex-start;width:82%">
+        <div class="dot" style="width:11px;height:11px"></div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:4px"><div class="t">Estoy mirando las amenazas detectadas</div><div class="t11">solo lectura · no cambio nada</div></div>
+      </div>
+    </div>
+    <div style="padding:12px 22px 18px;border-top:1px solid #ddd9d1"><div class="bx hatch" style="padding:11px 13px"><span class="t11">Espera a que termine…</span></div></div>
+  </div>
+</div>
+</div>
+
+<div class="dv-opt" id="2c">
+<div class="dv-olabel"><a class="dv-oid" href="#2c">2c</a>Propuesta pendiente. Tarjeta en línea: qué va a pasar en llano, el detalle técnico plegado, y el chat bloqueado hasta el clic.</div>
+<div class="dv-card scr" style="width:520px;height:620px;flex-direction:row">
+  <div style="width:150px;border-right:1px solid #ddd9d1;padding:16px 13px;display:flex;flex-direction:column;gap:13px;background:#f7f5f2">
+    <div class="t14">◇ ProtexiumAI</div>
+    <div class="hair"></div>
+    <div class="lbl">Estado del equipo</div>
+    <div class="sol" style="padding:10px;display:flex;flex-direction:column;gap:6px"><div style="display:flex;align-items:center;gap:7px"><div class="dot"></div><div class="t">Requiere atención</div></div><div class="t11">Un perfil del firewall está desactivado</div></div>
+    <div class="hair"></div>
+    <div class="lbl">Esperando</div>
+    <div class="t11">Hay 1 orden esperando tu decisión</div>
+  </div>
+  <div style="flex:1;display:flex;flex-direction:column">
+    <div style="flex:1;padding:18px 22px;display:flex;flex-direction:column;gap:15px">
+      <div style="align-self:flex-end;width:72%;display:flex;flex-direction:column;gap:6px"><div class="lbl" style="text-align:right">Tú</div><div class="bx" style="padding:10px 12px"><span class="t">Enciéndelo, por favor</span></div></div>
+      <div style="width:88%;display:flex;flex-direction:column;gap:6px"><div class="lbl">Protexium</div><div class="ln" style="width:100%"></div><div class="ln" style="width:62%"></div></div>
+      <div class="sol" style="border-width:2px;padding:14px;display:flex;flex-direction:column;gap:11px">
+        <div style="display:flex;justify-content:space-between;align-items:center"><span class="lbl">Necesito tu permiso</span><span class="pill" style="font-size:10px">Cambia ajustes</span></div>
+        <div class="t14">Voy a encender el firewall del perfil público</div>
+        <div class="hair"></div>
+        <div style="display:flex;flex-direction:column;gap:5px">
+          <div class="t11">Qué consigues · tu equipo volverá a filtrar las conexiones en redes wifi ajenas</div>
+          <div class="t11">Se puede deshacer · sí, pídeme lo contrario</div>
+        </div>
+        <div class="bx" style="padding:7px 10px;align-self:flex-start"><span class="t11">▸ Ver el detalle técnico</span></div>
+        <div style="display:flex;gap:9px"><div class="sol" style="flex:1;padding:8px;text-align:center;border-width:2px"><span class="t14">Sí, adelante</span></div><div class="bx" style="flex:1;padding:8px;text-align:center"><span class="t14">No, déjalo</span></div></div>
+      </div>
+      <div class="note">nada ocurre hasta que pulses «Sí, adelante»</div>
+    </div>
+    <div style="padding:12px 22px 18px;border-top:1px solid #ddd9d1"><div class="bx hatch" style="padding:11px 13px"><span class="t11">Responde arriba para seguir escribiendo</span></div></div>
+  </div>
+</div>
+</div>
+
+<div class="dv-opt" id="2d">
+<div class="dv-olabel"><a class="dv-oid" href="#2d">2d</a>La misma tarjeta con el detalle desplegado, en nivel mutante y con el aviso de que falta administrador.</div>
+<div class="dv-card scr" style="width:400px;padding:18px;gap:12px">
+  <div class="ln" style="width:88%"></div><div class="ln" style="width:54%"></div>
+  <div class="sol" style="border-width:2px;padding:14px;display:flex;flex-direction:column;gap:11px">
+    <div style="display:flex;justify-content:space-between;align-items:center"><span class="lbl">Necesito tu permiso</span><span class="pill" style="font-size:10px;border-width:2px">Borra datos</span></div>
+    <div class="t14">Voy a eliminar las 2 amenazas que ha encontrado Defender</div>
+    <div class="hair"></div>
+    <div style="display:flex;flex-direction:column;gap:5px"><div class="t11">Qué consigues · los archivos infectados se quitan del equipo</div><div class="t11">Se puede deshacer · no</div></div>
+    <div class="bx" style="padding:10px;display:flex;flex-direction:column;gap:6px">
+      <div class="lbl">▾ Detalle técnico</div>
+      <div class="t11">Herramienta · remove_all_threats</div>
+      <div class="t11">Nivel · mutante · requiere administrador</div>
+      <div class="t11" style="font-family:ui-monospace,monospace">Remove-MpThreat</div>
+      <div class="t11">Parámetros · ninguno</div>
+    </div>
+    <div class="sol" style="border-width:2px;border-style:dashed;padding:9px 11px;display:flex;gap:8px"><span class="t">!</span><div class="t11">Esta orden necesita permisos de administrador. Cierra y vuelve a abrir ProtexiumAI como administrador para poder autorizarla.</div></div>
+    <div style="display:flex;gap:9px"><div class="bx hatch" style="flex:1;padding:8px;text-align:center"><span class="t14">Sí, adelante</span></div><div class="sol" style="flex:1;padding:8px;text-align:center"><span class="t14">No, déjalo</span></div></div>
+  </div>
+</div>
+</div>
+
+<div class="dv-opt" id="2e">
+<div class="dv-olabel"><a class="dv-oid" href="#2e">2e</a>Resultado del turno. Primero la respuesta en llano; el recibo de lo ejecutado queda debajo, plegable, con quién lo autorizó.</div>
+<div class="dv-card scr" style="width:400px;padding:18px;gap:13px">
+  <div class="lbl">Protexium</div>
+  <div class="t14">Ya está: el firewall vuelve a estar encendido en las tres redes.</div>
+  <div style="display:flex;flex-direction:column;gap:6px"><div class="ln" style="width:100%"></div><div class="ln" style="width:97%"></div><div class="ln" style="width:46%"></div></div>
+  <div class="hair"></div>
+  <div class="sol" style="padding:0;overflow:hidden">
+    <div style="padding:9px 12px" class="lbl">▾ Qué he hecho · 3 pasos</div>
+    <div class="hair"></div>
+    <div style="padding:9px 12px;display:flex;gap:9px;align-items:baseline"><span class="t">✓</span><div style="flex:1"><div class="t">He mirado el estado del firewall</div><div class="t11">get_firewall_status · lectura · sin permiso</div></div></div>
+    <div class="hair"></div>
+    <div style="padding:9px 12px;display:flex;gap:9px;align-items:baseline"><span class="t">✓</span><div style="flex:1"><div class="t">He encendido el perfil público</div><div class="t11">set_firewall_profile · mutante · autorizado por ti · 10:03</div></div></div>
+    <div class="hair"></div>
+    <div style="padding:9px 12px;display:flex;gap:9px;align-items:baseline;background:#f7f5f2"><span class="t">✕</span><div style="flex:1"><div class="t">No he analizado el equipo</div><div class="t11">start_quick_scan · acción · cancelado por ti</div></div></div>
+  </div>
+  <div class="bx" style="padding:8px 11px"><span class="t11">▸ Ver el registro de auditoría</span></div>
+</div>
+</div>
+
+<div class="dv-opt" id="2f">
+<div class="dv-olabel"><a class="dv-oid" href="#2f">2f</a>Estado del sistema en detalle: la tarjeta de la barra lateral abierta, una fila por cosa comprobada.</div>
+<div class="dv-card scr" style="width:400px;padding:18px;gap:13px">
+  <div style="display:flex;justify-content:space-between;align-items:baseline"><span class="lbl">Estado del equipo</span><span class="t11">↻ hace 1 min</span></div>
+  <div class="sol" style="border-width:2px;padding:14px;display:flex;gap:12px;align-items:center">
+    <div class="dot" style="width:26px;height:26px;border-width:2px"></div>
+    <div style="flex:1"><div class="t14">Requiere atención</div><div class="t11">Al menos un perfil del firewall está desactivado.</div></div>
+  </div>
+  <div class="lbl">Windows Defender</div>
+  <div class="sol" style="padding:0">
+    <div style="padding:9px 12px;display:flex;justify-content:space-between"><span class="t">Vigilancia en tiempo real</span><span class="t11">✓ activa</span></div><div class="hair"></div>
+    <div style="padding:9px 12px;display:flex;justify-content:space-between"><span class="t">Antivirus</span><span class="t11">✓ activo</span></div><div class="hair"></div>
+    <div style="padding:9px 12px;display:flex;justify-content:space-between"><span class="t">Firmas de virus</span><span class="t11">al día · ayer</span></div><div class="hair"></div>
+    <div style="padding:9px 12px;display:flex;justify-content:space-between"><span class="t">Último análisis rápido</span><span class="t11">hace 3 días</span></div>
+  </div>
+  <div class="lbl">Firewall</div>
+  <div class="sol" style="padding:0">
+    <div style="padding:9px 12px;display:flex;justify-content:space-between"><span class="t">Red de casa (privada)</span><span class="t11">✓ encendido</span></div><div class="hair"></div>
+    <div style="padding:9px 12px;display:flex;justify-content:space-between"><span class="t">Red del trabajo (dominio)</span><span class="t11">✓ encendido</span></div><div class="hair"></div>
+    <div style="padding:9px 12px;display:flex;justify-content:space-between;background:#f7f5f2"><span class="t">Redes públicas</span><span class="t11">✕ apagado</span></div>
+  </div>
+  <div class="bx" style="padding:9px 11px;text-align:center"><span class="t">Pídeme que lo arregle</span></div>
+</div>
+</div>
+
+<div class="dv-opt" id="2g">
+<div class="dv-olabel"><a class="dv-oid" href="#2g">2g</a>Ajustes. Los dos modos como una elección con consecuencia explicada, no como un radio con una nota al pie.</div>
+<div class="dv-card scr" style="width:400px;padding:18px;gap:13px">
+  <span class="lbl">Dónde se procesan tus preguntas</span>
+  <div class="sol" style="border-width:2px;padding:13px;display:flex;flex-direction:column;gap:6px">
+    <div style="display:flex;justify-content:space-between;align-items:center"><span class="t14">◉ En la nube · Groq</span><span class="pill" style="font-size:10px">Activo</span></div>
+    <div class="t11">Tus preguntas viajan a los servidores de Groq. Responde rápido.</div>
+  </div>
+  <div class="bx" style="padding:13px;display:flex;flex-direction:column;gap:6px">
+    <div class="t14">○ En este equipo · Ollama</div>
+    <div class="t11">Nada sale de tu ordenador. Necesita Ollama en marcha y va más lento.</div>
+  </div>
+  <div class="hair"></div>
+  <span class="lbl">Qué no hago nunca</span>
+  <div style="display:flex;flex-direction:column;gap:7px">
+    <div class="t">— Cambiar un ajuste sin tu clic</div>
+    <div class="t">— Ejecutar nada fuera de una lista cerrada de 7 comandos</div>
+    <div class="t">— Pedirme permisos de administrador por mi cuenta</div>
+  </div>
+  <div class="hair"></div>
+  <span class="lbl">Modo claro / oscuro</span>
+  <div style="display:flex;gap:0;border:1.4px solid #2a2825;border-radius:4px;overflow:hidden">
+    <div style="flex:1;padding:8px;text-align:center;background:#2a2825;color:#fdfcfa"><span class="t">Claro</span></div>
+    <div style="flex:1;padding:8px;text-align:center"><span class="t">Oscuro</span></div>
+    <div style="flex:1;padding:8px;text-align:center"><span class="t">Sistema</span></div>
+  </div>
+</div>
+</div>
+
+<div class="dv-opt" id="2h">
+<div class="dv-olabel"><a class="dv-oid" href="#2h">2h</a>Fallo de conexión como pieza propia: separa «no puedo hablar» de «tu equipo está en riesgo».</div>
+<div class="dv-card scr" style="width:400px;padding:18px;gap:13px">
+  <div class="lbl">Protexium</div>
+  <div class="sol" style="border-width:2px;padding:14px;display:flex;flex-direction:column;gap:9px">
+    <span class="lbl">No he podido conectar</span>
+    <div class="t14">No consigo hablar con Groq ahora mismo</div>
+    <div class="hair"></div>
+    <div class="t11">Tu equipo sigue igual de protegido: esto solo afecta a la conversación, no a tu seguridad.</div>
+    <div style="display:flex;gap:9px"><div class="sol" style="flex:1;padding:8px;text-align:center"><span class="t">Reintentar</span></div><div class="bx" style="flex:1;padding:8px;text-align:center"><span class="t">Usar el modo local</span></div></div>
+    <div class="bx" style="padding:7px 10px;align-self:flex-start"><span class="t11">▸ Ver detalle técnico del error</span></div>
+  </div>
+  <div class="hair"></div>
+  <div class="lbl">Otra variante · falta la clave</div>
+  <div class="sol" style="padding:12px;display:flex;flex-direction:column;gap:7px">
+    <div class="t14">Falta la clave de acceso a Groq</div>
+    <div class="t11">Añade GROQ_API_KEY en tu archivo .env, o cambia al modo local.</div>
+    <div class="bx" style="padding:7px;text-align:center;align-self:flex-start;padding-inline:14px"><span class="t">Cómo se hace</span></div>
+  </div>
+</div>
+</div>
+
+<div class="dv-opt" id="2i">
+<div class="dv-olabel"><a class="dv-oid" href="#2i">2i</a>Modo oscuro de la pantalla principal: mismo esqueleto, papel oscuro y reglas finas claras.</div>
+<div class="dv-card scr" style="width:520px;height:620px;flex-direction:row;background:#1b1a18;color:#efece5">
+  <div style="width:150px;border-right:1px solid #3a3833;padding:16px 13px;display:flex;flex-direction:column;gap:13px;background:#161513">
+    <div class="t14">◇ ProtexiumAI</div><div class="t11" style="color:#9b958a">Asistente de seguridad</div>
+    <div style="height:1px;background:#3a3833"></div>
+    <div class="lbl" style="color:#8d877c">Estado del equipo</div>
+    <div style="border:1.4px solid #6d675c;border-radius:4px;padding:10px;display:flex;flex-direction:column;gap:7px">
+      <div style="display:flex;align-items:center;gap:7px"><div class="dot" style="border-color:#efece5"></div><div class="t">Protegido</div></div>
+      <div class="t11" style="color:#9b958a">Defender y firewall activos</div>
+    </div>
+    <div style="height:1px;background:#3a3833"></div>
+    <div class="lbl" style="color:#8d877c">Modo</div>
+    <div style="border:1.4px solid #6d675c;border-radius:4px;padding:6px 8px"><span class="t11" style="color:#efece5">◉ Nube</span></div>
+    <div style="border:1.4px dashed #4a4842;border-radius:4px;padding:6px 8px"><span class="t11" style="color:#9b958a">○ Local</span></div>
+  </div>
+  <div style="flex:1;display:flex;flex-direction:column">
+    <div style="flex:1;padding:18px 22px;display:flex;flex-direction:column;gap:15px">
+      <div style="align-self:flex-end;width:72%;display:flex;flex-direction:column;gap:6px"><div class="lbl" style="text-align:right;color:#8d877c">Tú</div><div style="border:1.4px dashed #4a4842;border-radius:4px;padding:10px 12px"><span class="t">Apaga la vigilancia un momento</span></div></div>
+      <div style="width:88%;display:flex;flex-direction:column;gap:6px"><div class="lbl" style="color:#8d877c">Protexium</div><div class="ln d" style="width:100%"></div><div class="ln d" style="width:92%"></div><div class="ln d" style="width:44%"></div></div>
+      <div style="border:1.6px solid #b9a06a;border-radius:4px;padding:14px;display:flex;flex-direction:column;gap:11px">
+        <div style="display:flex;justify-content:space-between;align-items:center"><span class="lbl" style="color:#c4ab74">Necesito tu permiso</span><span class="pill" style="font-size:10px;border-color:#c4ab74;color:#e8ddc4">Cambia ajustes</span></div>
+        <div class="t14">Voy a apagar la vigilancia en tiempo real de Defender</div>
+        <div style="height:1px;background:#3a3833"></div>
+        <div class="t11" style="color:#9b958a">Qué implica · tu equipo dejará de revisar los archivos que abras<br>Se puede deshacer · sí</div>
+        <div style="border:1.4px dashed #4a4842;border-radius:4px;padding:7px 10px;align-self:flex-start"><span class="t11" style="color:#9b958a">▸ Ver el detalle técnico</span></div>
+        <div style="display:flex;gap:9px"><div style="flex:1;padding:8px;text-align:center;border:1.6px solid #c4ab74;border-radius:4px"><span class="t14">Sí, adelante</span></div><div style="flex:1;padding:8px;text-align:center;border:1.4px dashed #6d675c;border-radius:4px"><span class="t14">No, déjalo</span></div></div>
+      </div>
+    </div>
+    <div style="padding:12px 22px 18px;border-top:1px solid #3a3833"><div style="border:1.4px dashed #4a4842;border-radius:4px;padding:11px 13px"><span class="t11" style="color:#7d776d">Responde arriba para seguir</span></div></div>
+  </div>
+</div>
+</div>
+
+</div>
+<p class="dv-next">Prueba a decirme: «me valen, pasa a mockups» · «en <a class="dv-oid" href="#2c">2c</a> quiero los botones más separados» · «añade la pantalla de análisis en marcha»</p>
+</section>
+
+<section class="dv-turn" id="t1">
+<div class="dv-thd"><a class="dv-tid" href="#t1">1</a><span class="dv-tname">ProtexiumAI — primera exploración</span></div>
+
+<p class="dv-sub">A · Estructura de la pantalla principal</p>
+<div class="dv-opts">
+
+<div class="dv-opt" id="1a">
+<div class="dv-olabel"><a class="dv-oid" href="#1a">1a</a>Vestir lo actual: barra lateral + chat. Menor riesgo, se reconoce lo de siempre.</div>
+<div class="dv-card scr" style="width:470px;height:600px;flex-direction:row">
+  <div style="width:152px;border-right:1px solid #ddd9d1;padding:16px 13px;display:flex;flex-direction:column;gap:14px;background:#f7f5f2">
+    <div style="display:flex;flex-direction:column;gap:4px"><div class="t14">◇ ProtexiumAI</div><div class="t11">Asistente de seguridad</div></div>
+    <div class="hair"></div>
+    <div class="lbl">Estado del sistema</div>
+    <div class="sol" style="padding:11px;display:flex;flex-direction:column;gap:8px">
+      <div style="display:flex;align-items:center;gap:8px"><div class="dot"></div><div class="t">Protegido</div></div>
+      <div class="ln" style="width:100%"></div><div class="ln" style="width:72%"></div>
+      <div class="bx" style="padding:4px 0;text-align:center" ><span class="t11">↻ Actualizar</span></div>
+    </div>
+    <div class="hair"></div>
+    <div class="lbl">Proveedor</div>
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <div class="sol" style="padding:5px 8px"><span class="t11">◉ Nube</span></div>
+      <div class="bx" style="padding:5px 8px"><span class="t11">○ Local</span></div>
+      <div class="t11" style="color:#8d887e">Nada sale del equipo en local</div>
+    </div>
+  </div>
+  <div style="flex:1;display:flex;flex-direction:column">
+    <div style="padding:14px 18px 10px;display:flex;flex-direction:column;gap:14px;flex:1">
+      <div style="align-self:flex-end;width:76%;display:flex;flex-direction:column;gap:6px">
+        <div class="lbl" style="text-align:right">Tú</div>
+        <div class="bx" style="padding:9px 11px;display:flex;flex-direction:column;gap:6px"><div class="ln" style="width:100%"></div><div class="ln" style="width:60%"></div></div>
+      </div>
+      <div style="max-width:84%;display:flex;flex-direction:column;gap:6px">
+        <div class="lbl">Protexium</div>
+        <div style="display:flex;flex-direction:column;gap:6px"><div class="ln" style="width:100%"></div><div class="ln" style="width:94%"></div><div class="ln" style="width:48%"></div></div>
+      </div>
+      <div class="sol" style="border-width:2px;padding:12px;display:flex;flex-direction:column;gap:9px">
+        <div style="display:flex;justify-content:space-between;align-items:center"><span class="lbl">Requiere tu confirmación</span><span class="pill" style="font-size:10px">Acción</span></div>
+        <div class="t">Quiero ejecutar: activar el firewall del perfil público</div>
+        <div class="bx" style="padding:8px;display:flex;flex-direction:column;gap:5px"><div class="ln" style="width:66%"></div><div class="ln" style="width:44%"></div></div>
+        <div style="display:flex;gap:8px"><div class="sol" style="flex:1;padding:6px;text-align:center"><span class="t">✓ Confirmar</span></div><div class="bx" style="flex:1;padding:6px;text-align:center"><span class="t">✕ Cancelar</span></div></div>
+      </div>
+    </div>
+    <div style="padding:10px 18px 16px;border-top:1px solid #ddd9d1">
+      <div class="bx" style="padding:10px 12px"><span class="t11">Escribe tu pregunta…</span></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="dv-opt" id="1b">
+<div class="dv-olabel"><a class="dv-oid" href="#1b">1b</a>Ancho completo con cabecera fina: el estado vive arriba, siempre a la vista, sin barra lateral.</div>
+<div class="dv-card scr" style="width:470px;height:600px">
+  <div style="padding:12px 18px;border-bottom:1.4px solid #2a2825;display:flex;align-items:center;justify-content:space-between">
+    <div class="t14">◇ ProtexiumAI</div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <span class="pill"><span class="dot" style="width:9px;height:9px"></span>Protegido</span>
+      <span class="pill" style="border-style:dashed">Nube</span>
+    </div>
+  </div>
+  <div style="flex:1;padding:20px 60px;display:flex;flex-direction:column;gap:18px">
+    <div style="display:flex;flex-direction:column;gap:6px"><div class="lbl">Tú preguntaste</div><div class="t">¿Cómo está mi PC?</div></div>
+    <div class="hair"></div>
+    <div style="display:flex;flex-direction:column;gap:6px"><div class="lbl">Protexium</div><div class="ln" style="width:100%"></div><div class="ln" style="width:97%"></div><div class="ln" style="width:100%"></div><div class="ln" style="width:40%"></div></div>
+    <div class="sol" style="border-width:2px;padding:13px;display:flex;flex-direction:column;gap:9px">
+      <div style="display:flex;justify-content:space-between"><span class="lbl">Espera tu clic</span><span class="pill" style="font-size:10px">Mutante</span></div>
+      <div class="t">Quiero ejecutar: excluir la carpeta C:\Temp del análisis</div>
+      <div style="display:flex;gap:8px"><div class="sol" style="flex:1;padding:6px;text-align:center"><span class="t">✓ Confirmar</span></div><div class="bx" style="flex:1;padding:6px;text-align:center"><span class="t">✕ Cancelar</span></div></div>
+    </div>
+  </div>
+  <div style="padding:14px 60px 20px;border-top:1px solid #ddd9d1">
+    <div class="bx" style="padding:11px 13px"><span class="t11">Pregunta algo sobre tu equipo…</span></div>
+  </div>
+</div>
+</div>
+
+<div class="dv-opt" id="1c">
+<div class="dv-olabel"><a class="dv-oid" href="#1c">1c</a>Dos paneles: conversación a la izquierda, consola de estado y acciones a la derecha. La propuesta aparece en el panel, no en el hilo.</div>
+<div class="dv-card scr" style="width:560px;height:600px;flex-direction:row">
+  <div style="flex:1;display:flex;flex-direction:column;border-right:1.4px solid #2a2825">
+    <div style="padding:13px 16px;border-bottom:1px solid #ddd9d1"><div class="t14">◇ ProtexiumAI</div></div>
+    <div style="flex:1;padding:16px;display:flex;flex-direction:column;gap:16px">
+      <div style="align-self:flex-end;max-width:80%;display:flex;flex-direction:column;gap:5px"><div class="lbl" style="text-align:right">Tú</div><div class="ln" style="width:150px"></div><div class="ln" style="width:110px;margin-left:auto"></div></div>
+      <div style="display:flex;flex-direction:column;gap:5px"><div class="lbl">Protexium</div><div class="ln" style="width:100%"></div><div class="ln" style="width:92%"></div><div class="ln" style="width:55%"></div></div>
+      <div class="bx" style="padding:9px 11px;display:flex;gap:8px;align-items:center"><span class="t11">→ Propuesta enviada al panel</span></div>
+    </div>
+    <div style="padding:12px 16px 16px;border-top:1px solid #ddd9d1"><div class="bx" style="padding:10px 12px"><span class="t11">Escribe…</span></div></div>
+  </div>
+  <div style="width:210px;padding:14px;display:flex;flex-direction:column;gap:13px;background:#f7f5f2">
+    <div class="lbl">Estado</div>
+    <div class="sol" style="padding:11px;display:flex;flex-direction:column;gap:7px">
+      <div style="display:flex;align-items:center;gap:8px"><div class="dot"></div><div class="t">Requiere atención</div></div>
+      <div class="ln" style="width:100%"></div><div class="ln" style="width:64%"></div>
+    </div>
+    <div class="hair"></div>
+    <div class="lbl">Pendiente de confirmar</div>
+    <div class="sol" style="border-width:2px;padding:11px;display:flex;flex-direction:column;gap:8px">
+      <span class="pill" style="font-size:10px;align-self:flex-start">Acción</span>
+      <div class="t">Activar protección en tiempo real</div>
+      <div class="bx" style="padding:7px;display:flex;flex-direction:column;gap:4px"><div class="ln" style="width:80%"></div><div class="ln" style="width:50%"></div></div>
+      <div class="sol" style="padding:6px;text-align:center"><span class="t">✓ Confirmar</span></div>
+      <div class="bx" style="padding:6px;text-align:center"><span class="t">✕ Cancelar</span></div>
+    </div>
+    <div class="hair"></div>
+    <div class="lbl">Historial</div>
+    <div style="display:flex;flex-direction:column;gap:7px">
+      <div class="t11">✓ Get-MpComputerStatus</div><div class="t11">✓ Get-NetFirewallProfile</div><div class="t11">✕ Set-MpPreference</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="dv-opt" id="1d">
+<div class="dv-olabel"><a class="dv-oid" href="#1d">1d</a>Formato bitácora: la sesión se lee como un informe editorial fechado, no como un chat. Es la más alejada de los chats de IA y la que mejor se defiende ante tribunal.</div>
+<div class="dv-card scr" style="width:500px;height:600px">
+  <div style="padding:16px 26px 12px;display:flex;justify-content:space-between;align-items:baseline;border-bottom:1.4px solid #2a2825">
+    <div style="font:400 17px 'Kalam',cursive">ProtexiumAI</div>
+    <div class="t11">Sesión del 30 · VIII · 2026</div>
+  </div>
+  <div style="flex:1;padding:18px 26px;display:flex;flex-direction:column;gap:0">
+    <div style="display:flex;gap:16px;padding-bottom:14px">
+      <div style="width:44px;flex:none" class="lbl">I<br>10:02</div>
+      <div style="flex:1;display:flex;flex-direction:column;gap:6px"><div class="t14" style="font-style:italic">«Me salió una alerta rara»</div></div>
+    </div>
+    <div class="hair"></div>
+    <div style="display:flex;gap:16px;padding:14px 0">
+      <div style="width:44px;flex:none" class="lbl">II<br>10:02</div>
+      <div style="flex:1;display:flex;flex-direction:column;gap:6px">
+        <div class="ln" style="width:100%"></div><div class="ln" style="width:100%"></div><div class="ln" style="width:78%"></div>
+        <div class="t11" style="margin-top:4px">Consultado: Defender · Firewall (lectura, sin permiso)</div>
+      </div>
+    </div>
+    <div class="hair"></div>
+    <div style="display:flex;gap:16px;padding:14px 0">
+      <div style="width:44px;flex:none" class="lbl">III<br>10:03</div>
+      <div style="flex:1;display:flex;flex-direction:column;gap:9px">
+        <div class="sol" style="border-width:2px;padding:13px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline"><span class="lbl">Orden pendiente de tu firma</span><span class="pill" style="font-size:10px">Mutante</span></div>
+          <div class="t14">Activar la protección en tiempo real de Windows Defender</div>
+          <div class="hair"></div>
+          <div style="display:flex;flex-direction:column;gap:4px"><div class="t11">Qué cambia · el equipo volverá a vigilar archivos al abrirlos</div><div class="t11">Reversible · sí, con la orden contraria</div><div class="t11">▸ Ver comando exacto</div></div>
+          <div style="display:flex;gap:9px"><div class="sol" style="flex:1;padding:7px;text-align:center"><span class="t">Firmar y ejecutar</span></div><div class="bx" style="flex:1;padding:7px;text-align:center"><span class="t">Descartar</span></div></div>
+        </div>
+        <div class="note">nada se ejecuta hasta este clic</div>
+      </div>
+    </div>
+  </div>
+  <div style="padding:13px 26px 18px;border-top:1.4px solid #2a2825;display:flex;align-items:center;gap:10px">
+    <span class="lbl">IV</span><div style="flex:1;border-bottom:1.4px dashed #b8b4ab;padding-bottom:6px"><span class="t11">Escribe aquí tu siguiente pregunta</span></div>
+  </div>
+</div>
+</div>
+
+</div>
+
+<p class="dv-sub">B · El momento de confirmar (el núcleo de seguridad)</p>
+<div class="dv-opts">
+
+<div class="dv-opt" id="1e">
+<div class="dv-olabel"><a class="dv-oid" href="#1e">1e</a>Tarjeta en línea, con el detalle técnico plegado</div>
+<div class="dv-card scr" style="width:340px;padding:16px;gap:12px">
+  <div class="ln" style="width:92%"></div><div class="ln" style="width:60%"></div>
+  <div class="sol" style="border-width:2px;padding:12px;display:flex;flex-direction:column;gap:9px">
+    <div style="display:flex;justify-content:space-between"><span class="lbl">Requiere confirmación</span><span class="pill" style="font-size:10px">Acción</span></div>
+    <div class="t14">Reactivar el firewall del perfil público</div>
+    <div class="t11">▸ Ver parámetros y comando</div>
+    <div style="display:flex;gap:8px"><div class="sol" style="flex:1;padding:6px;text-align:center"><span class="t">✓ Confirmar</span></div><div class="bx" style="flex:1;padding:6px;text-align:center"><span class="t">✕ Cancelar</span></div></div>
+  </div>
+  <div class="bx" style="padding:9px 11px;opacity:.5"><span class="t11">Entrada bloqueada mientras decides</span></div>
+</div>
+</div>
+
+<div class="dv-opt" id="1f">
+<div class="dv-olabel"><a class="dv-oid" href="#1f">1f</a>Zócalo inferior fijo, encima de la entrada</div>
+<div class="dv-card scr" style="width:340px;height:300px">
+  <div style="flex:1;padding:16px;display:flex;flex-direction:column;gap:9px;opacity:.5">
+    <div class="ln" style="width:70%;margin-left:auto"></div><div class="ln" style="width:100%"></div><div class="ln" style="width:88%"></div><div class="ln" style="width:52%"></div>
+  </div>
+  <div style="border-top:2px solid #2a2825;padding:13px 16px;display:flex;flex-direction:column;gap:9px;background:#f7f5f2">
+    <div style="display:flex;justify-content:space-between"><span class="lbl">1 orden esperando</span><span class="pill" style="font-size:10px">Mutante</span></div>
+    <div class="t14">Excluir C:\Temp del análisis</div>
+    <div style="display:flex;gap:8px"><div class="sol" style="flex:1;padding:6px;text-align:center"><span class="t">✓ Confirmar</span></div><div class="bx" style="flex:1;padding:6px;text-align:center"><span class="t">✕ Cancelar</span></div><div class="bx" style="padding:6px 9px"><span class="t">⌄</span></div></div>
+  </div>
+  <div style="padding:11px 16px 14px"><div class="bx hatch" style="padding:10px 12px"><span class="t11">Bloqueado</span></div></div>
+</div>
+</div>
+
+<div class="dv-opt" id="1g">
+<div class="dv-olabel"><a class="dv-oid" href="#1g">1g</a>Diálogo modal: máxima fricción, imposible ignorarlo en una demo</div>
+<div class="dv-card scr hatch" style="width:340px;height:300px;align-items:center;justify-content:center;padding:18px">
+  <div class="sol" style="border-width:2px;padding:16px;width:100%;display:flex;flex-direction:column;gap:11px;box-shadow:0 6px 18px rgba(0,0,0,.12)">
+    <div style="display:flex;justify-content:space-between;align-items:baseline"><span class="lbl">Confirmación humana</span><span class="pill" style="font-size:10px">Mutante</span></div>
+    <div class="t14">Desactivar la protección en tiempo real</div>
+    <div class="hair"></div>
+    <div class="t11">Tu equipo dejará de vigilar archivos al abrirlos.</div>
+    <div class="bx" style="padding:8px;display:flex;flex-direction:column;gap:4px"><div class="ln" style="width:74%"></div><div class="ln" style="width:46%"></div></div>
+    <div style="display:flex;gap:8px"><div class="bx" style="flex:1;padding:7px;text-align:center"><span class="t">Cancelar</span></div><div class="sol" style="flex:1;padding:7px;text-align:center"><span class="t">Confirmar</span></div></div>
+  </div>
+</div>
+</div>
+
+<div class="dv-opt" id="1h">
+<div class="dv-olabel"><a class="dv-oid" href="#1h">1h</a>Cajón lateral que se despliega desde el borde derecho</div>
+<div class="dv-card scr" style="width:340px;height:300px;flex-direction:row">
+  <div style="flex:1;padding:14px;display:flex;flex-direction:column;gap:8px;opacity:.45">
+    <div class="ln" style="width:60%;margin-left:auto"></div><div class="ln" style="width:100%"></div><div class="ln" style="width:80%"></div>
+  </div>
+  <div style="width:170px;border-left:2px solid #2a2825;padding:14px;display:flex;flex-direction:column;gap:9px;background:#f7f5f2">
+    <span class="lbl">Orden propuesta</span>
+    <span class="pill" style="font-size:10px;align-self:flex-start">Acción</span>
+    <div class="t">Activar el firewall (perfil público)</div>
+    <div class="hair"></div>
+    <div class="t11">Perfil · Público<br>Reversible · sí<br>Admin · requerido</div>
+    <div class="sol" style="padding:6px;text-align:center"><span class="t">✓ Confirmar</span></div>
+    <div class="bx" style="padding:6px;text-align:center"><span class="t">✕ Cancelar</span></div>
+  </div>
+</div>
+</div>
+
+</div>
+
+<p class="dv-sub">C · Otros estados</p>
+<div class="dv-opts">
+
+<div class="dv-opt" id="1i">
+<div class="dv-olabel"><a class="dv-oid" href="#1i">1i</a>Estado vacío / bienvenida: portada con el estado del equipo y tres preguntas de arranque</div>
+<div class="dv-card scr" style="width:380px;height:420px;padding:26px;gap:16px;align-items:center;text-align:center;justify-content:center">
+  <div style="font:400 26px 'Kalam',cursive">◇ ProtexiumAI</div>
+  <div class="t11" style="max-width:250px">Asistente de seguridad para Windows 11. Pregunta en tus palabras.</div>
+  <div class="sol" style="width:100%;padding:14px;display:flex;align-items:center;gap:11px;text-align:left">
+    <div class="dot" style="width:20px;height:20px;border-width:2px"></div>
+    <div style="flex:1;display:flex;flex-direction:column;gap:5px"><div class="t14">Tu equipo está protegido</div><div class="ln" style="width:80%"></div></div>
+  </div>
+  <div class="hair" style="width:60%"></div>
+  <div style="width:100%;display:flex;flex-direction:column;gap:8px">
+    <div class="bx" style="padding:9px 12px;text-align:left"><span class="t">¿Cómo está mi PC?</span></div>
+    <div class="bx" style="padding:9px 12px;text-align:left"><span class="t">Me salió una alerta rara</span></div>
+    <div class="bx" style="padding:9px 12px;text-align:left"><span class="t">¿Está activo mi firewall?</span></div>
+  </div>
+  <div class="note">nunca cambio nada sin tu permiso</div>
+</div>
+</div>
+
+<div class="dv-opt" id="1j">
+<div class="dv-olabel"><a class="dv-oid" href="#1j">1j</a>Resultado del turno: recibo de lo que se ejecutó, antes de la respuesta en prosa</div>
+<div class="dv-card scr" style="width:380px;height:420px;padding:20px;gap:13px">
+  <span class="lbl">Lo que hice</span>
+  <div class="sol" style="padding:0;overflow:hidden">
+    <div style="padding:10px 12px;display:flex;gap:9px;align-items:baseline"><span class="t">✓</span><div style="flex:1"><div class="t">Get-MpComputerStatus</div><div class="t11">lectura · sin permiso · estado leído</div></div></div>
+    <div class="hair"></div>
+    <div style="padding:10px 12px;display:flex;gap:9px;align-items:baseline"><span class="t">✓</span><div style="flex:1"><div class="t">Set-NetFirewallProfile</div><div class="t11">acción · confirmado por ti a las 10:03</div></div></div>
+    <div class="hair"></div>
+    <div style="padding:10px 12px;display:flex;gap:9px;align-items:baseline;background:#f7f5f2"><span class="t">✕</span><div style="flex:1"><div class="t">Add-MpPreference</div><div class="t11">mutante · cancelada por ti</div></div></div>
+  </div>
+  <div class="hair"></div>
+  <span class="lbl">Qué significa</span>
+  <div style="display:flex;flex-direction:column;gap:6px"><div class="ln" style="width:100%"></div><div class="ln" style="width:98%"></div><div class="ln" style="width:100%"></div><div class="ln" style="width:44%"></div></div>
+  <div class="bx" style="padding:8px 11px;margin-top:auto"><span class="t11">▸ Ver registro técnico completo</span></div>
+</div>
+</div>
+
+<div class="dv-opt" id="1k">
+<div class="dv-olabel"><a class="dv-oid" href="#1k">1k</a>Modo oscuro sobre la bitácora <a class="dv-oid" href="#1d">1d</a>: papel oscuro, mismas reglas finas</div>
+<div class="dv-card scr" style="width:380px;height:420px;background:#1b1a18;color:#efece5">
+  <div style="padding:14px 22px 11px;display:flex;justify-content:space-between;align-items:baseline;border-bottom:1.4px solid #6d675c">
+    <div style="font:400 16px 'Kalam',cursive">ProtexiumAI</div><div class="t11" style="color:#9b958a">Sesión · 30 VIII</div>
+  </div>
+  <div style="flex:1;padding:16px 22px;display:flex;flex-direction:column;gap:0">
+    <div style="display:flex;gap:14px;padding-bottom:12px">
+      <div class="lbl" style="width:36px;flex:none;color:#8d877c">I</div>
+      <div class="t14" style="font-style:italic">«¿Cómo está mi PC?»</div>
+    </div>
+    <div style="height:1px;background:#3a3833"></div>
+    <div style="display:flex;gap:14px;padding:12px 0">
+      <div class="lbl" style="width:36px;flex:none;color:#8d877c">II</div>
+      <div style="flex:1;display:flex;flex-direction:column;gap:6px"><div class="ln d"style="width:100%"></div><div class="ln d" style="width:92%"></div><div class="ln d" style="width:58%"></div></div>
+    </div>
+    <div style="height:1px;background:#3a3833"></div>
+    <div style="display:flex;gap:14px;padding:12px 0">
+      <div class="lbl" style="width:36px;flex:none;color:#8d877c">III</div>
+      <div style="flex:1;border:1.6px solid #b9a06a;border-radius:4px;padding:11px;display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;justify-content:space-between"><span class="lbl" style="color:#c4ab74">Pendiente de tu firma</span><span class="pill" style="font-size:10px;border-color:#c4ab74;color:#e8ddc4">Mutante</span></div>
+        <div class="t">Desactivar la protección en tiempo real</div>
+        <div style="display:flex;gap:8px"><div style="flex:1;padding:6px;text-align:center;border:1.4px solid #c4ab74;border-radius:4px"><span class="t">Firmar</span></div><div style="flex:1;padding:6px;text-align:center;border:1.4px dashed #6d675c;border-radius:4px"><span class="t">Descartar</span></div></div>
+      </div>
+    </div>
+  </div>
+  <div style="padding:12px 22px 16px;border-top:1.4px solid #6d675c"><div style="border-bottom:1.4px dashed #6d675c;padding-bottom:6px"><span class="t11" style="color:#9b958a">Escribe aquí…</span></div></div>
+</div>
+</div>
+
+<div class="dv-opt" id="1l">
+<div class="dv-olabel"><a class="dv-oid" href="#1l">1l</a>Fallo de conexión y aviso de privacidad como piezas propias, no como texto en una burbuja</div>
+<div class="dv-card scr" style="width:380px;height:420px;padding:20px;gap:14px">
+  <span class="lbl">Proveedor del modelo</span>
+  <div style="display:flex;gap:9px">
+    <div class="sol" style="flex:1;padding:11px;display:flex;flex-direction:column;gap:5px"><div class="t">◉ Nube · Groq</div><div class="t11">tus preguntas salen del equipo</div></div>
+    <div class="bx" style="flex:1;padding:11px;display:flex;flex-direction:column;gap:5px"><div class="t">○ Local · Ollama</div><div class="t11">nada sale del equipo</div></div>
+  </div>
+  <div class="hair"></div>
+  <div class="sol" style="border-width:2px;border-style:solid;padding:13px;display:flex;flex-direction:column;gap:8px;background:#faf6ef">
+    <span class="lbl">Sin conexión con el proveedor</span>
+    <div class="t14">No he podido contactar con Groq</div>
+    <div class="t11">Tu equipo sigue protegido; solo está en pausa la conversación.</div>
+    <div style="display:flex;gap:8px"><div class="sol" style="flex:1;padding:6px;text-align:center"><span class="t">Reintentar</span></div><div class="bx" style="flex:1;padding:6px;text-align:center"><span class="t">Pasar a local</span></div></div>
+  </div>
+  <div class="hair"></div>
+  <span class="lbl">Mientras piensa</span>
+  <div class="bx" style="padding:11px;display:flex;gap:9px;align-items:center"><div class="dot" style="width:10px;height:10px"></div><div style="flex:1;display:flex;flex-direction:column;gap:5px"><div class="t">Consultando Windows Defender…</div><div class="t11">paso 2 de 3 · solo lectura</div></div></div>
+</div>
+</div>
+
+</div>
+
+<p class="dv-next">Prueba a decirme: «seguimos con <a class="dv-oid" href="#1d">1d</a>, pero la confirmación como <a class="dv-oid" href="#1g">1g</a>» · «más variantes de <a class="dv-oid" href="#1c">1c</a>» · «ninguna me convence, nuevas direcciones»</p>
+</section>
+</x-dc>
+</body>
+</html>
