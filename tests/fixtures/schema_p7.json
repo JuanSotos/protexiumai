@@ -1,0 +1,351 @@
+[
+  {
+    "type": "function",
+    "function": {
+      "name": "get_defender_status",
+      "description": "Consulta el estado general de Windows Defender (protección en tiempo real, servicio, firmas, últimos análisis).",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "get_detected_threats",
+      "description": "Lista las amenazas detectadas por Windows Defender.",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "get_firewall_status",
+      "description": "Consulta el estado (activado/desactivado) de los perfiles del firewall de Windows, si las conexiones entrantes están bloqueadas por completo (AllowInboundRules) y si el firewall notifica al bloquear una app (NotifyOnListen).",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "get_active_network_profile",
+      "description": "Consulta qué perfil de red (Dominio/Privada/Pública) está activo ahora mismo y en qué red, complementando el estado de los tres perfiles del firewall.",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "start_quick_scan",
+      "description": "Inicia un análisis rápido de Windows Defender.",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "update_signatures",
+      "description": "Actualiza las firmas de virus de Windows Defender.",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "set_firewall_profile",
+      "description": "Activa o desactiva un perfil concreto del firewall de Windows.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "profile": {
+            "type": "string",
+            "enum": [
+              "Domain",
+              "Private",
+              "Public"
+            ]
+          },
+          "enabled": {
+            "type": "string",
+            "enum": [
+              "True",
+              "False"
+            ]
+          }
+        },
+        "required": [
+          "profile",
+          "enabled"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "set_block_all_incoming",
+      "description": "Bloquea o permite TODAS las conexiones entrantes en un perfil del firewall de Windows. Poner allow_inbound_rules en 'False' bloquea absolutamente todas las conexiones entrantes, incluidas las de las apps de la lista de permitidas — es la opción 'Bloquea todas las conexiones entrantes, incluidas las de la lista de apps permitidas' de la configuración de Windows. Poner 'True' restaura el comportamiento normal (se respeta la lista de apps permitidas).",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "profile": {
+            "type": "string",
+            "enum": [
+              "Domain",
+              "Private",
+              "Public"
+            ]
+          },
+          "allow_inbound_rules": {
+            "type": "string",
+            "enum": [
+              "True",
+              "False"
+            ]
+          }
+        },
+        "required": [
+          "profile",
+          "allow_inbound_rules"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "remove_all_threats",
+      "description": "Elimina todas las amenazas detectadas actualmente por Windows Defender.",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "get_account_info",
+      "description": "Consulta el nombre de la cuenta de Windows con la que se ha iniciado sesión y si pertenece al grupo de administradores locales.",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "start_full_scan",
+      "description": "Inicia un análisis completo de Windows Defender sobre todo el equipo.",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "start_custom_scan",
+      "description": "Inicia un análisis de Windows Defender sobre una carpeta de usuario predefinida (Descargas, Escritorio o Documentos).",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "ruta": {
+            "type": "string",
+            "enum": [
+              "Descargas",
+              "Escritorio",
+              "Documentos"
+            ]
+          }
+        },
+        "required": [
+          "ruta"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "get_allowed_threats",
+      "description": "Consulta las amenazas que el usuario ha permitido explícitamente en Windows Defender.",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "get_defender_exclusions",
+      "description": "Consulta las exclusiones configuradas actualmente en Windows Defender (rutas, extensiones y procesos).",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "get_defender_preferences",
+      "description": "Consulta ajustes de protección de Windows Defender: Controlled Folder Access, protección en la nube, envío automático de muestras y si el bloqueo de aplicaciones potencialmente no deseadas (PUA) está activo.",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "get_exploit_protection_status",
+      "description": "Consulta la configuración de Exploit Protection a nivel de sistema (DEP, ASLR, CFG, SEHOP y el resto de mitigaciones que expone Get-ProcessMitigation).",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "get_allowed_firewall_rules",
+      "description": "Consulta de solo lectura de las reglas de entrada actualmente habilitadas y permitidas en el firewall de Windows (nombre visible de la regla y perfil al que aplica). No crea, habilita ni deshabilita ninguna regla.",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "restore_firewall_defaults",
+      "description": "ACCIÓN DE ALTO IMPACTO: restaura TODAS las reglas del firewall de Windows a los valores de fábrica, incluidas las reglas personalizadas que el usuario haya creado fuera de ProtexiumAI. No se puede deshacer.",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "get_core_isolation_status",
+      "description": "Consulta el estado de Core isolation (integridad de memoria/HVCI, Credential Guard, System Guard) mediante la clase WMI oficial de Device Guard.",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "get_secure_boot_status",
+      "description": "Consulta si el arranque seguro (Secure Boot) está activo.",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "get_tpm_status",
+      "description": "Consulta el estado del procesador de seguridad (TPM): si está presente, listo, activado y su fabricante/versión.",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "get_bitlocker_status",
+      "description": "Consulta el estado de cifrado de dispositivo (BitLocker) de los volúmenes del equipo.",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "get_storage_status",
+      "description": "Consulta el espacio libre y total de las unidades de almacenamiento del equipo.",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "get_battery_status",
+      "description": "Consulta el estado y la carga estimada de la batería. Si el equipo es de sobremesa y no tiene batería, la consulta no falla: no hay salida de PowerShell y el resultado es data=None, que debe explicarse al usuario como 'este equipo no tiene batería', nunca como un error o un fallo de la herramienta.",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "get_time_service_status",
+      "description": "Consulta si el servicio de hora de Windows (sincronización del reloj del sistema) está en ejecución.",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      }
+    }
+  }
+]

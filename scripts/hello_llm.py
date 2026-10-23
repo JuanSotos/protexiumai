@@ -9,7 +9,7 @@ from openai import APIConnectionError, APIError, AuthenticationError, OpenAI
 sys.stdout.reconfigure(encoding="utf-8")
 
 BASE_URL = "https://api.groq.com/openai/v1"
-MODEL = "llama-3.3-70b-versatile"
+MODEL = "openai/gpt-oss-20b"
 PREGUNTA = "Responde en una frase: ¿estás operativo?"
 
 
@@ -31,6 +31,8 @@ def main() -> None:
         respuesta = cliente.chat.completions.create(
             model=MODEL,
             messages=[{"role": "user", "content": PREGUNTA}],
+            # Modelo de razonamiento en Groq: sin limitar el esfuerzo supera el límite de tokens/min.
+            reasoning_effort="low",
         )
     except AuthenticationError:
         print(

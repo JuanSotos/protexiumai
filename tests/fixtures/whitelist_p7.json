@@ -1,0 +1,253 @@
+{
+  "get_defender_status": {
+    "id": "get_defender_status",
+    "descripcion": "Consulta el estado general de Windows Defender (protección en tiempo real, servicio, firmas, últimos análisis).",
+    "plantilla": "Get-MpComputerStatus | Select-Object AMServiceEnabled, AntispywareEnabled, AntivirusEnabled, RealTimeProtectionEnabled, NISEnabled, AntivirusSignatureLastUpdated, AntispywareSignatureLastUpdated, QuickScanEndTime, FullScanEndTime, ComputerState | ConvertTo-Json",
+    "parametros": {},
+    "nivel": "lectura",
+    "requiere_admin": false,
+    "timeout_s": 15
+  },
+  "get_detected_threats": {
+    "id": "get_detected_threats",
+    "descripcion": "Lista las amenazas detectadas por Windows Defender.",
+    "plantilla": "Get-MpThreatDetection | ConvertTo-Json -Depth 3",
+    "parametros": {},
+    "nivel": "lectura",
+    "requiere_admin": false,
+    "timeout_s": 15
+  },
+  "get_firewall_status": {
+    "id": "get_firewall_status",
+    "descripcion": "Consulta el estado (activado/desactivado) de los perfiles del firewall de Windows, si las conexiones entrantes están bloqueadas por completo (AllowInboundRules) y si el firewall notifica al bloquear una app (NotifyOnListen).",
+    "plantilla": "Get-NetFirewallProfile | Select-Object Name, Enabled, AllowInboundRules, NotifyOnListen | ConvertTo-Json",
+    "parametros": {},
+    "nivel": "lectura",
+    "requiere_admin": false,
+    "timeout_s": 15
+  },
+  "get_active_network_profile": {
+    "id": "get_active_network_profile",
+    "descripcion": "Consulta qué perfil de red (Dominio/Privada/Pública) está activo ahora mismo y en qué red, complementando el estado de los tres perfiles del firewall.",
+    "plantilla": "Get-NetConnectionProfile | Select-Object Name, InterfaceAlias, NetworkCategory | ConvertTo-Json",
+    "parametros": {},
+    "nivel": "lectura",
+    "requiere_admin": false,
+    "timeout_s": 15
+  },
+  "start_quick_scan": {
+    "id": "start_quick_scan",
+    "descripcion": "Inicia un análisis rápido de Windows Defender.",
+    "plantilla": "Start-MpScan -ScanType QuickScan",
+    "parametros": {},
+    "nivel": "accion",
+    "requiere_admin": true,
+    "timeout_s": 600
+  },
+  "update_signatures": {
+    "id": "update_signatures",
+    "descripcion": "Actualiza las firmas de virus de Windows Defender.",
+    "plantilla": "Update-MpSignature",
+    "parametros": {},
+    "nivel": "accion",
+    "requiere_admin": true,
+    "timeout_s": 120
+  },
+  "set_firewall_profile": {
+    "id": "set_firewall_profile",
+    "descripcion": "Activa o desactiva un perfil concreto del firewall de Windows.",
+    "plantilla": "Set-NetFirewallProfile -Profile {profile} -Enabled {enabled}",
+    "parametros": {
+      "profile": [
+        "Domain",
+        "Private",
+        "Public"
+      ],
+      "enabled": [
+        "True",
+        "False"
+      ]
+    },
+    "nivel": "mutante",
+    "requiere_admin": true,
+    "timeout_s": 30
+  },
+  "set_block_all_incoming": {
+    "id": "set_block_all_incoming",
+    "descripcion": "Bloquea o permite TODAS las conexiones entrantes en un perfil del firewall de Windows. Poner allow_inbound_rules en 'False' bloquea absolutamente todas las conexiones entrantes, incluidas las de las apps de la lista de permitidas — es la opción 'Bloquea todas las conexiones entrantes, incluidas las de la lista de apps permitidas' de la configuración de Windows. Poner 'True' restaura el comportamiento normal (se respeta la lista de apps permitidas).",
+    "plantilla": "Set-NetFirewallProfile -Profile {profile} -AllowInboundRules {allow_inbound_rules}",
+    "parametros": {
+      "profile": [
+        "Domain",
+        "Private",
+        "Public"
+      ],
+      "allow_inbound_rules": [
+        "True",
+        "False"
+      ]
+    },
+    "nivel": "mutante",
+    "requiere_admin": true,
+    "timeout_s": 30
+  },
+  "remove_all_threats": {
+    "id": "remove_all_threats",
+    "descripcion": "Elimina todas las amenazas detectadas actualmente por Windows Defender.",
+    "plantilla": "Remove-MpThreat",
+    "parametros": {},
+    "nivel": "mutante",
+    "requiere_admin": true,
+    "timeout_s": 60
+  },
+  "get_account_info": {
+    "id": "get_account_info",
+    "descripcion": "Consulta el nombre de la cuenta de Windows con la que se ha iniciado sesión y si pertenece al grupo de administradores locales.",
+    "plantilla": "$p = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent()); [PSCustomObject]@{ Usuario = $p.Identity.Name; EsAdministradorLocal = $p.IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator) } | ConvertTo-Json",
+    "parametros": {},
+    "nivel": "lectura",
+    "requiere_admin": false,
+    "timeout_s": 15
+  },
+  "start_full_scan": {
+    "id": "start_full_scan",
+    "descripcion": "Inicia un análisis completo de Windows Defender sobre todo el equipo.",
+    "plantilla": "Start-MpScan -ScanType FullScan",
+    "parametros": {},
+    "nivel": "accion",
+    "requiere_admin": true,
+    "timeout_s": 3600
+  },
+  "start_custom_scan": {
+    "id": "start_custom_scan",
+    "descripcion": "Inicia un análisis de Windows Defender sobre una carpeta de usuario predefinida (Descargas, Escritorio o Documentos).",
+    "plantilla": "$rutas = @{{ 'Descargas' = \"$env:USERPROFILE\\Downloads\"; 'Escritorio' = \"$env:USERPROFILE\\Desktop\"; 'Documentos' = \"$env:USERPROFILE\\Documents\" }}; Start-MpScan -ScanType CustomScan -ScanPath $rutas['{ruta}']",
+    "parametros": {
+      "ruta": [
+        "Descargas",
+        "Escritorio",
+        "Documentos"
+      ]
+    },
+    "nivel": "accion",
+    "requiere_admin": true,
+    "timeout_s": 900
+  },
+  "get_allowed_threats": {
+    "id": "get_allowed_threats",
+    "descripcion": "Consulta las amenazas que el usuario ha permitido explícitamente en Windows Defender.",
+    "plantilla": "Get-MpPreference | Select-Object ThreatIDDefaultAction_Ids, ThreatIDDefaultAction_Actions | ConvertTo-Json",
+    "parametros": {},
+    "nivel": "lectura",
+    "requiere_admin": false,
+    "timeout_s": 15
+  },
+  "get_defender_exclusions": {
+    "id": "get_defender_exclusions",
+    "descripcion": "Consulta las exclusiones configuradas actualmente en Windows Defender (rutas, extensiones y procesos).",
+    "plantilla": "Get-MpPreference | Select-Object ExclusionPath, ExclusionExtension, ExclusionProcess | ConvertTo-Json",
+    "parametros": {},
+    "nivel": "lectura",
+    "requiere_admin": true,
+    "timeout_s": 15
+  },
+  "get_defender_preferences": {
+    "id": "get_defender_preferences",
+    "descripcion": "Consulta ajustes de protección de Windows Defender: Controlled Folder Access, protección en la nube, envío automático de muestras y si el bloqueo de aplicaciones potencialmente no deseadas (PUA) está activo.",
+    "plantilla": "Get-MpPreference | Select-Object EnableControlledFolderAccess, MAPSReporting, SubmitSamplesConsent, PUAProtection | ConvertTo-Json",
+    "parametros": {},
+    "nivel": "lectura",
+    "requiere_admin": false,
+    "timeout_s": 15
+  },
+  "get_exploit_protection_status": {
+    "id": "get_exploit_protection_status",
+    "descripcion": "Consulta la configuración de Exploit Protection a nivel de sistema (DEP, ASLR, CFG, SEHOP y el resto de mitigaciones que expone Get-ProcessMitigation).",
+    "plantilla": "Get-ProcessMitigation -System | ConvertTo-Json -Depth 4",
+    "parametros": {},
+    "nivel": "lectura",
+    "requiere_admin": false,
+    "timeout_s": 30
+  },
+  "get_allowed_firewall_rules": {
+    "id": "get_allowed_firewall_rules",
+    "descripcion": "Consulta de solo lectura de las reglas de entrada actualmente habilitadas y permitidas en el firewall de Windows (nombre visible de la regla y perfil al que aplica). No crea, habilita ni deshabilita ninguna regla.",
+    "plantilla": "Get-NetFirewallRule -Direction Inbound -Action Allow -Enabled True | Select-Object DisplayName, Profile | ConvertTo-Json",
+    "parametros": {},
+    "nivel": "lectura",
+    "requiere_admin": false,
+    "timeout_s": 20
+  },
+  "restore_firewall_defaults": {
+    "id": "restore_firewall_defaults",
+    "descripcion": "ACCIÓN DE ALTO IMPACTO: restaura TODAS las reglas del firewall de Windows a los valores de fábrica, incluidas las reglas personalizadas que el usuario haya creado fuera de ProtexiumAI. No se puede deshacer.",
+    "plantilla": "netsh advfirewall reset | Out-Null",
+    "parametros": {},
+    "nivel": "mutante",
+    "requiere_admin": true,
+    "timeout_s": 60
+  },
+  "get_core_isolation_status": {
+    "id": "get_core_isolation_status",
+    "descripcion": "Consulta el estado de Core isolation (integridad de memoria/HVCI, Credential Guard, System Guard) mediante la clase WMI oficial de Device Guard.",
+    "plantilla": "Get-CimInstance -Namespace root\\Microsoft\\Windows\\DeviceGuard -ClassName Win32_DeviceGuard | ConvertTo-Json -Depth 3",
+    "parametros": {},
+    "nivel": "lectura",
+    "requiere_admin": false,
+    "timeout_s": 15
+  },
+  "get_secure_boot_status": {
+    "id": "get_secure_boot_status",
+    "descripcion": "Consulta si el arranque seguro (Secure Boot) está activo.",
+    "plantilla": "try { [PSCustomObject]@{ SecureBootEnabled = (Confirm-SecureBootUEFI) } | ConvertTo-Json } catch { [PSCustomObject]@{ SecureBootEnabled = $null; Error = $_.Exception.Message } | ConvertTo-Json }",
+    "parametros": {},
+    "nivel": "lectura",
+    "requiere_admin": true,
+    "timeout_s": 15
+  },
+  "get_tpm_status": {
+    "id": "get_tpm_status",
+    "descripcion": "Consulta el estado del procesador de seguridad (TPM): si está presente, listo, activado y su fabricante/versión.",
+    "plantilla": "Get-Tpm | Select-Object TpmPresent, TpmReady, TpmEnabled, TpmActivated, ManufacturerIdTxt, ManufacturerVersion | ConvertTo-Json",
+    "parametros": {},
+    "nivel": "lectura",
+    "requiere_admin": true,
+    "timeout_s": 15
+  },
+  "get_bitlocker_status": {
+    "id": "get_bitlocker_status",
+    "descripcion": "Consulta el estado de cifrado de dispositivo (BitLocker) de los volúmenes del equipo.",
+    "plantilla": "Get-BitLockerVolume | Select-Object MountPoint, VolumeStatus, ProtectionStatus, EncryptionPercentage | ConvertTo-Json",
+    "parametros": {},
+    "nivel": "lectura",
+    "requiere_admin": true,
+    "timeout_s": 15
+  },
+  "get_storage_status": {
+    "id": "get_storage_status",
+    "descripcion": "Consulta el espacio libre y total de las unidades de almacenamiento del equipo.",
+    "plantilla": "Get-Volume | Where-Object { $_.DriveLetter } | Select-Object DriveLetter, FileSystemLabel, SizeRemaining, Size | ConvertTo-Json",
+    "parametros": {},
+    "nivel": "lectura",
+    "requiere_admin": false,
+    "timeout_s": 15
+  },
+  "get_battery_status": {
+    "id": "get_battery_status",
+    "descripcion": "Consulta el estado y la carga estimada de la batería. Si el equipo es de sobremesa y no tiene batería, la consulta no falla: no hay salida de PowerShell y el resultado es data=None, que debe explicarse al usuario como 'este equipo no tiene batería', nunca como un error o un fallo de la herramienta.",
+    "plantilla": "Get-CimInstance -ClassName Win32_Battery | Select-Object EstimatedChargeRemaining, BatteryStatus | ConvertTo-Json",
+    "parametros": {},
+    "nivel": "lectura",
+    "requiere_admin": false,
+    "timeout_s": 15
+  },
+  "get_time_service_status": {
+    "id": "get_time_service_status",
+    "descripcion": "Consulta si el servicio de hora de Windows (sincronización del reloj del sistema) está en ejecución.",
+    "plantilla": "Get-Service -Name W32Time | Select-Object Status, StartType | ConvertTo-Json",
+    "parametros": {},
+    "nivel": "lectura",
+    "requiere_admin": false,
+    "timeout_s": 15
+  }
+}

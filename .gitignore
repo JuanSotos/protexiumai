@@ -1,12 +1,19 @@
 # Entorno
 .env
 venv/
+.venv/
 __pycache__/
 *.pyc
 *.pyo
 
-# Logs
+# Logs y datos locales (la auditoría vive en logs/audit.jsonl)
 logs/
+data/
+*.jsonl
+
+# Cobertura
+.coverage
+htmlcov/
 
 # Herramientas y editores
 .pytest_cache/

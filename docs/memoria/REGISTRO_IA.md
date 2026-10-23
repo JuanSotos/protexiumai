@@ -1,0 +1,50 @@
+# Registro de uso de IA
+
+## Escala de automatización
+
+- **N0 Sin IA:** hecho a mano por el alumno.
+- **N1 Asistencia puntual:** consulta, explicación o fragmento suelto.
+- **N2 Generación supervisada de fragmentos:** la IA propone, el alumno integra y adapta.
+- **N3 Generación de módulo completo con revisión humana del diff.**
+- **N4 Desarrollo agéntico completo:** Claude Code planifica, implementa, ejecuta tests e itera dentro de la fase; el alumno aprueba el plan y revisa el resultado.
+
+## Criterios y fuentes
+
+- **Herramienta y modelo:** Claude Code con Sonnet 5.5 (`claude-sonnet-5-5`) en todas las fases, según indica el autor.
+- **Fechas, commits y tamaño del cambio:** extraídos de `git log` y `git show --shortstat`. El detalle de cada fase está en el historial de commits.
+- **Nivel (N0–N4):** propuesto a partir del tamaño y la naturaleza del cambio de cada commit. Se asigna **N3** cuando el commit entrega un módulo o conjunto de módulos completos (cientos de líneas con sus tests) y **N2** cuando son fragmentos pequeños o piezas de apoyo que el alumno define y la IA redacta. No se asigna N4 a P0–P6 porque el repositorio no permite acreditar que la IA iterara por su cuenta dentro de cada fase, y el autor indica que no todo lo hizo la IA. Es una propuesta razonada que el autor puede ajustar; el reparto entre la IA y el alumno está al final del documento.
+- **Aceptado / corregido:** por indicación del autor, el código generado se aceptó tal cual en todas las fases y no se registra ninguna corrección propia. Cualquier corrección real debe anotarse además en `INCIDENCIAS_IA.md`.
+
+| Fase | Fecha | Herramienta y modelo | Tarea | Nivel (N0–N4) | Qué generó la IA | Aceptado sin cambios | Corregido por el alumno (y por qué) | Commit |
+|---|---|---|---|---|---|---|---|---|
+| P0 | 2026-08-27 | Claude Code, Sonnet 5.5 | Estructura inicial del proyecto (andamiaje). Detalle en el historial de commits. | N2 | Esqueleto de carpetas y módulos (`src/`, `cli.py`, `app/streamlit_app.py`), `requirements.txt`, `.gitignore`, `.env.example` y `README.md` (16 ficheros, 162 líneas). | Todo | Ninguna registrada | `2728b9a` |
+| P1 | 2026-08-27 | Claude Code, Sonnet 5.5 | Scripts de verificación de la Fase 0 (LLM y PowerShell). Detalle en el historial de commits. | N2 | `scripts/hello_llm.py` y `scripts/hello_ps.py` (145 líneas). | Todo | Ninguna registrada | `7922ebd` |
+| P2 | 2026-08-28 | Claude Code, Sonnet 5.5 | Capa ejecutora con WHITELIST, auditoría y tests. Detalle en el historial de commits. | N3 | `src/executor.py`, `src/audit.py`, `tests/conftest.py`, `tests/test_executor.py` y `scripts/verificar_whitelist.py` (689 líneas). | Todo | Ninguna registrada | `6c3d8c2` |
+| P3 | 2026-08-28 | Claude Code, Sonnet 5.5 | Agente conversacional y chat por consola. Detalle en el historial de commits. | N3 | `src/agent.py`, `src/tools_schema.py`, `src/config.py`, `cli.py`, `tests/test_agent.py` y `tests/test_tools_schema.py` (631 líneas). | Todo | Ninguna registrada | `76ffdcd` |
+| P4 | 2026-08-28 | Claude Code, Sonnet 5.5 | Interfaz Streamlit con confirmación por botones. Detalle en el historial de commits. | N3 | `app/streamlit_app.py` y ajustes en `src/agent.py` y `src/config.py` (339 líneas añadidas). | Todo | Ninguna registrada | `b87ba23` |
+| P5 | 2026-08-28 | Claude Code, Sonnet 5.5 | Modo privado con Ollama: auditoría por proveedor y verificación end-to-end. Detalle en el historial de commits. | N2 | Cambios acotados en módulos existentes (`src/agent.py`, `src/executor.py`, interfaz), `scripts/check_local.py`, ampliación de tests y sección de README (143 líneas añadidas). | Todo | Ninguna registrada | `b22a112` |
+| P6 | 2026-08-28 | Claude Code, Sonnet 5.5 | Guion de demo para la defensa y tests de inyección de prompts. Detalle en el historial de commits. | N2 | Redacción de `docs/demo_escenarios.md` y `tests/test_injection.py` (3 tests) (354 líneas). | Todo | Ninguna registrada | `6d228a1` |
+| Post-P6 | 2026-09-01 | Claude Code, Sonnet 5.5 | Ampliación de la WHITELIST de 7 a 25 herramientas, con tests y documento de cobertura. Detalle en el historial de commits. | N3 | Las 18 herramientas nuevas en `src/executor.py`, sus tests (`test_executor.py`, `test_agent.py`, `test_tools_schema.py`) y `docs/cobertura_windows_security.md` (1530 líneas añadidas). | Todo | Ninguna registrada | `1aee76d` |
+| Post-P6 | 2026-09-01 | Paquete de diseño externo al código del proyecto | Incorporación del paquete de diseño de la interfaz (handoff). Detalle en el historial de commits. | N/A (material de diseño, no código del proyecto) | Ficheros de referencia de diseño en HTML/CSS/JS y documentos de entrega (9 ficheros, 4114 líneas) que sirven de especificación, no de código de producción. | Todo (se incorpora como referencia) | Ninguna registrada | `3d9b3cb` |
+| Post-P6 | 2026-09-01 | Claude Code, Sonnet 5.5 | Módulos de apoyo de la interfaz (textos, lecturas, auditoría, cliente observado). Detalle en el historial de commits. | N3 | `app/textos.py`, `app/lecturas.py`, `app/auditoria.py`, `app/cliente_observado.py` y sus tests (`test_auditoria.py`, `test_cliente_observado.py`, `test_textos.py`) (2111 líneas). | Todo | Ninguna registrada | `4ae26e3` |
+| Post-P6 | 2026-09-01 | Claude Code, Sonnet 5.5 | Reescritura de la vista Streamlit según el rediseño. Detalle en el historial de commits. | N3 | Tema, `app/estilos.css`, `.streamlit/config.toml` y reescritura de `app/streamlit_app.py` (2877 líneas añadidas, 156 eliminadas). | Todo | Ninguna registrada | `26cbe3b` |
+| P7 | 2026-10-22 | Claude Code, Sonnet 5.5 (`claude-sonnet-5-5`) | Línea base de la entrega intermedia: inventario, batería base, instantánea del esquema de herramientas, andamiaje `docs/memoria/`, test anti-secretos, `requirements-dev.txt` y reglas v2 en `CLAUDE.md`. Sin funcionalidad nueva. | N4 | Inventario (`estado_inicial.md`), plantillas de `docs/memoria/`, `tests/test_repo_sin_secretos.py`, `tests/fixtures/schema_p7.json`, `requirements-dev.txt`, ajustes en `.gitignore`, `.env.example` y `scripts/hello_llm.py`; el texto de las reglas v2 lo aportó el autor y la IA lo insertó sin cambios. | Todo lo generado, pendiente de que el autor revise el diff antes del commit | Ninguna registrada hasta ahora | pendiente (lo hará Juan) |
+| P8 | 2026-10-23 | Claude Code, Sonnet 5.5 (`claude-sonnet-5-5`) | Migración de la WHITELIST en código al catálogo YAML validado (F03): esquema estricto, lista de denegación, fusión de marcos desde CSV y presupuesto de tokens. Sin cambio de comportamiento de las 25 herramientas. | N4 | `src/catalogo.py`, `catalogo/` (`herramientas_llm.yaml` generado a partir del código anterior, `_ESQUEMA.md`, `mapeo_marcos.csv` vacío), adaptación de `src/executor.py` y `src/tools_schema.py`, `tests/test_catalogo.py`, `tests/test_catalogo_regresion.py`, `tests/fixtures/whitelist_p7.json`, `pyyaml` en `requirements.txt` y actualización de la memoria. La asignación de `area`, `sensibilidad` y `riesgo` a las 25 herramientas es una propuesta de la IA que Juan debe revisar. | Todo lo generado, pendiente de que el autor revise el diff antes del commit | Ninguna registrada hasta ahora | pendiente (lo hará Juan) |
+
+## Reparto entre la IA y el alumno
+
+Tabla de qué pudo hacer cada parte. La columna del alumno sale de lo que consta en el repositorio (reglas y arquitectura de `CLAUDE.md`, la regla 6 de «petición explícita de Juan», la regla 17 de pruebas en VM y los prompts de fase) y es una propuesta que el autor debe validar y completar con lo que recuerde.
+
+| Fase | Pudo hacerlo la IA | Corresponde al alumno |
+|---|---|---|
+| P0 | Crear carpetas, módulos vacíos, ficheros de configuración y README. | Fijar el alcance del TFG, la arquitectura (agente, executor, PowerShell) y las 8 reglas de seguridad de `CLAUDE.md`; elegir proveedores (Groq y Ollama) y el plan de fases P0–P6. |
+| P1 | Escribir los dos scripts de «hola mundo». | Obtener la API key, ejecutar los scripts y comprobar que el LLM y PowerShell responden en su equipo. |
+| P2 | Implementar la WHITELIST, la validación por enums, los niveles, la auditoría y los tests. | Decidir qué cmdlets entran en la WHITELIST y con qué nivel, exigir auditoría total y confirmación humana, y revisar que ningún texto libre llegue al comando. |
+| P3 | Implementar el bucle de function calling, el system prompt, el esquema generado desde la WHITELIST y el CLI. | Decidir que el esquema salga de la WHITELIST y no a mano, aprobar el diseño de la confirmación, y probar la conversación. |
+| P4 | Construir la interfaz Streamlit y los botones de confirmación. | Definir qué debe ver el usuario doméstico y probar la interfaz. |
+| P5 | Parametrizar el proveedor, añadir la auditoría por proveedor y el script de comprobación. | Instalar Ollama, elegir el modelo local, ejecutar la verificación end-to-end (documentada en el README) y decidir el modo privado. |
+| P6 | Redactar el guion y los tests de inyección. | Elegir los escenarios de la defensa, preparar los snapshots de la VM («Base limpia», «Demo lista») y ensayar el guion. |
+| Post-P6 (WHITELIST a 25) | Implementar las 18 herramientas nuevas y sus tests. | Pedir cada ampliación de forma explícita (regla 6), decidir qué grupos de Windows Security entran y cuáles quedan fuera, y validar los casos reales en la VM. |
+| Post-P6 (diseño y vista) | Implementar módulos de apoyo y recrear la vista según el diseño. | Aportar el diseño y revisar el resultado visual. |
+| P7 | Inventariar, ejecutar la batería, generar las plantillas y el test de secretos. | Aprobar el plan, dictar las reglas v2 y las plantillas de evidencias, revisar el diff y hacer el commit. |
+| P8 | Migrar las plantillas al YAML, escribir el cargador, la lista de denegación, la fusión de marcos y los tests. | Autorizar la migración (regla 6), fijar el esquema y la lista de denegación, rellenar `mapeo_marcos.csv` con identificadores verificados (regla 15), revisar el reparto de áreas/sensibilidad y hacer el commit. |

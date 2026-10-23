@@ -38,6 +38,19 @@ Estas reglas son el núcleo del proyecto y de su valor académico. No las relaje
 7. **Sin elevación automática.** Si una herramienta requiere administrador y el proceso no está elevado, se devuelve un error explicativo. Nunca se intenta elevar privilegios desde el código.
 8. **Sin credenciales.** El proyecto no pide, procesa ni almacena contraseñas del usuario. Las API keys viven solo en `.env` (que está en `.gitignore`).
 
+## Reglas multiplataforma (v2)
+
+9. El catálogo (catalogo/**/*.yaml) es la única fuente de verdad. El esquema que ve el LLM y la capa ejecutora se generan o leen a partir de él. Prohibido definir herramientas o comandos fuera del catálogo.
+10. Linux: subprocess con lista de argumentos y shell=False, ruta absoluta del binario resuelta con shutil.which durante la detección de capacidades, entorno mínimo y fijo (LC_ALL=C, PATH fijo) y timeout. Nunca sudo, su, pkexec ni doas.
+11. Windows: PowerShell con -NoProfile -NonInteractive y sin ventana (CREATE_NO_WINDOW). Las lecturas de registro usan winreg en modo solo lectura.
+12. Toda acción que modifique el sistema implementará check/plan/apply/verify/rollback, y la confirmación del usuario quedará ligada al plan mostrado.
+13. Los parámetros de una acción solo pueden venir de enums del catálogo o de identificadores de hallazgos de la sesión. Nunca rutas, nombres ni texto libre producidos por el LLM.
+14. Estados de resultado normalizados: cumple, no_cumple, no_aplicable, requiere_privilegios, manual, error. Un motor o binario ausente produce no_aplicable, nunca una excepción.
+15. Los mapeos a marcos (CIS, CIS Controls, CCN-STIC, ATT&CK, D3FEND, ENS) no se inventan. Solo son válidos los aportados por Juan con verificado: true; las propuestas de la IA se marcan verificado: false.
+16. Evidencias: al terminar cada fase, actualizar docs/memoria (REGISTRO_IA, ESTADO_FUNCIONALIDADES, PRUEBAS y, si procede, CAMBIOS) y guardar la salida de pytest en docs/memoria/evidencias/. INCIDENCIAS_IA solo recoge incidencias reales.
+17. Las pruebas con efectos sobre el sistema se ejecutan solo en máquinas virtuales y las lanza Juan.
+18. Las 8 reglas originales siguen vigentes. Que un prompt de fase autorice expresamente nuevas herramientas cuenta como la "petición explícita de Juan" de la regla 6.
+
 ## Stack y convenciones
 
 - Python 3.11+, entorno virtual `venv/`.
