@@ -203,7 +203,7 @@ Niveles de `REGISTRO_IA.md`: N2 generación supervisada de fragmentos, N3 módul
 | P7 Línea base | 2026-10-22 | `4b5c408` (junto con P8) | — | N4 |
 | P8 Catálogo YAML | 2026-10-23 | `4b5c408` | 31 ficheros, +3.175 −380 (P7 + P8) | N4 |
 | P9 Plataforma | 2026-10-24 | `2f1723c` | 27 ficheros, +1.534 −12 | N4 |
-| P10 Entrega intermedia | 2026-10-24 | pendiente (lo hará Juan) | sin funcionalidad nueva | N4 (propuesto) |
+| P10 Entrega intermedia | 2026-10-24 | `f22343c`, `0bf0154`, `68e4bf1` (parcial) | sin funcionalidad nueva | N4 (propuesto) |
 
 Recuento: 14 filas con nivel (sin contar P10): N2 = 4 (P0, P1, P5, P6), N3 = 6, N4 = 3 (P7, P8, P9), N/A = 1; con P10, N4 = 4. No hay filas N0 ni N1 en el registro. Todo el código generado figura como aceptado sin cambios.
 
