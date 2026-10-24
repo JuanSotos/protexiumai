@@ -56,6 +56,11 @@ def construir_whitelist(cat: catalogo.Catalogo) -> dict[str, ToolSpec]:
 # catálogo no valida, la importación falla: nunca se ejecuta con una WHITELIST a medias.
 WHITELIST: dict[str, ToolSpec] = construir_whitelist(catalogo.cargar_catalogo())
 
+# Codificación con la que PowerShell escribe su salida al estar redirigida: la página de códigos OEM
+# de la consola (cp850 en un Windows en español), no la ANSI (cp1252) que Python usaría por defecto.
+# Sin esto, «ó», «á» e «í» llegan como «¢», un espacio duro y «¡» (INC-10).
+CODIFICACION_SALIDA = "oem" if sys.platform == "win32" else "utf-8"
+
 
 def _es_administrador() -> bool:
     """Comprueba si el proceso actual se ejecuta con privilegios de administrador en Windows."""
@@ -250,7 +255,13 @@ def execute(tool_id: str, params: dict[str, Any], *, proveedor: str | None = Non
     # 6) ejecución
     comando_completo = ["powershell.exe", "-NoProfile", "-NonInteractive", "-Command", comando_str]
     try:
-        proceso = subprocess.run(comando_completo, capture_output=True, text=True, timeout=spec.timeout_s)
+        proceso = subprocess.run(
+            comando_completo,
+            capture_output=True,
+            encoding=CODIFICACION_SALIDA,
+            errors="replace",
+            timeout=spec.timeout_s,
+        )
     except FileNotFoundError:
         resultado = _construir_resultado(
             ok=False,

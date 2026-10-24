@@ -6,8 +6,10 @@ PowerShell real ni toca logs/audit.jsonl (ver fixture autouse en conftest.py).
 
 from __future__ import annotations
 
+import ctypes
 import json
 import subprocess
+import sys
 from unittest.mock import Mock, patch
 
 import pytest
@@ -1064,3 +1066,22 @@ def test_execute_aborta_mutante_si_falla_auditoria_previa():
 
     assert resultado["ok"] is False
     mock_run.assert_not_called()
+
+
+def test_la_salida_de_powershell_se_decodifica_con_la_codificacion_de_la_consola():
+    with patch("src.executor.subprocess.run", return_value=_proceso_ok()) as mock_run:
+        executor.execute("get_defender_status", {})
+
+    argumentos = mock_run.call_args.kwargs
+    assert argumentos["encoding"] == executor.CODIFICACION_SALIDA
+    assert argumentos["errors"] == "replace"
+    assert "text" not in argumentos
+
+
+@pytest.mark.skipif(sys.platform != "win32", reason="La página de códigos OEM solo existe en Windows")
+def test_las_tildes_de_la_consola_oem_no_se_corrompen():
+    # Bytes que escribiría PowerShell en la página OEM del equipo (cp850 en un Windows en español).
+    pagina_oem = f"cp{ctypes.windll.kernel32.GetOEMCP()}"
+    texto = "Optimización de distribución, característica dinámica"
+
+    assert texto.encode(pagina_oem).decode(executor.CODIFICACION_SALIDA) == texto
