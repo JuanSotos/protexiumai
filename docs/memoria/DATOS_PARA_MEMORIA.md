@@ -1,6 +1,6 @@
-# Datos para la memoria (P10, 2026-10-24)
+# Datos para la memoria (P10, 2026-10-25)
 
-Cifras extraídas del repositorio en el estado de la entrega intermedia (rama `master`, último commit `2f1723c`, más los ficheros de P10 aún sin confirmar). Nada está estimado: cada cifra sale de un comando o de un fichero que se cita. Donde una cifra es una aproximación (los tokens) o una clasificación hecha por reglas (los tipos de test) se dice expresamente.
+Cifras extraídas del repositorio en el estado de la entrega intermedia (rama `master`, tras las correcciones de las pruebas en la VM, último commit de código `cf19e7d`). Las cifras de este documento se regeneraron el 25/10/2026 con la batería de 458 tests; la composición por fichero y tipo y la cobertura son las de esa ejecución. Nada está estimado: cada cifra sale de un comando o de un fichero que se cita. Donde una cifra es una aproximación (los tokens) o una clasificación hecha por reglas (los tipos de test) se dice expresamente.
 
 ## 0. Cómo se obtuvieron
 
@@ -15,11 +15,11 @@ Cifras extraídas del repositorio en el estado de la entrega intermedia (rama `m
 | Mapeos a marcos | `catalogo/mapeo_marcos.csv` y campo `marcos` del catálogo |
 | Commits y tamaños | `git log` y `git show --shortstat` |
 
-Entorno de la batería: Windows 11, Python 3.14.7, pytest 9.1.1, pytest-cov 7.1.0.
+Entorno de la batería: Windows 11, Python 3.14.7, pytest 9.1.1, pytest-cov 7.1.0. La misma batería, ejecutada en la VM (Windows 11 Home, compilación 26300, Python 3.13.14), también da 458 correctos (`evidencias/vm/vm_01_pytest.txt`).
 
 ## 1. Tests
 
-Resultado final: **454 pasan, 0 fallan, 0 errores, 0 omitidos** en 11,6 s (`evidencias/P10_pytest_final.txt`). Se comprobó además que un clon limpio del repositorio, con un entorno virtual nuevo e `pip install -r requirements-dev.txt`, pasa los mismos 454.
+Resultado final: **458 pasan, 0 fallan, 0 errores, 0 omitidos** en 12,9 s (`evidencias/P10_pytest_final.txt`). Un clon limpio del repositorio, con un entorno virtual nuevo e `pip install -r requirements-dev.txt`, pasó los 454 de la primera batería; la instalación desde cero en la VM pasó después los 458.
 
 ### 1.1 Evolución
 
@@ -29,18 +29,19 @@ Resultado final: **454 pasan, 0 fallan, 0 errores, 0 omitidos** en 11,6 s (`evid
 | Tras P7 (test de secretos) | 195 | +10 | `evidencias/P07_pytest_final.txt` |
 | Tras P8 (catálogo) | 355 | +160 | `evidencias/P08_pytest.txt` |
 | Tras P9 (plataforma) | 454 | +99 | `evidencias/P09_pytest.txt` |
-| **Ahora (P10)** | **454** | 0 | `evidencias/P10_pytest_final.txt` |
+| Tras P10 (batería con cobertura) | 454 | 0 | primera versión de `evidencias/P10_pytest_final.txt` |
+| **Ahora (tras las pruebas en la VM)** | **458** | +4 | `evidencias/P10_pytest_final.txt` (regenerado), `evidencias/vm/vm_01_pytest.txt` |
 
-Entre el inicio y ahora hay **269 tests más** (+145 %). Ningún assert de la batería inicial se modificó (PRUEBAS.md, P8 y P9).
+Entre el inicio y ahora hay **273 tests más** (+148 %). Los 4 últimos son de las correcciones de la VM (2 en `test_agent.py`, INC-08, y 2 en `test_executor.py`, INC-10). Ningún assert de la batería inicial se modificó (PRUEBAS.md, P8 y P9); en INC-09 se reescribió un test de P9 (el de «no revela usuario ni equipo») para que no dependa del nombre de la máquina.
 
 ### 1.2 Por fichero
 
-| Fichero | Inicio (185) | Ahora (454) | Introducido en |
+| Fichero | Inicio (185) | Ahora (458) | Introducido en |
 |---|---:|---:|---|
-| `tests/test_agent.py` | 16 | 16 | P3 |
+| `tests/test_agent.py` | 16 | 18 | P3 (+2 en P10) |
 | `tests/test_auditoria.py` | 26 | 26 | Post-P6 |
 | `tests/test_cliente_observado.py` | 8 | 8 | Post-P6 |
-| `tests/test_executor.py` | 99 | 99 | P2 (ampliado en Post-P6) |
+| `tests/test_executor.py` | 99 | 101 | P2 (ampliado en Post-P6 y +2 en P10) |
 | `tests/test_injection.py` | 3 | 3 | P6 |
 | `tests/test_textos.py` | 24 | 24 | Post-P6 |
 | `tests/test_tools_schema.py` | 9 | 9 | P3 |
@@ -50,33 +51,33 @@ Entre el inicio y ahora hay **269 tests más** (+145 %). Ningún assert de la ba
 | `tests/test_plataforma.py` | — | 60 | P9 |
 | `tests/test_catalogo_aplicable.py` | — | 25 | P9 |
 | `tests/test_tools_schema_plataforma.py` | — | 14 | P9 |
-| **Total** | **185** | **454** | |
+| **Total** | **185** | **458** | |
 
 ### 1.3 Por tipo
 
-Los tests no llevan etiqueta de tipo en el código. La clasificación se ha hecho **por reglas mecánicas aplicadas al fichero y al nombre del test** (primera regla que coincide): (1) `test_injection.py` → inyección; (2) `test_catalogo_regresion.py` o nombre con «equivale» → regresión; (3) nombre que indica un rechazo, un fallo gestionado o una exclusión («rechaza», «bloquea», «deniega», «ausente», «malformado», «ilegible», «fuera_de», «no_aplica», «maneja», etc.) → negativo; (4) `test_agent.py`, `test_audit_*` o nombres que mencionan el agente, `python -m src.plataforma` o un YAML temporal → integración simulada; (5) el resto → unitario. Es una aproximación reproducible, no una revisión test a test; la clasificación a mano por grupos está en `PRUEBAS.md`. No hay tests de tipo «VM»: las pruebas en VM son manuales y no tienen registro en el repositorio.
+Los tests no llevan etiqueta de tipo en el código. La clasificación se ha hecho **por reglas mecánicas aplicadas al fichero y al nombre del test** (primera regla que coincide): (1) `test_injection.py` → inyección; (2) `test_catalogo_regresion.py` o nombre con «equivale» → regresión; (3) nombre que indica un rechazo, un fallo gestionado o una exclusión («rechaza», «bloquea», «deniega», «ausente», «malformado», «ilegible», «fuera_de», «no_aplica», «maneja», etc.) → negativo; (4) `test_agent.py`, `test_audit_*` o nombres que mencionan el agente, `python -m src.plataforma` o un YAML temporal → integración simulada; (5) el resto → unitario. Es una aproximación reproducible, no una revisión test a test; la clasificación a mano por grupos está en `PRUEBAS.md`. No hay tests de tipo «VM»: las pruebas en VM son manuales; su registro está en `evidencias/vm/` y `evidencias/capturas/`.
 
-| Tipo | Inicio (185) | Ahora (454) |
+| Tipo | Inicio (185) | Ahora (458) |
 |---|---:|---:|
-| Unitario | 88 | 173 |
+| Unitario | 88 | 175 |
 | Negativo | 74 | 244 |
-| Integración simulada | 20 | 24 |
+| Integración simulada | 20 | 26 |
 | Regresión | 0 | 10 |
 | Inyección | 3 | 3 |
 | VM (automáticos) | 0 | 0 |
-| **Total** | **185** | **454** |
+| **Total** | **185** | **458** |
 
 Por fichero y tipo (ahora):
 
 | Fichero | Unit. | Neg. | Integ. sim. | Regr. | Inyecc. |
 |---|---:|---:|---:|---:|---:|
-| `test_agent.py` | 0 | 7 | 9 | 0 | 0 |
+| `test_agent.py` | 0 | 7 | 11 | 0 | 0 |
 | `test_auditoria.py` | 16 | 10 | 0 | 0 | 0 |
 | `test_catalogo.py` | 14 | 136 | 0 | 0 | 0 |
 | `test_catalogo_aplicable.py` | 11 | 13 | 1 | 0 | 0 |
 | `test_catalogo_regresion.py` | 0 | 0 | 0 | 10 | 0 |
 | `test_cliente_observado.py` | 4 | 4 | 0 | 0 | 0 |
-| `test_executor.py` | 41 | 48 | 10 | 0 | 0 |
+| `test_executor.py` | 43 | 48 | 10 | 0 | 0 |
 | `test_injection.py` | 0 | 0 | 0 | 0 | 3 |
 | `test_plataforma.py` | 46 | 13 | 1 | 0 | 0 |
 | `test_repo_sin_secretos.py` | 6 | 4 | 0 | 0 | 0 |
@@ -90,9 +91,9 @@ Observación para la memoria: los tests de inyección siguen siendo 3 desde P6; 
 
 | Carpeta | Ficheros `.py` | Líneas |
 |---|---:|---:|
-| `src/` (incluye `src/plataforma/`) | 10 | 1.805 |
+| `src/` (incluye `src/plataforma/`) | 10 | 1.847 |
 | `app/` | 6 | 2.852 |
-| `tests/` | 15 | 3.910 |
+| `tests/` | 15 | 3.977 |
 | `scripts/` | 4 | 259 |
 | `catalogo/herramientas_llm.yaml` | — | 548 |
 
@@ -159,29 +160,29 @@ De `evidencias/P10_pytest_final.txt`:
 |---|---:|---:|---:|---|
 | `src/catalogo.py` | 440 | 14 | **97 %** | 252-253, 306, 337, 340, 346, 405-406, 429, 493, 524-525, 569, 577 |
 | `src/tools_schema.py` | 15 | 0 | **100 %** | — |
-| `src/executor.py` | 110 | 5 | **95 %** | 62-65, 144 |
+| `src/executor.py` | 111 | 5 | **95 %** | 67-70, 149 |
 | `src/plataforma/` (3 ficheros) | 198 | 5 | **97,5 %** | todas en `deteccion.py`: 274-277, 285 |
 | `src/plataforma/deteccion.py` | 189 | 5 | 97 % | 274-277, 285 |
 | `src/plataforma/__init__.py` | 2 | 0 | 100 % | — |
 | `src/plataforma/__main__.py` | 7 | 0 | 100 % | — |
-| `src/agent.py` | 106 | 9 | 92 % | 77-78, 96-97, 119-120, 128-130 |
+| `src/agent.py` | 112 | 9 | 92 % | 84-85, 103-104, 126-127, 159-161 |
 | `src/audit.py` | 10 | 0 | 100 % | — |
 | `src/config.py` | 23 | 7 | 70 % | 40-60 (`cargar_perfil()` sin tests) |
-| **Total `src/`** | **902** | **40** | **95,6 % (96 %)** | |
+| **Total `src/`** | **909** | **40** | **95,6 % (96 %)** | |
 
 La cobertura se mide solo sobre `src/`; `app/` (2.852 líneas, incluida la vista de Streamlit) no está en el informe. Es cobertura de líneas, no de ramas. No se midió en ninguna fase anterior a P10.
 
 ## 5. Incidencias de la IA
 
-`INCIDENCIAS_IA.md` contiene **7 incidencias** (INC-01 a INC-07), todas registradas en la revisión de P10. Las causas raíz son hipótesis de la IA que Juan debe confirmar.
+`INCIDENCIAS_IA.md` contiene **12 incidencias** (INC-01 a INC-12): las siete primeras de la revisión de P10 y las cinco últimas de las pruebas en la VM. Las causas raíz son hipótesis de la IA que Juan debe confirmar.
 
 | Desglose | Resultado |
 |---|---|
-| Por forma de detección | Revisión de coherencia documental: 3 (INC-01, INC-02, INC-03) · contraste con la memoria preliminar: 1 (INC-04) · test automático: 1 (INC-05) · contraste del autor con fuentes oficiales (attack.mitre.org y anexo II del RD 311/2022): 2 (INC-06, INC-07) · revisión del diff, ejecución manual y VM: 0 |
-| Por módulo | Memoria (`ESTADO_FUNCIONALIDADES.md`): 2 (INC-01, INC-03) · memoria (`CAMBIOS.md`): 1 (INC-04) · catálogo, documentación (`_ESQUEMA.md`): 1 (INC-02) · evidencias de P10: 1 (INC-05) · propuestas de mapeo (`_mapeo_marcos_razonamiento.md`): 2 (INC-06, INC-07) · código de `src/`: 0 |
-| Por fase de origen | P7: 2 · P8: 2 · P10: 3 |
+| Por forma de detección | Revisión de coherencia documental: 3 (INC-01, INC-02, INC-03) · contraste con la memoria preliminar: 1 (INC-04) · test automático: 1 (INC-05) · contraste del autor con fuentes oficiales (attack.mitre.org y anexo II del RD 311/2022): 2 (INC-06, INC-07) · pruebas en la VM: 5 (INC-08 por el error 413 de Groq, INC-09 por un test que falló en la VM, INC-10 por revisión del extracto de auditoría, INC-11 e INC-12 por revisión de las capturas) · revisión del diff: 0 |
+| Por módulo | Memoria (`ESTADO_FUNCIONALIDADES.md`): 2 (INC-01, INC-03) · memoria (`CAMBIOS.md`): 1 (INC-04) · catálogo, documentación (`_ESQUEMA.md`): 1 (INC-02) · evidencias de P10: 1 (INC-05) · propuestas de mapeo (`_mapeo_marcos_razonamiento.md`): 2 (INC-06, INC-07) · código de `src/`: 2 (INC-08 en `src/agent.py`, INC-10 en `src/executor.py`) · tests: 1 (INC-09) · comportamiento del modelo, sin corrección: 2 (INC-11, INC-12) |
+| Por fase de origen | P2: 1 (INC-10) · P3: 1 (INC-08) · P7: 2 · P8: 2 · P9: 1 (INC-09) · P10: 5 (INC-05, INC-06, INC-07, INC-11, INC-12) |
 
-Ninguna afecta al código de `src/`; hasta P9 no consta ninguna corrección del autor sobre código generado. Si Juan recuerda algún comportamiento incorrecto de la IA en el código que corrigiera, debe añadirse con su causa raíz y su test de regresión.
+Las siete primeras no afectan al código de `src/`. INC-08 e INC-10 son fallos de código de `src/`, corregidos con test de regresión; INC-09 es un test frágil, corregido; INC-11 e INC-12 son errores del modelo en tiempo de ejecución que **no se han corregido** (limitaciones conocidas). Si Juan recuerda algún comportamiento incorrecto de la IA en el código que corrigiera antes, debe añadirse con su causa raíz y su test de regresión.
 
 ## 6. Fases y nivel de automatización
 
@@ -203,7 +204,7 @@ Niveles de `REGISTRO_IA.md`: N2 generación supervisada de fragmentos, N3 módul
 | P7 Línea base | 2026-10-22 | `4b5c408` (junto con P8) | — | N4 |
 | P8 Catálogo YAML | 2026-10-23 | `4b5c408` | 31 ficheros, +3.175 −380 (P7 + P8) | N4 |
 | P9 Plataforma | 2026-10-24 | `2f1723c` | 27 ficheros, +1.534 −12 | N4 |
-| P10 Entrega intermedia | 2026-10-24 | `f22343c`, `0bf0154`, `68e4bf1` (parcial) | sin funcionalidad nueva | N4 (propuesto) |
+| P10 Entrega intermedia | 2026-10-24 y 25 | `f22343c`, `0bf0154`, `68e4bf1`, `b350979`, `50b698b`, `cf19e7d` | sin funcionalidad nueva (3 correcciones de las pruebas en la VM) | N4 (propuesto) |
 
 Recuento: 14 filas con nivel (sin contar P10): N2 = 4 (P0, P1, P5, P6), N3 = 6, N4 = 3 (P7, P8, P9), N/A = 1; con P10, N4 = 4. No hay filas N0 ni N1 en el registro. Todo el código generado figura como aceptado sin cambios.
 
@@ -232,7 +233,8 @@ Los 25 identificadores heredados son herramientas del LLM, no comprobaciones; lo
 | Ficheros versionados en `logs/`, `data/`, `.env`, `*.jsonl` o `.coverage` | ninguno, ni en el índice ni en el historial |
 | `logs/audit.jsonl` y `.env` | ignorados por `.gitignore` (`git check-ignore`) |
 | Nombre de usuario de Windows, nombre del equipo, correo, rutas `C:\Users\…` e IPs en ficheros versionados | ninguno |
-| Evidencias nuevas | `P10_junit.xml` incluía el nombre del equipo en `hostname=` y `P10_pytest_final.txt` rutas absolutas del repositorio: se sustituyeron por `anonimizado` y rutas relativas / `<repo>`. Los identificadores de los 4 casos de `test_los_patrones_detectan_claves_falsas` en el XML contenían las claves sintéticas del test y hacían fallar el propio test de secretos; se renombraron a `caso_sintetico_1…4` (el test no se modificó) |
+| Evidencias nuevas | `P10_junit.xml` incluía el nombre del equipo en `hostname=` y `P10_pytest_final.txt` rutas absolutas del repositorio: se sustituyeron por `anonimizado` y rutas relativas / `<repo>`. Los identificadores de los 4 casos de `test_los_patrones_detectan_claves_falsas` en el XML contenían las claves sintéticas del test y hacían fallar el propio test de secretos; se renombraron a `caso_sintetico_1…4` (el test no se modificó). Se repitió el mismo saneado al regenerar ambos ficheros con los 458 tests |
+| Evidencias de la VM (`evidencias/vm/`, `evidencias/capturas/`) | El log de auditoría de la VM contiene el usuario y el nombre del equipo reales (`get_account_info`), por lo que no se versiona: se extrajo un resumen sin resultados y solo las líneas de la mutación. La salida de pytest se anonimizó (`rootdir`). Las capturas de PowerShell muestran la ruta de la cuenta local de la VM (`C:\Users\juan\…`), que coincide con el nombre de pila del autor; no aparece ninguna clave ni el nombre del equipo. El test de secretos (10 de 10) sigue en verde con las evidencias dentro |
 
 Observaciones (no son fallos): los metadatos de los commits llevan el nombre y el correo del autor, como es habitual en git; y la historia anterior a la reescritura (`refs/original`) se eliminó tras la revisión (ver I-9).
 
@@ -253,9 +255,9 @@ Revisión de `ESTADO_FUNCIONALIDADES.md` (F01–F27), `CAMBIOS.md`, `REGISTRO_IA
 | I-9 | `git log --all` mostraba dos líneas de historia (la actual y la anterior a la reescritura, en `refs/original`). | Corregida: se eliminó `refs/original`, se caducó el reflog y se ejecutó `git gc --prune=now`; solo queda la línea actual (13 commits) y `origin/master`. Los hashes de la documentación son los de esa línea. |
 | I-10 | `REGISTRO_IA.md` fecha P8 el 2026-10-23 y P7 el 2026-10-22, pero su commit es del 2026-10-24: las fechas del registro son las de trabajo y las del commit son las de confirmación. | Informativa: aclarar en la memoria cuál se usa. |
 | I-11 | No constaba la Tabla 5 de la memoria preliminar para saber si la WHITELIST de 25 herramientas, el rediseño de la interfaz y las reglas v2 eran desviaciones. | Resuelta con «Planteamiento final y estructura»: ninguna de las tres es desviación de calendario ni de alcance (H0 ya preveía 25 herramientas, interfaz y 185 tests; la Tabla 3 cita el diseño de la interfaz). Las reglas v2 sí son una diferencia de estrategia (la memoria dice «ocho reglas») y se añadió su fila a `CAMBIOS.md`. Detalle en `PLANIFICACION_RESTANTE.md`, apartado 4. |
-| I-12 | La evidencia de las pruebas manuales en VM está vacía (`evidencias/vm/` y `evidencias/capturas/` solo tienen `.gitkeep`) mientras `PRUEBAS.md` y `ESTADO_FUNCIONALIDADES.md` dependen de ellas para F04, F12 y P2–P6. | Abierta (las lanza Juan, regla 17). |
+| I-12 | La evidencia de las pruebas manuales en VM estaba vacía mientras `PRUEBAS.md` y `ESTADO_FUNCIONALIDADES.md` dependían de ella para F04, F12 y P2–P6. | Cerrada en parte: las pruebas se hicieron el 24 y 25/10/2026 y constan en `evidencias/vm/` y `evidencias/capturas/` (F04 en Windows 11; F12 con lectura, EICAR y acción con confirmación). Siguen sin evidencia propia las pruebas de P2–P6, Linux, Windows 10 y el modo privado. |
 | I-13 | F02 (proveedor dual) figura «en curso» y la cobertura lo confirma: `src/config.py` está al 70 % porque `cargar_perfil()` (líneas 40-60) no tiene tests. | Consistente; sigue pendiente de test. |
 | I-14 | Las filas 1, 2 y 4 de `CAMBIOS.md` figuraban como cambios «respecto a la entrega preliminar», pero la memoria ya describe el modelo `openai/gpt-oss-20b`, el catálogo YAML y el esquema filtrado por equipo: comparaban con el `CLAUDE.md` y el prototipo originales. | Corregida (opción A): `CAMBIOS.md` tiene ahora la tabla 1, con lo que se aparta de la memoria preliminar (agrupación por área y reglas 8→18), y la tabla 2, «Decisiones de diseño durante el desarrollo», con las otras tres y su base de comparación. Se reescribió el motivo de la fila del catálogo, que contradecía la memoria. |
-| I-15 | Cifras de la memoria preliminar desfasadas («185 actualmente», «ocho reglas», Tabla 3 sin versión de modelo). | Descartada: la memoria adjuntada es una versión antigua (entrega de planteamiento y estructura) y no se modifica; la memoria de la entrega intermedia recogerá las cifras actuales (454 tests, 18 reglas). |
+| I-15 | Cifras de la memoria preliminar desfasadas («185 actualmente», «ocho reglas», Tabla 3 sin versión de modelo). | Descartada: la memoria adjuntada es una versión antigua (entrega de planteamiento y estructura) y no se modifica; la memoria de la entrega intermedia recogerá las cifras actuales (458 tests, 18 reglas). |
 
 Comprobado sin incoherencias: los 27 identificadores F01–F27 están todos; los recuentos de tests citados en ESTADO, PRUEBAS y REGISTRO (16, 26, 150, 10, 25, 14, 60, 99, 3, 24, 9, 8) coinciden con `pytest --collect-only`; los tamaños de commit de REGISTRO_IA coinciden con `git show --shortstat`; las 4 filas de `CAMBIOS.md` coinciden con el código (modelo de Groq en `src/config.py`, WHITELIST derivada del catálogo en `src/executor.py`, esquema de 25 herramientas ≈ 1.819 tokens, fixture autouse en `tests/conftest.py`).

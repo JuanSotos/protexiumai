@@ -10,7 +10,7 @@
 | H1 | F03–F10 | **Hecho:** F03 catálogo YAML validado (P8) y F04 detección de plataforma y capacidades (P9). **Pendiente:** F05 validador y política, F06 confirmación ligada al plan, F07 remediación reversible, F08 token de marcha atrás, F09 perfiles, F10 enrutador y anonimizador. |
 | H2–H7 | F11–F26 | Todo pendiente. `catalogo/windows/` y `catalogo/linux/` están vacíos. |
 
-Cifras de partida: 3 funcionalidades completadas, 4 en curso, 20 pendientes; 454 tests; cobertura de `src/` del 96 %; 25 herramientas en el catálogo y ninguna comprobación (`DATOS_PARA_MEMORIA.md`). P9, que la petición incluía «si no se hizo», **sí está hecha** (commit `2f1723c`), aunque falta contrastarla en una VM Linux real.
+Cifras de partida: 3 funcionalidades completadas, 4 en curso, 20 pendientes; 458 tests; cobertura de `src/` del 96 %; 25 herramientas en el catálogo y ninguna comprobación (`DATOS_PARA_MEMORIA.md`). P9, que la petición incluía «si no se hizo», **sí está hecha** (commit `2f1723c`), aunque falta contrastarla en una VM Linux real.
 
 Capacidades ya disponibles sobre las que se construye: `catalogo.aplicable()` ya decide por sistema, build, edición, familia, binarios y perfil; el catálogo ya admite los motores `powershell`, `registro`, `comando` y `python` y los tipos `comprobacion` y `accion`, aunque solo se usa `herramienta`; el esquema del LLM está limitado a 3.000 tokens y las futuras comprobaciones deben agruparse por área.
 
@@ -130,7 +130,7 @@ Tampoco hay desviación de plataformas: la memoria prevé probar en Windows 11 y
 
 ### 4.3 Cifras de la memoria que han quedado desfasadas
 
-La memoria cita «185 actualmente» (tests, apartado 3), que hoy son **454**, y «ocho reglas» (ahora 18). No son desviaciones y no hace falta modificarla: es la versión de la entrega de planteamiento y la memoria de la entrega intermedia recogerá las cifras actuales.
+La memoria cita «185 actualmente» (tests, apartado 3), que hoy son **458**, y «ocho reglas» (ahora 18). No son desviaciones y no hace falta modificarla: es la versión de la entrega de planteamiento y la memoria de la entrega intermedia recogerá las cifras actuales.
 
 ### 4.4 Conclusión
 

@@ -5,7 +5,7 @@ Todos los tests automáticos usan subprocess y LLM mockeados y no ejecutan accio
 
 Las secciones P0–P6 y Post-P6 se han reconstruido de `git log`/`git show` y de los propios ficheros de test. El recuento por fichero es el **actual** (línea base P7), no el de cada fase. La cobertura de código **no se midió** en ninguna fase anterior a P7 (`pytest-cov` no estaba instalado), así que no se inventan porcentajes.
 
-**Pruebas manuales en VM.** El repositorio documenta el procedimiento (snapshots «Base limpia» y «Demo lista» de VirtualBox en `docs/demo_escenarios.md` y `README.md`, y el script `scripts/verificar_whitelist.py`), pero **no contiene un registro de resultados obtenidos ni capturas**. Por eso en cada fase se indica el procedimiento disponible y el campo «resultado obtenido» queda como pendiente de aportar con la captura correspondiente, en `evidencias/vm/` y `evidencias/capturas/`.
+**Pruebas manuales en VM.** El procedimiento (snapshots «Base limpia» y «Demo lista» de VirtualBox en `docs/demo_escenarios.md` y `README.md`, y el script `scripts/verificar_whitelist.py`) se ejecutó por primera vez el 24 y 25 de octubre de 2026 y su resultado está registrado en la sección «Pruebas en máquina virtual (P10)», con la salida en `evidencias/vm/` y las capturas en `evidencias/capturas/`. Los campos «resultado obtenido» de las fases P2–P6 siguen sin una captura propia de cada fase: la prueba de la VM se hizo sobre el código de P10 y cubre la lectura, la acción con confirmación, la cancelación y la auditoría.
 
 ## P0 — Estructura inicial (`2728b9a`)
 - Tests añadidos: ninguno (solo el paquete `tests/__init__.py`).
@@ -186,11 +186,11 @@ Ninguna en P9. La detección solo lee (registro, `os-release`, `/sys`) y los tes
 
 ## P10 — Entrega intermedia (2026-10-24)
 
-Sin funcionalidad nueva: no se modifica ningún módulo de `src/` ni de `app/` ni ningún test. Se ejecuta la batería final con cobertura (`pytest-cov` instalado desde `requirements-dev.txt`) y se revisan secretos y datos personales.
+Sin funcionalidad nueva. La preparación de la entrega (batería con cobertura, revisión de secretos y datos personales) acabó con 454 tests; las pruebas en la VM hallaron después tres fallos que se corrigieron: dos en `src/` (INC-08 en `src/agent.py`, INC-10 en `src/executor.py`) y un test frágil (INC-09 en `tests/test_plataforma.py`). Los tests pasaron de 454 a 458 (2 nuevos en `tests/test_agent.py` y 2 en `tests/test_executor.py`) y se volvió a ejecutar la batería final.
 
 ### Resultado
-- Línea base de la fase: **454 passed**. Tras P10: **454 passed**, 0 fallos, 0 errores, 0 omitidos, en 11,6 s (`evidencias/P10_pytest_final.txt`, `evidencias/P10_junit.xml`). Comando: `python -m pytest --cov=src --cov-report=term-missing --junitxml=docs/memoria/evidencias/P10_junit.xml`.
-- Reproducibilidad: un clon limpio del repositorio, con un entorno virtual nuevo e `pip install -r requirements-dev.txt`, pasa también los 454 tests sin `.env` ni `logs/`. Las dependencias no tienen la versión fijada, así que se resolvieron versiones más recientes que las del entorno de desarrollo y la batería siguió en verde.
+- Línea base de la fase: **454 passed**. Tras P10 (con las correcciones de la VM): **458 passed**, 0 fallos, 0 errores, 0 omitidos, en 12,9 s (`evidencias/P10_pytest_final.txt`, `evidencias/P10_junit.xml`, regenerados). Comando: `python -m pytest --cov=src --cov-report=term-missing --junitxml=docs/memoria/evidencias/P10_junit.xml`. La misma batería, ejecutada en la VM, también da 458 (`evidencias/vm/vm_01_pytest.txt`).
+- Reproducibilidad: un clon limpio del repositorio, con un entorno virtual nuevo e `pip install -r requirements-dev.txt`, pasó los 454 tests de la primera batería sin `.env` ni `logs/`, y la instalación desde cero en la VM pasó después los 458. Las dependencias no tienen la versión fijada, así que se resolvieron versiones más recientes que las del entorno de desarrollo y la batería siguió en verde.
 - Anonimización de las evidencias: el XML de JUnit incluye por defecto el nombre del equipo (`hostname=`) y la salida de pytest rutas absolutas; se sustituyeron por `anonimizado` y por rutas relativas / `<repo>`. Además, los identificadores de los 4 casos de `test_los_patrones_detectan_claves_falsas` incluyen las claves sintéticas del test y hacían saltar `test_ningun_fichero_contiene_claves` sobre el propio XML; se renombraron a `caso_sintetico_1…4`. Son las únicas ediciones manuales de esas salidas; el test de secretos no se ha modificado.
 
 ### Cobertura de `src/` (primera medición del proyecto)
@@ -204,7 +204,7 @@ Sin funcionalidad nueva: no se modifica ningún módulo de `src/` ni de `app/` n
 | `src/agent.py` | 92 % |
 | `src/audit.py` | 100 % |
 | `src/config.py` | 70 % (`cargar_perfil()` sin tests, líneas 40-60) |
-| **Total** | **96 %** (902 sentencias, 40 sin cubrir) |
+| **Total** | **96 %** (909 sentencias, 40 sin cubrir) |
 
 Es cobertura de líneas y solo de `src/`; `app/` (incluida la vista de Streamlit) no se mide. Detalle de líneas no cubiertas en `DATOS_PARA_MEMORIA.md`.
 
@@ -213,19 +213,36 @@ Es cobertura de líneas y solo de `src/`; `app/` (incluida la vista de Streamlit
 - `git log --all -G "gsk_[A-Za-z0-9]{10,}" --oneline`: sin coincidencias.
 - Ningún fichero de `logs/`, `data/` ni `.env` versionado, ni en el índice ni en el historial; sin nombre de usuario, nombre de equipo, correos, IPs ni rutas personales en los ficheros versionados.
 
-### Pruebas manuales en VM
-Ninguna en P10. Siguen pendientes de Juan las de P2–P6, la repetición en la VM de una lectura y una acción con confirmación tras la migración al catálogo (P8) y `python -m src.plataforma` en una VM Linux y en Windows 10 (P9), con salida en `evidencias/vm/`.
+## Pruebas en máquina virtual (P10)
+
+Primera ejecución del procedimiento de `docs/demo_escenarios.md`, lanzada por el autor (regla 17) el 24 y 25 de octubre de 2026 en una VM de VirtualBox con Windows 11 Home (compilación 26300, edición `Core`), partiendo del snapshot «Base limpia», con Groq (`openai/gpt-oss-20b`) como proveedor y la interfaz Streamlit en una terminal elevada. Notas completas, con las incidencias de preparación, en `evidencias/vm/vm_00_notas.md`.
+
+| Prueba | Resultado | Evidencia |
+|---|---|---|
+| Instalación desde cero siguiendo el README | Correcta, con dos observaciones sobre el entorno virtual (activarlo en cada terminal nueva; un caso en que `python` resolvía al de la Tienda de Windows, causa no determinada) | `vm_00_notas.md` |
+| `python -m pytest` | 458 correctos (a la primera hubo 1 fallo, INC-09) | `vm/vm_01_pytest.txt`; `capturas/vm_02_pytest_ok.png`, `vm_02b_pytest_fallo_inicial.png` |
+| `python -m src.plataforma` | Windows 11, compilación 26300, sin elevar | `vm/vm_02_plataforma.json`; `capturas/vm_03_plataforma.png` |
+| Escenario 1 (diagnóstico) | Respondió sin confirmación; ver los errores de interpretación del modelo (INC-11 e INC-12) | `capturas/vm_06_escenario1_diagnostico.png` |
+| Escenario 2 (alerta EICAR) | Tras corregir INC-08 respondió sin el error 413; la captura no muestra la conclusión final y la respuesta afirmó erróneamente que las firmas estaban al día (INC-12) | `capturas/vm_07_eicar_alerta_defender.png`, `vm_08_escenario2_respuesta.png` |
+| Escenario 3, cancelar | No se ejecutó nada y quedó auditado (`usuario_rechazo`); el perfil siguió desactivado | `capturas/vm_09`–`vm_11`; `vm/vm_03_audit_set_firewall.txt` |
+| Escenario 3, confirmar | Tarjeta de confirmación, ejecución, verificación del modelo y comprobación independiente con `Get-NetFirewallProfile` (Private activado) | `capturas/vm_12`–`vm_14` |
+| Auditoría | Cancelación, marca previa `en curso`, ejecución y un rechazo del ejecutor (`parametro_no_declarado`), todo registrado | `vm/vm_03_audit_resumen.txt`; `capturas/vm_15_audit_extracto.png` |
+| Tildes en la salida de PowerShell | Correctas tras corregir INC-10 | `capturas/vm_16_tildes_corregidas.png` |
+
+Hallazgos de la VM, con detalle en `INCIDENCIAS_IA.md`: error 413 de Groq por la salida sin límite de una herramienta (INC-08, corregido), test frágil por el nombre del equipo (INC-09, corregido), tildes corruptas en la salida de PowerShell (INC-10, corregido), valores numéricos mal interpretados por el modelo (INC-11, limitación) y fechas de las firmas mal leídas (INC-12, limitación). Además, con la frase exacta del guion («revisa mi firewall») el modelo explicó el estado pero no propuso la acción: hizo falta pedirla («sí, activa el perfil Privado»).
+
+Sin probar en la VM: Linux (la detección de plataforma solo se ha probado con ficheros simulados), Windows 10, y el modo privado con Ollama. La captura `vm_04_firewall_antes_normal.png` es del estado original del cortafuegos, antes de desactivar el perfil Private para preparar el Escenario 3.
 
 ## Validación específica del código generado por IA (borrador de P10)
 
-Resumen de cómo se ha comprobado el código y la documentación generados por la IA (Claude Code), con lo que consta en el repositorio. Está sujeto a la confirmación del autor y a las pruebas en VM, que siguen pendientes.
+Resumen de cómo se ha comprobado el código y la documentación generados por la IA (Claude Code), con lo que consta en el repositorio. Está sujeto a la confirmación del autor; las pruebas en VM ya se han realizado (sección anterior) y sus incidencias están incorporadas.
 
 ### Controles aplicados
 
 | Control | Qué comprueba | Dónde consta |
 |---|---|---|
 | Revisión humana del diff antes del commit | Que el autor entiende y acepta cada cambio; en P7–P10 consta como «Revisado y aceptado por el autor». | `REGISTRO_IA.md` |
-| Tests con LLM y PowerShell simulados | Que el código se comporta como se espera sin ejecutar acciones reales. 454 tests, cobertura de `src/` del 96 %. | `evidencias/P10_pytest_final.txt` |
+| Tests con LLM y PowerShell simulados | Que el código se comporta como se espera sin ejecutar acciones reales. 458 tests, cobertura de `src/` del 96 %. | `evidencias/P10_pytest_final.txt` |
 | Tests negativos y de la lista de denegación | Que se rechazan campos desconocidos, ids duplicados, enums inválidos y 24 tokens peligrosos en plantillas y en argv (48 casos). | `tests/test_catalogo.py` |
 | Tests de inyección de prompts | Que el contenido malicioso en la salida de una herramienta no provoca ninguna acción sin confirmación (3 tests). | `tests/test_injection.py` |
 | Instantáneas de regresión de la migración | Que en P8 el esquema, las plantillas, los niveles, los permisos de administrador y los timeouts de las 25 herramientas son idénticos a los de P7. Las instantáneas se generaron con el código anterior. | `tests/fixtures/schema_p7.json`, `whitelist_p7.json` |
@@ -233,14 +250,21 @@ Resumen de cómo se ha comprobado el código y la documentación generados por l
 | Test anti-secretos | Que no hay claves ni `.env` en el repositorio; además `git log --all -G "gsk_[A-Za-z0-9]{10,}"` no devuelve nada. | `tests/test_repo_sin_secretos.py` |
 | Revisión de coherencia de la documentación | Contraste de los documentos de memoria entre sí y con el código. Detectó 4 errores documentales generados por IA. | `INCIDENCIAS_IA.md` (INC-01 a INC-04) |
 | Verificación de los mapeos a marcos con fuentes oficiales | Contraste de las propuestas de la IA con attack.mitre.org, con el anexo II del Real Decreto 311/2022 y con CIS Controls v8.1. Detectó 2 errores (IDs de ATT&CK obsoletos y una medida del ENS mal asignada). | `INCIDENCIAS_IA.md` (INC-06 e INC-07); CIS Controls v8.1 contrastado sin errores |
+| Pruebas en una máquina virtual real | Ejecución del procedimiento de la demo con Windows 11 y un LLM real, que los tests simulados no ejercitan. Detectó 5 incidencias: 2 fallos de código (INC-08 e INC-10), 1 test frágil (INC-09) y 2 errores de interpretación del modelo (INC-11 e INC-12). | `INCIDENCIAS_IA.md` (INC-08 a INC-12); sección «Pruebas en máquina virtual (P10)» |
 
 ### Errores o comportamientos incorrectos detectados y correcciones
 
-Hay 7 incidencias registradas, todas en documentación o evidencias y ninguna en el código de `src/`; el detalle, con causa probable y corrección, está en `INCIDENCIAS_IA.md`. Hasta P9 no consta ninguna corrección del autor sobre el código generado.
+Hay 12 incidencias registradas; el detalle, con causa probable y corrección, está en `INCIDENCIAS_IA.md`:
+- INC-01 a INC-07: errores de documentación o de evidencias generadas por IA, detectados en la revisión de coherencia y en la verificación de los mapeos.
+- INC-08 a INC-10: fallos de código o de test hallados en la VM y **corregidos** por el autor con la IA (`src/agent.py`, `tests/test_plataforma.py`, `src/executor.py`), cada uno con su test de regresión.
+- INC-11 e INC-12: el modelo interpreta mal valores numéricos y fechas que las herramientas devuelven sin traducir. **No están corregidos**: son limitaciones conocidas.
+
+Estas incidencias son las primeras sobre el código de `src/`; hasta P9 no constaba ninguna.
 
 ### Límites de la validación (lo que no está comprobado)
 
-- No hay pruebas reales en máquina virtual con resultado registrado: `evidencias/vm/` y `evidencias/capturas/` están vacías (procedimiento en `docs/demo_escenarios.md`). Las pruebas con efectos las lanza el autor (regla 17).
+- Las pruebas en máquina virtual se han hecho **una sola vez**, en un Windows 11 Home y con un único modelo (`openai/gpt-oss-20b` por Groq); no se han repetido ni se ha probado el modo privado con Ollama. Las pruebas con efectos las lanza el autor (regla 17).
+- Las respuestas del modelo no son deterministas: con la frase exacta del guion el Escenario 3 no propuso la acción a la primera. Y dos errores de interpretación del modelo (INC-11 e INC-12) siguen sin corregir; en particular, el modelo afirmó que las firmas de Defender estaban al día cuando tenían 402 días.
 - La detección de plataforma en Linux solo se ha probado con ficheros `os-release` simulados, escritos de memoria por la IA a partir del formato de cada distribución, no copiados de máquinas reales. Tampoco se ha ejecutado en Windows 10.
 - `cargar_perfil()` de `src/config.py` no tiene tests propios (cobertura de `config.py`: 70 %).
 - La vista de Streamlit (`app/streamlit_app.py`) no tiene tests automáticos; `app/` no se incluye en la medición de cobertura.

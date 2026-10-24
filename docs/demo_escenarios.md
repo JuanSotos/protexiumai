@@ -96,8 +96,14 @@ innecesaria.
    > Cualquier fichero que la contenga será puesto en cuarentena por Defender — es exactamente el
    > efecto que se busca en este escenario, así que el fichero debe descargarse en el momento, dentro
    > de la VM, desde la fuente oficial.
+   > **Si el navegador bloquea la descarga** (ocurrió en la prueba en la VM del 24/10/2026): copia
+   > la cadena de 68 caracteres que publica la propia página de EICAR y escríbela en un fichero
+   > desde PowerShell, fuera del repositorio, con `Set-Content` y `-Encoding ascii` en `$env:TEMP`.
+   > La cadena se copia en el momento desde la fuente oficial y **no** se guarda en este documento.
 3. Espera unos segundos: Windows Defender detecta el fichero al escribirse a disco (protección en
-   tiempo real) y lo pone en cuarentena automáticamente, sin intervención del agente.
+   tiempo real) y lo pone en cuarentena automáticamente, sin intervención del agente. La detección
+   queda en el historial de Defender, que es lo que lee `get_detected_threats`: no hace falta
+   repetir EICAR si ya se generó antes.
 
 **Frase exacta a escribir (tras la detección):**
 ```
@@ -116,6 +122,16 @@ prueba estándar de la industria antivirus, y responde explicando:
 **Qué demuestra al tribunal.** Que el agente consulta datos reales del sistema (no inventa nada, tal y
 como exige el `SYSTEM_PROMPT`), que interpreta correctamente el contenido de una alerta real sin
 generar pánico, y que el tono de la respuesta es el de un asistente doméstico claro y sin alarmismo.
+
+**Advertencias observadas en la prueba en la VM.**
+- Empieza cada escenario en una conversación nueva (`F5` o «Empezar una conversación nueva»): el
+  historial se acumula y, con el plan gratuito de Groq, una conversación larga puede superar el
+  límite de 8.000 tokens por minuto (error 413; la salida de cada herramienta ya se recorta a 6.000
+  caracteres, INC-08).
+- En la prueba, la respuesta del modelo también habló del estado de Defender y afirmó que las firmas
+  estaban «al día» cuando tenían 402 días: el modelo no sabe leer las fechas `/Date(…)/` (INC-12, sin
+  corregir). Si se muestra este escenario, conviene no detenerse en esa parte o contrastarla con la
+  barra lateral, que sí calcula bien la antigüedad de las firmas.
 
 ## 4. Escenario 3 · Refuerzo con humano en el bucle
 
@@ -148,6 +164,14 @@ revisa mi firewall
    ```
    El agente vuelve a llamar a `get_firewall_status` y debe confirmar que el perfil "Private" ya está
    activo.
+
+**Observado en la prueba en la VM (24/10/2026).** Con esa frase exacta el modelo comprobó el estado y
+explicó que el perfil estaba desactivado, pero **no propuso la acción**: hizo falta escribir a
+continuación `sí, activa el perfil Privado` para que apareciera la tarjeta de confirmación. El
+comportamiento depende del modelo y no está garantizado; para la grabación conviene tener preparada
+esa segunda frase (o usar directamente `revisa mi firewall y actívalo si hace falta`, sin probar).
+El resultado de la prueba (cancelación, confirmación, verificación y auditoría) consta en
+`docs/memoria/evidencias/vm/vm_00_notas.md` y en `capturas/vm_09`–`vm_14`.
 
 **Qué demuestra al tribunal.** Que las herramientas de nivel "mutante" quedan bloqueadas hasta un gesto
 explícito del usuario (regla innegociable #3 de CLAUDE.md), que la propuesta se muestra con total

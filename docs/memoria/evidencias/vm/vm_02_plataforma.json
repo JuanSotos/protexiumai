@@ -1,0 +1,18 @@
+{
+  "so": "windows",
+  "windows_build": 26300,
+  "windows_ubr": 9457,
+  "windows_edicion": "Core",
+  "windows_version": "26H2",
+  "es_windows11": true,
+  "es_admin": false,
+  "linux_id": "",
+  "linux_id_like": [],
+  "linux_version_id": "",
+  "linux_nombre": "",
+  "familia": "desconocida",
+  "es_kali": false,
+  "es_root": false,
+  "mac": "ninguno",
+  "binarios": {}
+}

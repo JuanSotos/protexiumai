@@ -1,0 +1,6 @@
+
+Caption                   Version    BuildNumber
+-------                   -------    -----------
+Microsoft Windows 11 Home 10.0.26300 26300      
+
+

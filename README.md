@@ -6,7 +6,7 @@ El prototipo cubre tres módulos: diagnóstico en lenguaje natural, respuesta gu
 
 ## Estado actual
 
-Documentación de la entrega intermedia en preparación (fase P10, parcial: faltan las evidencias de las pruebas en máquinas virtuales). Hay 3 funcionalidades completadas, 4 en curso y 20 pendientes de las 27 planificadas (F01–F27). El detalle, con el estado y el origen de cada una, está en [`docs/memoria/ESTADO_FUNCIONALIDADES.md`](docs/memoria/ESTADO_FUNCIONALIDADES.md).
+Documentación de la entrega intermedia en preparación (fase P10: las pruebas en máquina virtual se hicieron el 24 y 25 de octubre de 2026 y sus evidencias están en `docs/memoria/evidencias/`; queda por completar el registro de herramientas de IA y la validación de la planificación). Hay 3 funcionalidades completadas, 4 en curso y 20 pendientes de las 27 planificadas (F01–F27). El detalle, con el estado y el origen de cada una, está en [`docs/memoria/ESTADO_FUNCIONALIDADES.md`](docs/memoria/ESTADO_FUNCIONALIDADES.md).
 
 Lo que existe hoy:
 
@@ -15,7 +15,7 @@ Lo que existe hoy:
 - Catálogo YAML validado como única fuente de verdad de las herramientas (`catalogo/`).
 - Detección de plataforma y capacidades del equipo, que filtra las herramientas que se ofrecen al LLM.
 - Interfaz de consola (`cli.py`) e interfaz gráfica con Streamlit.
-- 454 tests automáticos (subprocess y LLM simulados) con una cobertura de `src/` del 96 %.
+- 458 tests automáticos (subprocess y LLM simulados) con una cobertura de `src/` del 96 %.
 
 Lo que **no** existe todavía (ver [Limitaciones conocidas](#limitaciones-conocidas)): comprobaciones de línea base CIS, Linux, remediación reversible, perfiles, enrutador de privacidad, análisis de procesos y persistencia, e instaladores.
 
@@ -58,7 +58,7 @@ Desde la raíz del repositorio, en PowerShell:
    pip install -r requirements-dev.txt
    ```
 
-Las dependencias no tienen la versión fijada. Los 454 tests pasan tanto en el entorno de desarrollo como en una instalación nueva desde un clon limpio del repositorio.
+Las dependencias no tienen la versión fijada. Los 458 tests pasan tanto en el entorno de desarrollo como en una instalación nueva desde cero en una máquina virtual con Windows 11 (`docs/memoria/evidencias/vm/vm_01_pytest.txt`).
 
 ## Configuración
 
@@ -171,7 +171,7 @@ python -m pytest --cov=src --cov-report=term-missing --junitxml=docs/memoria/evi
 
 El parte JUnit incluye el nombre del equipo (`hostname=`) y los identificadores de los casos con claves sintéticas del test de secretos, que hacen fallar a ese mismo test si el XML queda en el repositorio: antes de versionarlo hay que anonimizarlo, como se hizo con `P10_junit.xml` (ver `docs/memoria/PRUEBAS.md`, P10).
 
-Resultado de la batería final de la entrega intermedia (P10): 454 pasan, 0 fallan; cobertura total de `src/` del 96 % (`src/catalogo.py` 97 %, `src/executor.py` 95 %, `src/tools_schema.py` 100 %, `src/plataforma/deteccion.py` 97 %). La salida íntegra está en [`docs/memoria/evidencias/P10_pytest_final.txt`](docs/memoria/evidencias/P10_pytest_final.txt). La vista de Streamlit (`app/streamlit_app.py`) no tiene tests automáticos.
+Resultado de la batería final de la entrega intermedia (P10): 458 pasan, 0 fallan; cobertura total de `src/` del 96 % (`src/catalogo.py` 97 %, `src/executor.py` 95 %, `src/tools_schema.py` 100 %, `src/plataforma/deteccion.py` 97 %). La salida íntegra está en [`docs/memoria/evidencias/P10_pytest_final.txt`](docs/memoria/evidencias/P10_pytest_final.txt). La vista de Streamlit (`app/streamlit_app.py`) no tiene tests automáticos.
 
 ## Estructura del repositorio
 
@@ -241,5 +241,6 @@ Las reglas de seguridad están en [`CLAUDE.md`](CLAUDE.md). En resumen:
 - El motor local integrado (llama-cpp-python) está previsto para H5; hoy el modo privado necesita Ollama instalado aparte.
 - Un modelo local pequeño (`llama3.2:3b`) elige peor las herramientas y narra peor los resultados que el modelo de la nube.
 - La interfaz de Streamlit no tiene tests automáticos; su revisión es manual.
-- Las pruebas manuales en VM están documentadas como procedimiento, pero el repositorio aún no contiene capturas ni registro de resultados (`docs/memoria/evidencias/vm/` y `capturas/` están vacías).
+- Las pruebas manuales en VM se han hecho una sola vez (Windows 11 Home, Groq con `openai/gpt-oss-20b`); su registro está en `docs/memoria/evidencias/vm/` y las capturas en `docs/memoria/evidencias/capturas/`. No se ha probado el modo privado con Ollama en la VM, ni Linux, ni Windows 10.
+- **El modelo interpreta mal algunos valores en bruto de PowerShell** (INC-11 e INC-12 en `docs/memoria/INCIDENCIAS_IA.md`): lee mal las fechas de las firmas de Defender (llegó a decir que estaban al día cuando tenían 402 días) y el significado de varios valores numéricos del cortafuegos. No está corregido; no confíes en esos datos concretos sin contrastarlos con la barra lateral o con el estado de Windows Security.
 - Las dependencias no tienen la versión fijada.
