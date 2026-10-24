@@ -215,3 +215,33 @@ Es cobertura de líneas y solo de `src/`; `app/` (incluida la vista de Streamlit
 
 ### Pruebas manuales en VM
 Ninguna en P10. Siguen pendientes de Juan las de P2–P6, la repetición en la VM de una lectura y una acción con confirmación tras la migración al catálogo (P8) y `python -m src.plataforma` en una VM Linux y en Windows 10 (P9), con salida en `evidencias/vm/`.
+
+## Validación específica del código generado por IA (borrador de P10)
+
+Resumen de cómo se ha comprobado el código y la documentación generados por la IA (Claude Code), con lo que consta en el repositorio. Está sujeto a la confirmación del autor y a las pruebas en VM, que siguen pendientes.
+
+### Controles aplicados
+
+| Control | Qué comprueba | Dónde consta |
+|---|---|---|
+| Revisión humana del diff antes del commit | Que el autor entiende y acepta cada cambio; en P7–P10 consta como «Revisado y aceptado por el autor». | `REGISTRO_IA.md` |
+| Tests con LLM y PowerShell simulados | Que el código se comporta como se espera sin ejecutar acciones reales. 454 tests, cobertura de `src/` del 96 %. | `evidencias/P10_pytest_final.txt` |
+| Tests negativos y de la lista de denegación | Que se rechazan campos desconocidos, ids duplicados, enums inválidos y 24 tokens peligrosos en plantillas y en argv (48 casos). | `tests/test_catalogo.py` |
+| Tests de inyección de prompts | Que el contenido malicioso en la salida de una herramienta no provoca ninguna acción sin confirmación (3 tests). | `tests/test_injection.py` |
+| Instantáneas de regresión de la migración | Que en P8 el esquema, las plantillas, los niveles, los permisos de administrador y los timeouts de las 25 herramientas son idénticos a los de P7. Las instantáneas se generaron con el código anterior. | `tests/fixtures/schema_p7.json`, `whitelist_p7.json` |
+| Comprobación de que los tests detectan fallos | Se rompió a propósito cada pieza clave (4 en P8, 5 en P9) y en los 9 casos algún test falló; después se restauró el código. | Secciones P8 y P9 de este documento |
+| Test anti-secretos | Que no hay claves ni `.env` en el repositorio; además `git log --all -G "gsk_[A-Za-z0-9]{10,}"` no devuelve nada. | `tests/test_repo_sin_secretos.py` |
+| Revisión de coherencia de la documentación | Contraste de los documentos de memoria entre sí y con el código. Detectó 5 errores documentales generados por IA. | `INCIDENCIAS_IA.md` (INC-01 a INC-05) |
+
+### Errores o comportamientos incorrectos detectados y correcciones
+
+Hay 5 incidencias registradas, todas en documentación o evidencias y ninguna en el código de `src/`; el detalle, con causa probable y corrección, está en `INCIDENCIAS_IA.md`. Hasta P9 no consta ninguna corrección del autor sobre el código generado.
+
+### Límites de la validación (lo que no está comprobado)
+
+- No hay pruebas reales en máquina virtual con resultado registrado: `evidencias/vm/` y `evidencias/capturas/` están vacías (procedimiento en `docs/demo_escenarios.md`). Las pruebas con efectos las lanza el autor (regla 17).
+- La detección de plataforma en Linux solo se ha probado con ficheros `os-release` simulados, escritos de memoria por la IA a partir del formato de cada distribución, no copiados de máquinas reales. Tampoco se ha ejecutado en Windows 10.
+- `cargar_perfil()` de `src/config.py` no tiene tests propios (cobertura de `config.py`: 70 %).
+- La vista de Streamlit (`app/streamlit_app.py`) no tiene tests automáticos; `app/` no se incluye en la medición de cobertura.
+- Los tests de inyección comprueban que el sistema no ejecuta nada sin confirmación, no si un modelo real «obedecería» el texto inyectado.
+- Los mapeos a marcos (CIS, CCN, ATT&CK) no están verificados: el CSV está vacío (regla 15).

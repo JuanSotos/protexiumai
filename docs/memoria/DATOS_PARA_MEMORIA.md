@@ -173,14 +173,15 @@ La cobertura se mide solo sobre `src/`; `app/` (2.852 líneas, incluida la vista
 
 ## 5. Incidencias de la IA
 
-`INCIDENCIAS_IA.md` contiene **0 incidencias** (solo la cabecera de la tabla). Por tanto:
+`INCIDENCIAS_IA.md` contiene **5 incidencias** (INC-01 a INC-05), todas registradas en la revisión de P10. Las causas raíz son hipótesis de la IA que Juan debe confirmar.
 
 | Desglose | Resultado |
 |---|---|
-| Por forma de detección (test, revisión del diff, ejecución manual, VM…) | 0 en todas |
-| Por módulo | 0 en todos |
+| Por forma de detección | Revisión de coherencia documental: 3 (INC-01, INC-02, INC-03) · contraste con la memoria preliminar: 1 (INC-04) · test automático: 1 (INC-05) · revisión del diff, ejecución manual y VM: 0 |
+| Por módulo | Memoria (`ESTADO_FUNCIONALIDADES.md`): 2 (INC-01, INC-03) · memoria (`CAMBIOS.md`): 1 (INC-04) · catálogo, documentación (`_ESQUEMA.md`): 1 (INC-02) · evidencias de P10: 1 (INC-05) · código de `src/`: 0 |
+| Por fase de origen | P7: 2 · P8: 2 · P10: 1 |
 
-Es un dato real, no un hueco: el fichero indica «solo incidencias reales; nunca inventar filas», y `REGISTRO_IA.md` anota «ninguna corrección registrada» en todas las fases. Conviene que Juan lo contraste con su memoria antes de afirmarlo en el TFG: si recuerda algún comportamiento incorrecto de la IA que corrigió, debe anotarse con su causa raíz y su test de regresión.
+Ninguna afecta al código de `src/`; hasta P9 no consta ninguna corrección del autor sobre código generado. Si Juan recuerda algún comportamiento incorrecto de la IA en el código que corrigiera, debe añadirse con su causa raíz y su test de regresión.
 
 ## 6. Fases y nivel de automatización
 
@@ -215,7 +216,7 @@ De `ESTADO_FUNCIONALIDADES.md`: **3 completadas** (F01, F03, F04), **4 en curso*
 | Concepto | Cifra |
 |---|---:|
 | Mapeos **verificados** (`verificado: true`, con `verificado_por`) | **0** |
-| Mapeos propuestos por la IA pendientes de verificar (`verificado: false`) | **0** (no existe `catalogo/_propuestas_mapeo_IA.md`) |
+| Herramientas con propuesta de mapeo de la IA, pendientes de verificar (`verificado: false`) | **14 de 25** (`catalogo/_propuestas_mapeo_IA.md`; solo CIS Controls v8, ATT&CK y ENS; las 11 restantes sin propuesta) |
 | Filas en `catalogo/mapeo_marcos.csv` | 0 (solo la cabecera) |
 | Entradas del catálogo con el campo `marcos` en el YAML | 0 |
 | Entradas del catálogo sin mapeo (`verificado: false` por defecto) | 25 de 25 |

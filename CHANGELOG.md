@@ -2,14 +2,15 @@
 
 Historial de ProtexiumAI por fase, reconstruido a partir de `git log` y `git show --shortstat` (fechas y tamaños son los de cada commit). Las fases siguen la numeración del proyecto (P0–P10); los cuatro commits entre P6 y P7 se agrupan como «Post-P6». Los cambios respecto a la entrega preliminar, con su motivo, están en [`docs/memoria/CAMBIOS.md`](docs/memoria/CAMBIOS.md).
 
-## P10 — Preparación de la entrega intermedia (2026-10-24) · sin commit todavía
+## P10 — Preparación de la entrega intermedia, parcial (2026-10-24)
 
-Sin funcionalidad nueva.
+Sin funcionalidad nueva. Fase parcial: quedan pendientes las evidencias de las pruebas en máquinas virtuales (`evidencias/vm/` y `capturas/`), el contenido verificado de `catalogo/mapeo_marcos.csv`, la revisión de áreas y sensibilidad del catálogo, el registro completo de herramientas de IA y la validación final de la planificación.
 
 - `README.md` completo: requisitos, instalación, configuración, modo privado, ejecución, tests, estructura, aviso de pruebas en VM y limitaciones.
 - Batería final: 454 tests en verde y cobertura de `src/` del 96 % (`docs/memoria/evidencias/P10_pytest_final.txt`, `P10_junit.xml`).
 - Nuevos documentos de memoria: `DATOS_PARA_MEMORIA.md` (cifras extraídas del repositorio) y `PLANIFICACION_RESTANTE.md` (borrador hasta junio de 2027).
 - Revisión de coherencia de `ESTADO_FUNCIONALIDADES.md`, `CAMBIOS.md` y `REGISTRO_IA.md` entre sí y con el código; las incoherencias halladas quedan listadas en `DATOS_PARA_MEMORIA.md`.
+- Borradores de apoyo a la memoria: sección de validación del código generado por IA en `PRUEBAS.md`, estrategia de uso de la IA en `CAMBIOS.md`, cinco incidencias documentales en `INCIDENCIAS_IA.md` y propuestas de mapeo sin verificar en `catalogo/_propuestas_mapeo_IA.md`.
 - Revisión de seguridad: test de secretos en verde, historial sin claves `gsk_…`, ningún fichero de `logs/`, `data/` ni `.env` versionado, evidencias sin usuario ni nombre de equipo.
 
 ## P9 — Detección de plataforma y capacidades (commit `2f1723c`, 2026-10-24)
