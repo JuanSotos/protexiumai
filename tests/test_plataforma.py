@@ -433,14 +433,21 @@ def test_a_dict_es_serializable_y_no_revela_usuario_ni_equipo(monkeypatch):
     import getpass
     import socket
 
+    # Usuario y equipo ficticios y únicos: con los reales el test dependería de la máquina
+    # (un equipo llamado «windows11» coincide con la clave legítima «es_windows11»).
+    usuario, equipo = "usuario_secreto_xyz", "equipo_secreto_xyz"
+    monkeypatch.setattr(getpass, "getuser", lambda: usuario)
+    monkeypatch.setattr(socket, "gethostname", lambda: equipo)
+    monkeypatch.setattr(Path, "home", lambda: Path("C:/Users") / usuario)
+
     equipo_windows(monkeypatch, build="26100", edicion="Core", version="24H2")
     ruta_personal = str(Path.home() / "herramientas" / "tool.exe")
     monkeypatch.setattr(deteccion.shutil, "which", lambda nombre, path=None: ruta_personal)
 
     texto = json.dumps(detectar_capacidades(["tool"]).a_dict())
 
-    assert getpass.getuser().lower() not in texto.lower()
-    assert socket.gethostname().lower() not in texto.lower()
+    assert usuario not in texto.lower()
+    assert equipo not in texto.lower()
     assert json.loads(texto)["binarios"]["tool"].startswith("~")
 
 
