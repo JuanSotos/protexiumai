@@ -1,7 +1,7 @@
 # Estado de funcionalidades
 
-Línea base: P7 (2026-10-22); actualizado en P8 (2026-10-23) y P9 (2026-10-24). Criterio de estado: existe en el repositorio y tiene tests = **completada**; hecha solo en parte = **en curso**; el resto = **pendiente**.
-Origen: alumno / IA supervisada / software existente / mixto. Las funcionalidades existentes (F01, F02, F08, F12, F27) se marcan «IA supervisada» por indicación del autor (Claude Code, Sonnet 5.5, con revisión y decisiones de diseño del alumno; ver `REGISTRO_IA.md`).
+Línea base: P7 (2026-10-22); actualizado en P8 (2026-10-23), P9 y revisado en P10 (2026-10-24; sin cambios de estado, ver `DATOS_PARA_MEMORIA.md`). Criterio de estado: existe en el repositorio y tiene tests = **completada**; hecha solo en parte = **en curso**; el resto = **pendiente**.
+Origen: alumno / IA supervisada / software existente / mixto. Las funcionalidades existentes (F01, F02, F08, F12, F27) se marcan «IA supervisada» por indicación del autor (Claude Code: Sonnet 5 en P0–P6 y Opus 5 en parte de Post-P6, con revisión y decisiones de diseño del alumno; ver `REGISTRO_IA.md`).
 
 | ID | Funcionalidad | Hito | Estado (completada / en curso / pendiente) | Origen (alumno / IA supervisada / software existente / mixto) | Evidencia (test, fichero, captura) |
 |---|---|---|---|---|---|
@@ -12,7 +12,7 @@ Origen: alumno / IA supervisada / software existente / mixto. Las funcionalidade
 | F05 | Validador y política con listas de denegación | H1 | pendiente | — | — (hoy solo hay validación contra enums en `src/executor.py`) |
 | F06 | Confirmación humana sobre un plan visible | H1 | pendiente | — | — (hoy la confirmación por botón existe en `src/agent.py` y está testeada en `tests/test_agent.py`, pero no va ligada a un plan) |
 | F07 | Remediación reversible check/plan/apply/verify/rollback | H1 | pendiente | — | — |
-| F08 | Auditoría JSONL con token de marcha atrás | H0 parcial; H1 | en curso | IA supervisada | `src/audit.py`, `tests/test_auditoria.py` (26 tests), auditoría en `tests/test_executor.py`; falta el token de marcha atrás (H1) |
+| F08 | Auditoría JSONL con token de marcha atrás | H0 parcial; H1 | en curso | IA supervisada | `src/audit.py` (cobertura 100 %), auditoría probada en `tests/test_executor.py` (`test_audit_*`) y `tests/test_agent.py`; `tests/test_auditoria.py` (26 tests) prueba el lector de la interfaz `app/auditoria.py`, no `src/audit.py`; falta el token de marcha atrás (H1) |
 | F09 | Perfiles Hogar / Sistemas | H1 configuración; H5 interfaces | pendiente | — | — |
 | F10 | Enrutador por sensibilidad del dato y anonimizador | H1 | pendiente | — | — |
 | F11 | Comprobaciones Windows 10/11 CIS nivel 1 (30–40) | H2 | pendiente | — | — |
@@ -31,4 +31,4 @@ Origen: alumno / IA supervisada / software existente / mixto. Las funcionalidade
 | F24 | Interfaces Hogar/Sistemas completas e informes HTML con deriva | H5 | pendiente | — | — |
 | F25 | Instalador Windows y paquetes Linux | H5 | pendiente | — | — |
 | F26 | Evaluación en VMs y benchmark nube/local | H6 | pendiente | — | — |
-| F27 | Tests de inyección de prompts | H0; se amplían en cada fase | en curso | IA supervisada | `tests/test_injection.py` (3 tests); se amplía en cada fase |
+| F27 | Tests de inyección de prompts | H0; puede ampliarse en cada fase | en curso | IA supervisada | `tests/test_injection.py` (3 tests); los tests pueden ampliarse según lo realizado en cada fase y, si es necesario, se generarán nuevos |

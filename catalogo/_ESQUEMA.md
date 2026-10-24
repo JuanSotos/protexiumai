@@ -120,4 +120,4 @@ id,cis_benchmark,cis_id,cis_titulo_breve,cis_controls,ccn,attack,d3fend,ens,veri
 
 ## Presupuesto de tokens
 
-El esquema de herramientas que recibe el LLM no puede superar **3.000 tokens** (≈ caracteres/4, medido sobre el JSON compacto): el plan gratuito de Groq limita a 8.000 tokens por minuto. `tests/test_catalogo.py` lo comprueba. Por eso las futuras comprobaciones no se expondrán una a una, sino agrupadas por `area`.
+El esquema de herramientas que recibe el LLM no puede superar **3.000 tokens** (≈ caracteres/4, medido sobre el JSON compacto): el plan gratuito de Groq limita a 8.000 tokens por minuto. `tests/test_catalogo_regresion.py` lo comprueba. Por eso las futuras comprobaciones no se expondrán una a una, sino agrupadas por `area`.

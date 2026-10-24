@@ -183,3 +183,35 @@ No medida: `pytest-cov` no está instalado en el entorno (ver P7).
 
 ### Pruebas manuales en VM
 Ninguna en P9. La detección solo lee (registro, `os-release`, `/sys`) y los tests la simulan, pero **no se ha ejecutado en un Linux real**: las fixtures de os-release están escritas a partir del formato conocido de cada distribución, no copiadas de máquinas reales. Pendiente de Juan: ejecutar `python -m src.plataforma` en una VM Linux (p. ej. Ubuntu y Kali) y en Windows 10 y guardar la salida en `evidencias/vm/`.
+
+## P10 — Entrega intermedia (2026-10-24)
+
+Sin funcionalidad nueva: no se modifica ningún módulo de `src/` ni de `app/` ni ningún test. Se ejecuta la batería final con cobertura (`pytest-cov` instalado desde `requirements-dev.txt`) y se revisan secretos y datos personales.
+
+### Resultado
+- Línea base de la fase: **454 passed**. Tras P10: **454 passed**, 0 fallos, 0 errores, 0 omitidos, en 11,6 s (`evidencias/P10_pytest_final.txt`, `evidencias/P10_junit.xml`). Comando: `python -m pytest --cov=src --cov-report=term-missing --junitxml=docs/memoria/evidencias/P10_junit.xml`.
+- Reproducibilidad: un clon limpio del repositorio, con un entorno virtual nuevo e `pip install -r requirements-dev.txt`, pasa también los 454 tests sin `.env` ni `logs/`. Las dependencias no tienen la versión fijada, así que se resolvieron versiones más recientes que las del entorno de desarrollo y la batería siguió en verde.
+- Anonimización de las evidencias: el XML de JUnit incluye por defecto el nombre del equipo (`hostname=`) y la salida de pytest rutas absolutas; se sustituyeron por `anonimizado` y por rutas relativas / `<repo>`. Además, los identificadores de los 4 casos de `test_los_patrones_detectan_claves_falsas` incluyen las claves sintéticas del test y hacían saltar `test_ningun_fichero_contiene_claves` sobre el propio XML; se renombraron a `caso_sintetico_1…4`. Son las únicas ediciones manuales de esas salidas; el test de secretos no se ha modificado.
+
+### Cobertura de `src/` (primera medición del proyecto)
+
+| Módulo | Cobertura |
+|---|---:|
+| `src/catalogo.py` | 97 % |
+| `src/tools_schema.py` | 100 % |
+| `src/executor.py` | 95 % |
+| `src/plataforma/` (3 ficheros) | 97,5 % (`deteccion.py` 97 %) |
+| `src/agent.py` | 92 % |
+| `src/audit.py` | 100 % |
+| `src/config.py` | 70 % (`cargar_perfil()` sin tests, líneas 40-60) |
+| **Total** | **96 %** (902 sentencias, 40 sin cubrir) |
+
+Es cobertura de líneas y solo de `src/`; `app/` (incluida la vista de Streamlit) no se mide. Detalle de líneas no cubiertas en `DATOS_PARA_MEMORIA.md`.
+
+### Seguridad
+- `tests/test_repo_sin_secretos.py`: 10 de 10 en verde.
+- `git log --all -G "gsk_[A-Za-z0-9]{10,}" --oneline`: sin coincidencias.
+- Ningún fichero de `logs/`, `data/` ni `.env` versionado, ni en el índice ni en el historial; sin nombre de usuario, nombre de equipo, correos, IPs ni rutas personales en los ficheros versionados.
+
+### Pruebas manuales en VM
+Ninguna en P10. Siguen pendientes de Juan las de P2–P6, la repetición en la VM de una lectura y una acción con confirmación tras la migración al catálogo (P8) y `python -m src.plataforma` en una VM Linux y en Windows 10 (P9), con salida en `evidencias/vm/`.

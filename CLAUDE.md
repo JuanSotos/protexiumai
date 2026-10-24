@@ -22,7 +22,7 @@ PowerShell (Windows Defender + firewall)
 ```
 
 Proveedor LLM dual, intercambiable por configuración (interfaz compatible con SDK de OpenAI):
-- **groq** (nube): base_url `https://api.groq.com/openai/v1`, modelo `llama-3.3-70b-versatile`
+- **groq** (nube): base_url `https://api.groq.com/openai/v1`, modelo `openai/gpt-oss-20b` (fijo en `src/config.py`, con `reasoning_effort="low"`; sustituyó a `llama-3.3-70b-versatile`, que Groq retiró; ver `docs/memoria/CAMBIOS.md`)
 - **ollama** (local, "modo privado"): base_url `http://localhost:11434/v1`, modelo pequeño (p. ej. `llama3.2:3b`)
 
 ## REGLAS INNEGOCIABLES DE SEGURIDAD
@@ -54,16 +54,18 @@ Estas reglas son el núcleo del proyecto y de su valor académico. No las relaje
 ## Stack y convenciones
 
 - Python 3.11+, entorno virtual `venv/`.
-- Dependencias: `openai` (cliente compatible con Groq y Ollama), `streamlit`, `python-dotenv`, `pytest`.
+- Dependencias de ejecución (`requirements.txt`): `openai` (cliente compatible con Groq y Ollama), `streamlit`, `python-dotenv`, `pyyaml` (lectura del catálogo) y `pytest`. De desarrollo (`requirements-dev.txt`): además `pytest-cov`.
 - Type hints en todas las funciones públicas. Docstrings y comentarios **en español** (el tribunal leerá fragmentos del código en la memoria).
 - Funciones pequeñas y módulos con una sola responsabilidad. Sin dependencias nuevas salvo necesidad justificada.
 - Tests con pytest y subprocess/LLM mockeados; los tests nunca ejecutan acciones reales sobre el sistema.
-- La WHITELIST es la única fuente de verdad: el schema de tools para el LLM (`src/tools_schema.py`) se genera desde ella, nunca a mano.
+- El catálogo (`catalogo/`) es la única fuente de verdad (regla 9). `executor.WHITELIST` es una vista derivada de él y el schema de tools para el LLM (`src/tools_schema.py`) se genera desde esa vista, filtrado por las capacidades del equipo (`src/plataforma/`), nunca a mano. El schema no puede superar 3.000 tokens (test de regresión).
 
 ## Comandos útiles
 
 ```powershell
 python -m pytest                    # tests
+python -m pytest --cov=src --cov-report=term-missing  # tests con cobertura
+python -m src.plataforma            # diagnóstico JSON de plataforma y capacidades
 python cli.py                       # chat por consola
 streamlit run app/streamlit_app.py  # interfaz gráfica
 python scripts/hello_ps.py          # verificación PowerShell
@@ -79,4 +81,4 @@ python scripts/hello_llm.py         # verificación LLM
 
 ## Estado del proyecto por fases
 
-El desarrollo sigue prompts secuenciales P0–P6 (ver guía del proyecto): P0 andamiaje · P1 doble hello world · P2 capa ejecutora + tests · P3 agente + CLI (rebanada vertical) · P4 Streamlit · P5 modo privado Ollama · P6 escenarios de demo + tests de inyección. Antes de implementar, comprueba qué fases están ya completadas en el repositorio y no rehagas trabajo existente.
+El desarrollo sigue prompts secuenciales P0–P6 (ver guía del proyecto): P0 andamiaje · P1 doble hello world · P2 capa ejecutora + tests · P3 agente + CLI (rebanada vertical) · P4 Streamlit · P5 modo privado Ollama · P6 escenarios de demo + tests de inyección. Todas están completadas. Después, la línea de la entrega intermedia (v2, reglas 9–18): P7 línea base (inventario, test anti-secretos, `docs/memoria/`) · P8 catálogo YAML validado (`catalogo/`, `src/catalogo.py`) · P9 detección de plataforma y capacidades (`src/plataforma/`) · P10 preparación de la entrega intermedia (README, CHANGELOG, batería con cobertura, `docs/memoria/DATOS_PARA_MEMORIA.md` y `PLANIFICACION_RESTANTE.md`). El estado de cada funcionalidad (F01–F27) está en `docs/memoria/ESTADO_FUNCIONALIDADES.md`. Antes de implementar, comprueba qué fases están ya completadas en el repositorio y no rehagas trabajo existente.
