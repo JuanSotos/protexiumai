@@ -1,1 +1,15 @@
 id,cis_benchmark,cis_id,cis_titulo_breve,cis_controls,ccn,attack,d3fend,ens,verificado_por,fecha
+get_firewall_status,,,,4.4;4.5,,T1686.003,,mp.com.1,Juan Sotos,2026-10-24
+get_allowed_firewall_rules,,,,4.4;4.5,,T1686.003,,mp.com.1,Juan Sotos,2026-10-24
+set_firewall_profile,,,,4.4;4.5,,T1686.003,,mp.com.1,Juan Sotos,2026-10-24
+set_block_all_incoming,,,,4.4;4.5,,T1686.003,,mp.com.1,Juan Sotos,2026-10-24
+restore_firewall_defaults,,,,4.4;4.5,,T1686.003,,mp.com.1,Juan Sotos,2026-10-24
+get_defender_status,,,,10.1,,T1685,,op.exp.6,Juan Sotos,2026-10-24
+get_defender_exclusions,,,,10.1,,T1685,,op.exp.6,Juan Sotos,2026-10-24
+get_detected_threats,,,,10.1,,,,op.exp.6,Juan Sotos,2026-10-24
+remove_all_threats,,,,10.1,,,,op.exp.6,Juan Sotos,2026-10-24
+start_quick_scan,,,,10.1,,,,op.exp.6,Juan Sotos,2026-10-24
+start_full_scan,,,,10.1,,,,op.exp.6,Juan Sotos,2026-10-24
+start_custom_scan,,,,10.1,,,,op.exp.6,Juan Sotos,2026-10-24
+update_signatures,,,,10.2,,T1685,,op.exp.6,Juan Sotos,2026-10-24
+get_bitlocker_status,,,,3.6,,,,mp.eq.3,Juan Sotos,2026-10-24

@@ -231,11 +231,12 @@ Resumen de cómo se ha comprobado el código y la documentación generados por l
 | Instantáneas de regresión de la migración | Que en P8 el esquema, las plantillas, los niveles, los permisos de administrador y los timeouts de las 25 herramientas son idénticos a los de P7. Las instantáneas se generaron con el código anterior. | `tests/fixtures/schema_p7.json`, `whitelist_p7.json` |
 | Comprobación de que los tests detectan fallos | Se rompió a propósito cada pieza clave (4 en P8, 5 en P9) y en los 9 casos algún test falló; después se restauró el código. | Secciones P8 y P9 de este documento |
 | Test anti-secretos | Que no hay claves ni `.env` en el repositorio; además `git log --all -G "gsk_[A-Za-z0-9]{10,}"` no devuelve nada. | `tests/test_repo_sin_secretos.py` |
-| Revisión de coherencia de la documentación | Contraste de los documentos de memoria entre sí y con el código. Detectó 5 errores documentales generados por IA. | `INCIDENCIAS_IA.md` (INC-01 a INC-05) |
+| Revisión de coherencia de la documentación | Contraste de los documentos de memoria entre sí y con el código. Detectó 4 errores documentales generados por IA. | `INCIDENCIAS_IA.md` (INC-01 a INC-04) |
+| Verificación de los mapeos a marcos con fuentes oficiales | Contraste de las propuestas de la IA con attack.mitre.org, con el anexo II del Real Decreto 311/2022 y con CIS Controls v8.1. Detectó 2 errores (IDs de ATT&CK obsoletos y una medida del ENS mal asignada). | `INCIDENCIAS_IA.md` (INC-06 e INC-07); CIS Controls v8.1 contrastado sin errores |
 
 ### Errores o comportamientos incorrectos detectados y correcciones
 
-Hay 5 incidencias registradas, todas en documentación o evidencias y ninguna en el código de `src/`; el detalle, con causa probable y corrección, está en `INCIDENCIAS_IA.md`. Hasta P9 no consta ninguna corrección del autor sobre el código generado.
+Hay 7 incidencias registradas, todas en documentación o evidencias y ninguna en el código de `src/`; el detalle, con causa probable y corrección, está en `INCIDENCIAS_IA.md`. Hasta P9 no consta ninguna corrección del autor sobre el código generado.
 
 ### Límites de la validación (lo que no está comprobado)
 
@@ -244,4 +245,4 @@ Hay 5 incidencias registradas, todas en documentación o evidencias y ninguna en
 - `cargar_perfil()` de `src/config.py` no tiene tests propios (cobertura de `config.py`: 70 %).
 - La vista de Streamlit (`app/streamlit_app.py`) no tiene tests automáticos; `app/` no se incluye en la medición de cobertura.
 - Los tests de inyección comprueban que el sistema no ejecuta nada sin confirmación, no si un modelo real «obedecería» el texto inyectado.
-- Los mapeos a marcos (CIS, CCN, ATT&CK) no están verificados: el CSV está vacío (regla 15).
+- Los mapeos a marcos cubren 14 de las 25 herramientas y tres marcos (CIS Controls v8.1, ATT&CK y ENS); CIS Benchmark, CCN-STIC y D3FEND no están mapeados (regla 15). Son orientativos, no una declaración de conformidad.

@@ -116,7 +116,7 @@ id,cis_benchmark,cis_id,cis_titulo_breve,cis_controls,ccn,attack,d3fend,ens,veri
 - `id` debe existir en el catálogo y no repetirse. Las listas (`cis_controls`, `ccn`, `attack`, `d3fend`, `ens`) se separan con `;`. `fecha` es `AAAA-MM-DD`.
 - **Regla 15:** un mapeo solo es `verificado: true` si la columna `verificado_por` no está vacía. Sin ella el cargador lo deja en `verificado: false`. Los identificadores no se inventan: los aporta Juan.
 - En el YAML, `marcos` admite `cis` (`{benchmark, id, titulo_breve}`), `cis_controls`, `ccn`, `attack`, `d3fend`, `ens` y `verificado`, pero `verificado: true` se rechaza (la verificación debe constar en el CSV). Un mismo id no puede tener `marcos` en el YAML y en el CSV a la vez.
-- Las propuestas de la IA no van en el CSV: se anotan en `_propuestas_mapeo_IA.md` con la etiqueta «PROPUESTA IA — SIN VERIFICAR».
+- Las propuestas de la IA no van en el CSV hasta que Juan las verifica: se anotan en `_mapeo_marcos_razonamiento.md` (con el razonamiento y el perfil al que se dirige cada mapeo, que el CSV no recoge) y solo pasan al CSV con `verificado_por`.
 
 ## Presupuesto de tokens
 

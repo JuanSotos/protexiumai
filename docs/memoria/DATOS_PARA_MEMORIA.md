@@ -173,13 +173,13 @@ La cobertura se mide solo sobre `src/`; `app/` (2.852 líneas, incluida la vista
 
 ## 5. Incidencias de la IA
 
-`INCIDENCIAS_IA.md` contiene **5 incidencias** (INC-01 a INC-05), todas registradas en la revisión de P10. Las causas raíz son hipótesis de la IA que Juan debe confirmar.
+`INCIDENCIAS_IA.md` contiene **7 incidencias** (INC-01 a INC-07), todas registradas en la revisión de P10. Las causas raíz son hipótesis de la IA que Juan debe confirmar.
 
 | Desglose | Resultado |
 |---|---|
-| Por forma de detección | Revisión de coherencia documental: 3 (INC-01, INC-02, INC-03) · contraste con la memoria preliminar: 1 (INC-04) · test automático: 1 (INC-05) · revisión del diff, ejecución manual y VM: 0 |
-| Por módulo | Memoria (`ESTADO_FUNCIONALIDADES.md`): 2 (INC-01, INC-03) · memoria (`CAMBIOS.md`): 1 (INC-04) · catálogo, documentación (`_ESQUEMA.md`): 1 (INC-02) · evidencias de P10: 1 (INC-05) · código de `src/`: 0 |
-| Por fase de origen | P7: 2 · P8: 2 · P10: 1 |
+| Por forma de detección | Revisión de coherencia documental: 3 (INC-01, INC-02, INC-03) · contraste con la memoria preliminar: 1 (INC-04) · test automático: 1 (INC-05) · contraste del autor con fuentes oficiales (attack.mitre.org y anexo II del RD 311/2022): 2 (INC-06, INC-07) · revisión del diff, ejecución manual y VM: 0 |
+| Por módulo | Memoria (`ESTADO_FUNCIONALIDADES.md`): 2 (INC-01, INC-03) · memoria (`CAMBIOS.md`): 1 (INC-04) · catálogo, documentación (`_ESQUEMA.md`): 1 (INC-02) · evidencias de P10: 1 (INC-05) · propuestas de mapeo (`_mapeo_marcos_razonamiento.md`): 2 (INC-06, INC-07) · código de `src/`: 0 |
+| Por fase de origen | P7: 2 · P8: 2 · P10: 3 |
 
 Ninguna afecta al código de `src/`; hasta P9 no consta ninguna corrección del autor sobre código generado. Si Juan recuerda algún comportamiento incorrecto de la IA en el código que corrigiera, debe añadirse con su causa raíz y su test de regresión.
 
@@ -215,13 +215,13 @@ De `ESTADO_FUNCIONALIDADES.md`: **3 completadas** (F01, F03, F04), **4 en curso*
 
 | Concepto | Cifra |
 |---|---:|
-| Mapeos **verificados** (`verificado: true`, con `verificado_por`) | **0** |
-| Herramientas con propuesta de mapeo de la IA, pendientes de verificar (`verificado: false`) | **14 de 25** (`catalogo/_propuestas_mapeo_IA.md`; solo CIS Controls v8, ATT&CK y ENS; las 11 restantes sin propuesta) |
-| Filas en `catalogo/mapeo_marcos.csv` | 0 (solo la cabecera) |
+| Herramientas con mapeo **verificado** (`verificado: true`, con `verificado_por`) | **14 de 25** (CIS Controls v8.1, ATT&CK y ENS; verificados por Juan Sotos el 2026-10-24) |
+| Propuestas de mapeo de la IA pendientes de verificar | **0** (las 14 se verificaron y corrigieron; las 11 restantes no tienen propuesta; razonamiento y perfil en `catalogo/_mapeo_marcos_razonamiento.md`) |
+| Filas en `catalogo/mapeo_marcos.csv` | 14 |
 | Entradas del catálogo con el campo `marcos` en el YAML | 0 |
-| Entradas del catálogo sin mapeo (`verificado: false` por defecto) | 25 de 25 |
+| Entradas del catálogo sin mapeo (`verificado: false` por defecto) | 11 de 25 |
 
-Los 25 identificadores heredados son herramientas del LLM, no comprobaciones; los mapeos CIS/CCN/ATT&CK corresponden sobre todo a las comprobaciones de H2 y H3, que aún no existen. Según la regla 15 el CSV lo rellena Juan.
+Los 25 identificadores heredados son herramientas del LLM, no comprobaciones; los mapeos CIS/CCN/ATT&CK corresponden sobre todo a las comprobaciones de H2 y H3, que aún no existen. Según la regla 15 el CSV lo rellena Juan. Durante la verificación la IA cometió dos errores (identificadores de ATT&CK obsoletos y una medida del ENS mal asignada), registrados como INC-06 e INC-07; CIS Controls v8.1 se contrastó sin errores. CIS Benchmark, CCN-STIC y D3FEND siguen sin mapeo. Los mapeos son orientativos, no una declaración de conformidad.
 
 ## 9. Seguridad (comprobaciones de P10)
 

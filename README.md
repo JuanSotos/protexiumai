@@ -183,7 +183,7 @@ app/                       Interfaz Streamlit y módulos de apoyo (textos, lectu
 catalogo/                  Catálogo YAML: única fuente de verdad de herramientas y comprobaciones
   _ESQUEMA.md                Esquema, aplicabilidad, lista de denegación y presupuesto de tokens
   herramientas_llm.yaml      Las 25 herramientas que ve el LLM
-  mapeo_marcos.csv           Mapeos a CIS/CCN/ATT&CK/ENS (solo con verificación de Juan; hoy vacío)
+  mapeo_marcos.csv           Mapeos a CIS/CCN/ATT&CK/ENS (solo con verificación de Juan; 14 herramientas mapeadas)
   windows/  linux/           Reservadas para las comprobaciones de H2 y H3 (hoy vacías)
 src/
   agent.py                   Bucle del agente: function calling, historial y system prompt
@@ -236,7 +236,7 @@ Las reglas de seguridad están en [`CLAUDE.md`](CLAUDE.md). En resumen:
 
 - **Soporte funcional solo en Windows 11 por ahora.** En Windows 10 se detecta la plataforma y se ofrecen las mismas 25 herramientas, pero no se ha probado en ese sistema. En Linux solo funciona la detección de plataforma y capacidades (`python -m src.plataforma`): el agente no ofrece herramientas y lo avisa. La detección en Linux se ha probado únicamente con ficheros `os-release` simulados; falta contrastarla en una VM Linux real.
 - Windows Defender: Tamper Protection impide cambiar su configuración, así que no hay herramientas que modifiquen `Set-MpPreference`; las mutaciones actúan sobre el firewall. Con un antivirus de terceros Defender pasa a modo pasivo y el agente lo explica.
-- Los mapeos a marcos normativos (CIS, CCN-STIC, ATT&CK, D3FEND, ENS) están sin rellenar: solo valen los que aporte el autor con su verificación.
+- Los mapeos a marcos normativos (CIS, CCN-STIC, ATT&CK, D3FEND, ENS) están rellenados solo para 14 de las 25 herramientas y tres marcos (CIS Controls v8.1, ATT&CK y ENS, verificados por el autor); CIS Benchmark, CCN-STIC y D3FEND siguen sin mapeo: solo valen los que aporte el autor con su verificación.
 - Todavía no hay validador con listas de denegación sobre planes, confirmación ligada a un plan, remediación reversible (check/plan/apply/verify/rollback), perfiles Hogar/Sistemas, enrutador por sensibilidad ni anonimizador, comprobaciones CIS, análisis de procesos y persistencia, ni instaladores.
 - El motor local integrado (llama-cpp-python) está previsto para H5; hoy el modo privado necesita Ollama instalado aparte.
 - Un modelo local pequeño (`llama3.2:3b`) elige peor las herramientas y narra peor los resultados que el modelo de la nube.

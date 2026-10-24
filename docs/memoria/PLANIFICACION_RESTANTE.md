@@ -46,7 +46,7 @@ Objetivo: terminar la capa de seguridad y gobierno antes de añadir comprobacion
 | P14 Enrutador y anonimizador | F10 | Enrutador por sensibilidad del dato (`router.py`, como en el apartado 4 de la memoria; el campo `sensibilidad` ya está en el catálogo): lo `personal` se procesa en local o pasa por el anonimizador (`anonimizador.py`) antes de salir a la nube. | Tests con datos personales sintéticos: nunca llegan al cliente de Groq; el proveedor local los recibe. |
 | Cierre | F27, F02 | Ampliar `tests/test_injection.py` (hoy 3 tests) con inyección en las salidas nuevas; tests de `cargar_perfil()` (hoy sin ellos). | Cierra la incoherencia I-7 y el 70 % de `config.py`. |
 
-Dependencias de Juan: revisar el reparto de áreas/sensibilidad/riesgo de P8, rellenar `mapeo_marcos.csv` con identificadores verificados, y lanzar en VM las pruebas con efectos y la detección en Linux/Windows 10 pendientes de P9.
+Dependencias de Juan: revisar el reparto de áreas/sensibilidad/riesgo de P8, completar `mapeo_marcos.csv` (CIS Benchmark, CCN-STIC, D3FEND y las 11 herramientas sin mapeo), y lanzar en VM las pruebas con efectos y la detección en Linux/Windows 10 pendientes de P9.
 
 ### 3.2 H2 — Núcleo Windows 10/11 — del 23 de noviembre de 2026 al 29 de enero de 2027
 

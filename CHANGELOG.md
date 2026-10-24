@@ -4,13 +4,13 @@ Historial de ProtexiumAI por fase, reconstruido a partir de `git log` y `git sho
 
 ## P10 — Preparación de la entrega intermedia, parcial (2026-10-24)
 
-Sin funcionalidad nueva. Fase parcial: quedan pendientes las evidencias de las pruebas en máquinas virtuales (`evidencias/vm/` y `capturas/`), el contenido verificado de `catalogo/mapeo_marcos.csv`, la revisión de áreas y sensibilidad del catálogo, el registro completo de herramientas de IA y la validación final de la planificación.
+Sin funcionalidad nueva. Fase parcial: quedan pendientes las evidencias de las pruebas en máquinas virtuales (`evidencias/vm/` y `capturas/`), el mapeo a CIS Benchmark, CCN-STIC y D3FEND y de las 11 herramientas sin mapeo en `catalogo/mapeo_marcos.csv`, la revisión de áreas y sensibilidad del catálogo, el registro completo de herramientas de IA y la validación final de la planificación.
 
 - `README.md` completo: requisitos, instalación, configuración, modo privado, ejecución, tests, estructura, aviso de pruebas en VM y limitaciones.
 - Batería final: 454 tests en verde y cobertura de `src/` del 96 % (`docs/memoria/evidencias/P10_pytest_final.txt`, `P10_junit.xml`).
 - Nuevos documentos de memoria: `DATOS_PARA_MEMORIA.md` (cifras extraídas del repositorio) y `PLANIFICACION_RESTANTE.md` (borrador hasta junio de 2027).
 - Revisión de coherencia de `ESTADO_FUNCIONALIDADES.md`, `CAMBIOS.md` y `REGISTRO_IA.md` entre sí y con el código; las incoherencias halladas quedan listadas en `DATOS_PARA_MEMORIA.md`.
-- Borradores de apoyo a la memoria: sección de validación del código generado por IA en `PRUEBAS.md`, estrategia de uso de la IA en `CAMBIOS.md`, cinco incidencias documentales en `INCIDENCIAS_IA.md` y propuestas de mapeo sin verificar en `catalogo/_propuestas_mapeo_IA.md`.
+- Borradores de apoyo a la memoria: sección de validación del código generado por IA en `PRUEBAS.md`, estrategia de uso de la IA en `CAMBIOS.md`, siete incidencias documentales en `INCIDENCIAS_IA.md` y mapeos de 14 herramientas a CIS Controls v8.1, ATT&CK y ENS, verificados por el autor, en `catalogo/mapeo_marcos.csv` (razonamiento y perfil en `catalogo/_mapeo_marcos_razonamiento.md`).
 - Revisión de seguridad: test de secretos en verde, historial sin claves `gsk_…`, ningún fichero de `logs/`, `data/` ni `.env` versionado, evidencias sin usuario ni nombre de equipo.
 
 ## P9 — Detección de plataforma y capacidades (commit `2f1723c`, 2026-10-24)
@@ -25,7 +25,7 @@ Sin funcionalidad nueva. Fase parcial: quedan pendientes las evidencias de las p
 
 - Las 25 herramientas dejan de estar definidas en `src/executor.py` y pasan a `catalogo/herramientas_llm.yaml` (F03), cargado y validado por el nuevo `src/catalogo.py`: campos desconocidos, ids y claves duplicados, enums inválidos, marcadores sin declarar y lista de denegación (también tras expandir parámetros).
 - `executor.WHITELIST` pasa a ser una vista derivada del catálogo; el esquema del LLM se sigue generando desde ella.
-- Fusión de `catalogo/mapeo_marcos.csv` (hoy vacío): sin `verificado_por` un mapeo queda `verificado: false` (regla 15).
+- Fusión de `catalogo/mapeo_marcos.csv` (vacío en P8; rellenado en P10): sin `verificado_por` un mapeo queda `verificado: false` (regla 15).
 - Presupuesto de tokens: el esquema (~1.819 tokens) no puede superar 3.000.
 - Sin cambio de comportamiento, comprobado con instantáneas de P7 (`tests/fixtures/schema_p7.json`, `whitelist_p7.json`). 160 tests nuevos (355 en total); se añade `pyyaml`.
 
