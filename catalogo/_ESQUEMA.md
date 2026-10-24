@@ -68,7 +68,7 @@ Toda clave no listada aquí es un error («campo desconocido»).
 | `so` (obligatorio) | `windows` · `linux`. `powershell` y `registro` exigen `windows`. |
 | `familias` | solo `linux`: lista ⊆ {`debian`, `rhel`, `arch`, `suse`}, o `null` (todas). |
 | `build_min`, `build_max` | solo `windows`: enteros (build de Windows) o `null`; `build_min` ≤ `build_max`. |
-| `ediciones` | solo `windows`: lista de textos o `null` (todas). |
+| `ediciones` | solo `windows`: lista de textos o `null` (todas). Se comparan, sin distinguir mayúsculas, con el `EditionID` del registro (`Core` = Home, `Professional`, `Enterprise`, `Education`…). |
 
 ### `requisitos`
 
@@ -76,6 +76,18 @@ Toda clave no listada aquí es un error («campo desconocido»).
 |---|---|
 | `privilegios` (obligatorio) | `usuario` · `admin` (solo Windows) · `root` (solo Linux). `admin` y `root` equivalen a `requiere_admin` en el executor. |
 | `binarios` | lista de nombres de binario (sin rutas), por defecto vacía. |
+
+## Aplicabilidad al equipo
+
+`catalogo.aplicable(entrada, capacidades, perfil)` devuelve `(bool, motivo)` y decide si una entrada se ofrece en este equipo. Las `capacidades` las detecta `src/plataforma/` (solo lectura, sin `subprocess`; se ven con `python -m src.plataforma`). Se comprueba, por este orden:
+
+1. **Sistema:** `plataforma.so` debe coincidir con el del equipo (`windows`, `linux` u `otro`).
+2. **Windows:** `build_min` ≤ build ≤ `build_max` (ambos inclusivos; si no se pudo leer el build, una entrada con límites no aplica) y `ediciones`.
+3. **Linux:** `familias` debe contener la familia detectada (`debian`, `rhel`, `arch`, `suse`; por `ID` o `ID_LIKE` de `/etc/os-release`). Con `familias: null` aplica a todas, también a una distribución no reconocida.
+4. **Binarios:** todos los de `requisitos.binarios` deben resolverse con `shutil.which` (en Linux, sobre un PATH fijo). Uno ausente excluye la entrada.
+5. **Perfil:** el perfil activo (`hogar` por defecto) debe estar en `perfiles`.
+
+Los **privilegios no excluyen** una entrada: una que exija `admin` o `root` sigue siendo aplicable aunque el proceso no esté elevado, y más adelante se marcará como `requiere_privilegios` (regla 14). `src/tools_schema.py` usa `aplicable` para enviar al LLM solo las herramientas del equipo: en Windows 10/11 las 25 actuales, en Linux ninguna.
 
 ## Plantillas, argv y marcadores
 

@@ -1,0 +1,7 @@
+esto no es un fichero os-release
+ID="ubuntu
+=valor sin clave
+NAME
+1CLAVE_INVALIDA=x
+ID_LIKE='debian" mezcla de comillas
+VERSION_ID="12" texto tras la comilla de cierre

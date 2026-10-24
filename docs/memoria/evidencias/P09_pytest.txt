@@ -1,0 +1,25 @@
+============================= test session starts =============================
+platform win32 -- Python 3.14.7, pytest-9.1.1, pluggy-1.6.0
+rootdir: C:\dev\protexiumai
+plugins: anyio-4.14.2
+collected 454 items
+
+tests\test_agent.py ................                                     [  3%]
+tests\test_auditoria.py ..........................                       [  9%]
+tests\test_catalogo.py ................................................. [ 20%]
+........................................................................ [ 35%]
+.............................                                            [ 42%]
+tests\test_catalogo_aplicable.py .........................               [ 47%]
+tests\test_catalogo_regresion.py ..........                              [ 50%]
+tests\test_cliente_observado.py ........                                 [ 51%]
+tests\test_executor.py ................................................. [ 62%]
+..................................................                       [ 73%]
+tests\test_injection.py ...                                              [ 74%]
+tests\test_plataforma.py ............................................... [ 84%]
+.............                                                            [ 87%]
+tests\test_repo_sin_secretos.py ..........                               [ 89%]
+tests\test_textos.py ........................                            [ 94%]
+tests\test_tools_schema.py .........                                     [ 96%]
+tests\test_tools_schema_plataforma.py ..............                     [100%]
+
+============================ 454 passed in 10.40s =============================

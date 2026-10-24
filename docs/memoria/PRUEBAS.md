@@ -137,3 +137,49 @@ No medida: `pytest-cov` no está instalado en el entorno (ver P7).
 
 ### Pruebas manuales en VM
 Ninguna en P8: la migración no cambia los comandos ni añade acciones. Antes de dar la fase por cerrada conviene repetir en la VM una lectura y una acción con confirmación para ver que el comando ejecutado es idéntico.
+
+## P9 — Detección de plataforma y capacidades (2026-10-24)
+
+Paquete `src/plataforma/` (F04), `catalogo.aplicable()` y esquema del LLM filtrado por equipo. Sin herramientas ni comprobaciones nuevas.
+
+### Tests añadidos
+
+`tests/test_plataforma.py` (60), `tests/test_catalogo_aplicable.py` (25) y `tests/test_tools_schema_plataforma.py` (14): **99 tests**. No se modifica ningún assert de la batería anterior. Único cambio en un fichero existente: `tests/conftest.py` gana una fixture autouse que simula un Windows 11 Pro (build 26100) parcheando los lectores de bajo nivel, para que la batería no dependa del equipo en el que se ejecute. Ningún test lee el registro, `/etc/os-release` ni `/sys` reales y ninguno lanza subprocesos.
+
+| Grupo | Qué verifica | Tipo |
+|---|---|---|
+| `test_familia_y_campos_de_cada_distribucion` (8 casos) | Con las fixtures de `tests/fixtures/os-release/` (ubuntu-24.04, debian-12, kali-rolling, linuxmint-22, fedora-41, rocky-9, arch, opensuse-tumbleweed) la familia (debian / rhel / arch / suse), `ID`, `VERSION_ID` y `NAME` son los correctos; solo Kali es `es_kali`. | unitario |
+| `test_os_release_malformado_o_vacio_...`, `test_sin_fichero_os_release_...` | Un os-release malformado, vacío o inexistente da familia «desconocida» sin excepción. | negativo |
+| `test_la_familia_se_deduce_de_id_like_...`, `test_el_id_prevalece_...` | `ID_LIKE` sirve de respaldo, `ID` tiene prioridad y `opensuse*` es suse. | unitario |
+| `test_parser_*` (4) | Parseo propio: comillas dobles (con escapes) y simples, comentarios, saltos CRLF, líneas mal formadas descartadas sin perder las buenas, bytes raros. | unitario / negativo |
+| `test_windows_10_y_11_home_y_pro` (6 casos) | Builds 19045 (Windows 10) y 26100 (Windows 11), ediciones `Core` (Home) y `Professional`, y el límite 22000/21999 de `es_windows11`. | unitario |
+| `test_el_registro_se_abre_solo_en_modo_lectura_...`, `test_sin_winreg_o_sin_clave_...` | Con un `winreg` falso: se abre `HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion` con `KEY_READ` (sin bit de escritura) y un registro ilegible devuelve vacío. | unitario / negativo |
+| `test_registro_ilegible_...`, `test_valores_de_registro_corruptos_...` | Valores ausentes o corruptos dejan los campos en su valor neutro sin excepción. | negativo |
+| `test_comprobacion_de_administrador_...`, `test_sin_windll_...`, `test_es_root_...` | `IsUserAnAdmin` y `os.geteuid()` simulados; sin ellos, no hay privilegios. | unitario |
+| `test_deteccion_de_mac`, `test_mac_se_propaga_...` | AppArmor (`Y`/`N`), SELinux (`0` permisivo y `1`), prioridad de SELinux, contenido basura y ficheros ausentes. | unitario |
+| `test_clasificacion_del_sistema`, `test_so_otro_...` | `win32`, `linux`, `darwin`, `freebsd` → windows / linux / otro. | unitario |
+| `test_binarios_*`, `test_una_ruta_relativa_...`, `test_los_binarios_declarados_...` | Binarios resueltos a ruta absoluta o `None`, PATH fijo en Linux, ruta relativa rechazada y recogida de los binarios declarados en el catálogo. | unitario |
+| `test_la_deteccion_no_importa_subprocess_...` | El módulo no importa `subprocess` ni usa `os.system`/`os.popen`. | unitario (estático) |
+| `test_a_dict_...`, `test_python_m_src_plataforma_...` | El JSON del diagnóstico es válido, no contiene el usuario ni el nombre del equipo y abrevia rutas bajo el directorio personal. | unitario / integración simulada |
+| `test_una_entrada_de_windows_...`, `test_entrada_solo_para_windows_11_no_aplica_en_windows_10`, `test_build_max_...`, `test_los_limites_de_build_...` | `aplicable()` por sistema y build: una entrada solo para Windows 11 no aplica en Windows 10 y los límites son inclusivos. | unitario / negativo |
+| `test_ediciones_filtra_home_y_pro`, `test_la_familia_filtra_...`, `test_familia_desconocida_...` | Filtrado por edición y por familia de Linux. | unitario / negativo |
+| `test_entrada_con_binario_ausente_no_aplica` y relacionados (4) | Una entrada con un binario ausente (o no detectado) no aplica; con todos presentes sí. | negativo |
+| `test_perfil_distinto_...`, `test_un_perfil_inexistente_...`, `test_los_privilegios_no_excluyen_...` | El perfil excluye; los privilegios no (quedan para `requiere_privilegios`). | unitario |
+| `test_aplicabilidad_sobre_entradas_cargadas_desde_yaml` | `aplicable()` sobre una entrada leída de un YAML temporal (build, edición y sistema). | integración simulada |
+| `test_en_windows_aparecen_las_25_herramientas` (Windows 10 Home, 11 Home y 11 Pro), `test_fuera_de_windows_el_esquema_queda_vacio`, `test_una_herramienta_solo_para_windows_11_...` | El esquema conserva las 25 herramientas en Windows y queda vacío en Linux y sistemas desconocidos; una herramienta solo para Windows 11 desaparece en Windows 10. | regresión / unitario |
+| `test_en_linux_el_agente_no_envia_tools_...`, `test_en_windows_el_agente_envia_...` | En Linux el agente no envía `tools` (los proveedores rechazan un array vacío) y añade el aviso al system prompt; en Windows todo sigue igual. | integración simulada |
+
+La equivalencia con P8 se mantiene: `test_esquema_equivale_semanticamente_al_de_p7` y `test_el_orden_de_las_herramientas_y_de_los_enums_tambien_se_conserva` siguen en verde sobre el Windows 11 simulado.
+
+Comprobación de que los tests detectan fallos: se rompió temporalmente, una a una, la regla `build >= 22000`, el reconocimiento de `opensuse*`, la exclusión por binario ausente en `aplicable()`, el filtrado de `generar_tools_schema()` y la omisión de `tools` vacío en el agente; en los cinco casos algún test falló. El código se restauró después.
+
+### Resultado
+- Línea base antes de los cambios: **355 passed**.
+- Tras P9: **454 passed** = 355 + 99 (`evidencias/P09_pytest.txt`). Sin fallos.
+- `python -m src.plataforma` en el equipo de desarrollo (Windows 11, build 26300, edición `Core`, sin elevar): `evidencias/P09_capacidades_host.json`. El JSON no contiene usuario ni nombre del equipo.
+
+### Cobertura de los módulos tocados
+No medida: `pytest-cov` no está instalado en el entorno (ver P7).
+
+### Pruebas manuales en VM
+Ninguna en P9. La detección solo lee (registro, `os-release`, `/sys`) y los tests la simulan, pero **no se ha ejecutado en un Linux real**: las fixtures de os-release están escritas a partir del formato conocido de cada distribución, no copiadas de máquinas reales. Pendiente de Juan: ejecutar `python -m src.plataforma` en una VM Linux (p. ej. Ubuntu y Kali) y en Windows 10 y guardar la salida en `evidencias/vm/`.

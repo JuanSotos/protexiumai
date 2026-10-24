@@ -16,9 +16,12 @@ from dataclasses import dataclass, field, replace
 from datetime import date
 from pathlib import Path
 from string import Formatter
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import yaml
+
+if TYPE_CHECKING:  # solo para anotar tipos: src.plataforma importa este módulo, no al revés
+    from src.plataforma.deteccion import Capacidades
 
 RAIZ_CATALOGO = Path(__file__).resolve().parent.parent / "catalogo"
 
@@ -30,6 +33,7 @@ NIVELES = ("lectura", "accion", "mutante")
 RIESGOS = ("bajo", "alto")
 SENSIBILIDADES = ("tecnica", "personal")
 PERFILES = ("hogar", "sistemas")
+PERFIL_POR_DEFECTO = "hogar"
 SISTEMAS = ("windows", "linux")
 FAMILIAS = ("debian", "rhel", "arch", "suse")
 PRIVILEGIOS = ("usuario", "admin", "root")
@@ -672,3 +676,43 @@ def cargar_catalogo(raiz: Path | None = None) -> Catalogo:
                 _registrar(_cargar_fichero(ruta, f"{so}/{ruta.name}", ("comprobacion", "accion"), so))
 
     return Catalogo(entradas=_fusionar_marcos(entradas, raiz / "mapeo_marcos.csv"))
+
+
+# --- Aplicabilidad al equipo -------------------------------------------------------------
+def aplicable(entrada: Entrada, capacidades: Capacidades, perfil: str) -> tuple[bool, str]:
+    """Decide si una entrada aplica a este equipo y perfil; devuelve (aplica, motivo).
+
+    Comprueba, por este orden: sistema operativo, build y edición (Windows), familia (Linux),
+    binarios requeridos y perfil. El motivo explica la primera causa de exclusión. Los
+    privilegios no excluyen: una entrada que exige administrador o root sigue siendo aplicable
+    y se marcará como `requiere_privilegios` al evaluarla.
+    """
+    if perfil not in PERFILES:
+        raise ValueError(f"perfil desconocido: {perfil!r} (permitidos: {list(PERFILES)}).")
+    plataforma = entrada.plataforma
+    if plataforma.so != capacidades.so:
+        return False, f"es de {plataforma.so} y este equipo es {capacidades.so}"
+
+    if plataforma.so == "windows":
+        build = capacidades.windows_build
+        if plataforma.build_min is not None or plataforma.build_max is not None:
+            if build is None:
+                return False, "no se pudo determinar el build de Windows"
+            if plataforma.build_min is not None and build < plataforma.build_min:
+                return False, f"requiere el build {plataforma.build_min} o superior (este equipo: {build})"
+            if plataforma.build_max is not None and build > plataforma.build_max:
+                return False, f"requiere el build {plataforma.build_max} o inferior (este equipo: {build})"
+        if plataforma.ediciones is not None:
+            permitidas = {edicion.lower() for edicion in plataforma.ediciones}
+            if capacidades.windows_edicion.lower() not in permitidas:
+                return False, f"no aplica a la edición {capacidades.windows_edicion or 'desconocida'}"
+    elif plataforma.familias is not None and capacidades.familia not in plataforma.familias:
+        return False, f"no aplica a la familia {capacidades.familia}"
+
+    for binario in entrada.requisitos.binarios:
+        if capacidades.binarios.get(binario) is None:
+            return False, f"falta el binario '{binario}'"
+
+    if perfil not in entrada.perfiles:
+        return False, f"no está en el perfil '{perfil}'"
+    return True, "aplicable"

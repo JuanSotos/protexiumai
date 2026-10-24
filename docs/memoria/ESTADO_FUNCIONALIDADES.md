@@ -1,6 +1,6 @@
 # Estado de funcionalidades
 
-Línea base: P7 (2026-10-22); actualizado en P8 (2026-10-23). Criterio de estado: existe en el repositorio y tiene tests = **completada**; hecha solo en parte = **en curso**; el resto = **pendiente**.
+Línea base: P7 (2026-10-22); actualizado en P8 (2026-10-23) y P9 (2026-10-24). Criterio de estado: existe en el repositorio y tiene tests = **completada**; hecha solo en parte = **en curso**; el resto = **pendiente**.
 Origen: alumno / IA supervisada / software existente / mixto. Las funcionalidades existentes (F01, F02, F08, F12, F27) se marcan «IA supervisada» por indicación del autor (Claude Code, Sonnet 5.5, con revisión y decisiones de diseño del alumno; ver `REGISTRO_IA.md`).
 
 | ID | Funcionalidad | Hito | Estado (completada / en curso / pendiente) | Origen (alumno / IA supervisada / software existente / mixto) | Evidencia (test, fichero, captura) |
@@ -8,7 +8,7 @@ Origen: alumno / IA supervisada / software existente / mixto. Las funcionalidade
 | F01 | Conversación en lenguaje natural con agente LLM y function calling | H0 | completada | IA supervisada | `src/agent.py`, `cli.py`; `tests/test_agent.py` (16 tests); `tests/fixtures/schema_p7.json` |
 | F02 | Proveedor LLM dual nube (Groq) / local (modo privado) | H0; motor integrado en H5 | en curso | IA supervisada | `src/config.py` (perfiles groq/ollama), `scripts/check_local.py`; la parte H0 existe pero `cargar_perfil()` no tiene tests propios y falta integrar el motor (H5) |
 | F03 | Catálogo cerrado YAML con metadatos de marcos | H1 | completada | IA supervisada | `catalogo/` (`herramientas_llm.yaml` con las 25 herramientas, `_ESQUEMA.md`, `mapeo_marcos.csv`), `src/catalogo.py`; `tests/test_catalogo.py` (150 tests) y `tests/test_catalogo_regresion.py` (10 tests); `evidencias/P08_pytest.txt`. El CSV de marcos está vacío a propósito: los identificadores CIS/CCN/ATT&CK los aporta Juan con `verificado_por` (regla 15) |
-| F04 | Detección de plataforma y capacidades | H1 | pendiente | — | — |
+| F04 | Detección de plataforma y capacidades | H1 | completada | IA supervisada | `src/plataforma/` (`deteccion.py`, `__main__.py`), `catalogo.aplicable()` en `src/catalogo.py`, filtrado en `src/tools_schema.py` y aviso en `src/agent.py`; `tests/test_plataforma.py` (60), `tests/test_catalogo_aplicable.py` (25), `tests/test_tools_schema_plataforma.py` (14) y fixtures en `tests/fixtures/os-release/`; `evidencias/P09_pytest.txt`, `evidencias/P09_capacidades_host.json`. Verificada solo con registro y os-release simulados y en el equipo Windows 11 del autor; falta contrastarla en una VM Linux real (regla 17) |
 | F05 | Validador y política con listas de denegación | H1 | pendiente | — | — (hoy solo hay validación contra enums en `src/executor.py`) |
 | F06 | Confirmación humana sobre un plan visible | H1 | pendiente | — | — (hoy la confirmación por botón existe en `src/agent.py` y está testeada en `tests/test_agent.py`, pero no va ligada a un plan) |
 | F07 | Remediación reversible check/plan/apply/verify/rollback | H1 | pendiente | — | — |
