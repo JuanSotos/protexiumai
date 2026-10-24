@@ -40,6 +40,13 @@ MAX_ITERACIONES_POR_TURNO = 5
 # corta.
 MAX_TOKENS_RESPUESTA = 1024
 
+# Límite de caracteres de la salida de una herramienta que se reenvía al LLM. Una
+# consulta como Get-MpThreatDetection puede devolver decenas de miles de
+# caracteres y, sumada al resto de la petición, superar el límite de tokens por
+# minuto de las cuentas gratuitas (error 413 de Groq). Solo se recorta lo que ve el
+# LLM: la auditoría y la interfaz conservan el resultado completo.
+MAX_CARACTERES_RESULTADO_TOOL = 6000
+
 ConfirmarCallback = Callable[[str, str, dict[str, Any]], bool]
 
 
@@ -119,6 +126,30 @@ def _registrar_argumentos_invalidos(tool_id: str, argumentos_crudos: str, provee
     except OSError as error:
         print(f"Aviso: no se ha podido escribir en el log de auditoría: {error}", file=sys.stderr)
     return resultado
+
+
+def _contenido_para_llm(resultado: dict[str, Any]) -> str:
+    """Serializa el resultado de una herramienta; si es muy largo, envía un extracto con aviso.
+
+    El extracto sigue siendo un JSON válido y avisa al LLM de que los datos están
+    incompletos, para que lo diga al usuario en lugar de dar el recorte por completo.
+    """
+    texto = json.dumps(resultado, ensure_ascii=False)
+    if len(texto) <= MAX_CARACTERES_RESULTADO_TOOL:
+        return texto
+    return json.dumps(
+        {
+            "ok": resultado.get("ok"),
+            "tool_id": resultado.get("tool_id"),
+            "truncado": True,
+            "aviso": (
+                f"Salida recortada: se muestran {MAX_CARACTERES_RESULTADO_TOOL} de {len(texto)} caracteres. "
+                "Los datos están incompletos; indícaselo al usuario."
+            ),
+            "extracto": texto[:MAX_CARACTERES_RESULTADO_TOOL],
+        },
+        ensure_ascii=False,
+    )
 
 
 def _describir_sistema(capacidades: Capacidades) -> str:
@@ -226,5 +257,5 @@ class Agent:
 
     def _agregar_resultado_tool(self, tool_call_id: str, resultado: dict[str, Any]) -> None:
         self._historial.append(
-            {"role": "tool", "tool_call_id": tool_call_id, "content": json.dumps(resultado, ensure_ascii=False)}
+            {"role": "tool", "tool_call_id": tool_call_id, "content": _contenido_para_llm(resultado)}
         )

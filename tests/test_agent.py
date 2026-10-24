@@ -19,7 +19,7 @@ from openai.types.chat.chat_completion_message_function_tool_call import (
 )
 
 from src import executor
-from src.agent import MAX_ITERACIONES_POR_TURNO, Agent
+from src.agent import MAX_CARACTERES_RESULTADO_TOOL, MAX_ITERACIONES_POR_TURNO, Agent
 from src.config import PerfilLLM
 
 
@@ -393,6 +393,45 @@ def test_varias_tool_calls_en_un_turno_generan_un_resultado_por_cada_una(monkeyp
     mensajes_tool = [m for m in mensajes_enviados if m.get("role") == "tool"]
     assert len(mensajes_tool) == 2
     assert {m["tool_call_id"] for m in mensajes_tool} == {"call_1", "call_2"}
+
+
+def test_salida_de_herramienta_muy_larga_se_recorta_para_el_llm(monkeypatch):
+    tool_call = _tool_call("call_1", "get_detected_threats", "{}")
+    cliente = Mock()
+    cliente.chat.completions.create = Mock(
+        side_effect=[_completion_con_tool_calls([tool_call]), _completion_final("Hay varias detecciones.")]
+    )
+    resultado_largo = _resultado_ok("get_detected_threats")
+    resultado_largo["data"] = [{"Resources": "x" * 5000} for _ in range(10)]
+    monkeypatch.setattr(executor, "execute", Mock(return_value=resultado_largo))
+
+    agente = Agent(perfil=_perfil(), cliente=cliente)
+    agente.enviar_mensaje("me ha saltado una alerta, ¿es grave?")
+
+    mensajes = cliente.chat.completions.create.call_args_list[1].kwargs["messages"]
+    contenido = next(m["content"] for m in mensajes if m.get("role") == "tool")
+    recibido = json.loads(contenido)
+    assert recibido["truncado"] is True
+    assert recibido["tool_id"] == "get_detected_threats"
+    assert "incompletos" in recibido["aviso"]
+    assert len(contenido) < 2 * MAX_CARACTERES_RESULTADO_TOOL
+
+
+def test_salida_de_herramienta_corta_no_se_modifica(monkeypatch):
+    tool_call = _tool_call("call_1", "get_defender_status", "{}")
+    cliente = Mock()
+    cliente.chat.completions.create = Mock(
+        side_effect=[_completion_con_tool_calls([tool_call]), _completion_final("Todo bien.")]
+    )
+    resultado = _resultado_ok("get_defender_status")
+    monkeypatch.setattr(executor, "execute", Mock(return_value=resultado))
+
+    agente = Agent(perfil=_perfil(), cliente=cliente)
+    agente.enviar_mensaje("¿cómo está mi PC?")
+
+    mensajes = cliente.chat.completions.create.call_args_list[1].kwargs["messages"]
+    contenido = next(m["content"] for m in mensajes if m.get("role") == "tool")
+    assert json.loads(contenido) == resultado
 
 
 def test_sin_callback_confirmar_deniega_por_defecto(monkeypatch):

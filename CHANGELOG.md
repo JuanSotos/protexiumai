@@ -11,6 +11,7 @@ Sin funcionalidad nueva. Fase parcial: quedan pendientes las evidencias de las p
 - Nuevos documentos de memoria: `DATOS_PARA_MEMORIA.md` (cifras extraídas del repositorio) y `PLANIFICACION_RESTANTE.md` (borrador hasta junio de 2027).
 - Revisión de coherencia de `ESTADO_FUNCIONALIDADES.md`, `CAMBIOS.md` y `REGISTRO_IA.md` entre sí y con el código; las incoherencias halladas quedan listadas en `DATOS_PARA_MEMORIA.md`.
 - Borradores de apoyo a la memoria: sección de validación del código generado por IA en `PRUEBAS.md`, estrategia de uso de la IA en `CAMBIOS.md`, siete incidencias documentales en `INCIDENCIAS_IA.md` y mapeos de 14 herramientas a CIS Controls v8.1, ATT&CK y ENS, verificados por el autor, en `catalogo/mapeo_marcos.csv` (razonamiento y perfil en `catalogo/_mapeo_marcos_razonamiento.md`).
+- Corrección hallada en las pruebas en la VM (INC-08): la salida de cada herramienta que se reenvía al LLM se recorta a 6.000 caracteres con aviso (`src/agent.py`), para no superar el límite de tokens del plan gratuito de Groq. 2 tests nuevos (456 en total).
 - Revisión de seguridad: test de secretos en verde, historial sin claves `gsk_…`, ningún fichero de `logs/`, `data/` ni `.env` versionado, evidencias sin usuario ni nombre de equipo.
 
 ## P9 — Detección de plataforma y capacidades (commit `2f1723c`, 2026-10-24)
