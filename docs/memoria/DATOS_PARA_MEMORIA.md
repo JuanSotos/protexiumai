@@ -212,7 +212,7 @@ Herramientas de IA (confirmadas por Juan): Claude Code (código; Sonnet 5, Opus 
 
 ## 7. Funcionalidades (F01–F27)
 
-De `ESTADO_FUNCIONALIDADES.md`: **3 completadas** (F01, F03, F04), **4 en curso** (F02, F08, F12, F27) y **20 pendientes**. Origen declarado: «IA supervisada» en las 7 que existen (F01, F02, F03, F04, F08, F12, F27); ninguna «alumno», «mixto» ni «software existente».
+De `ESTADO_FUNCIONALIDADES.md`: **3 completadas** (F01, F03, F04), **4 en curso** (F02, F08, F12, F27) y **20 pendientes**. Origen declarado: «IA supervisada» en 6 de las 7 que existen (F01, F02, F03, F04, F08, F27) y «mixto» en F12, que orquesta software existente (Windows Defender) con código generado con IA supervisada; ninguna «alumno».
 
 ## 8. Mapeos a marcos
 
@@ -261,5 +261,21 @@ Revisión de `ESTADO_FUNCIONALIDADES.md` (F01–F27), `CAMBIOS.md`, `REGISTRO_IA
 | I-13 | F02 (proveedor dual) figura «en curso» y la cobertura lo confirma: `src/config.py` está al 70 % porque `cargar_perfil()` (líneas 40-60) no tiene tests. | Consistente; sigue pendiente de test. |
 | I-14 | Las filas 1, 2 y 4 de `CAMBIOS.md` figuraban como cambios «respecto a la entrega preliminar», pero la memoria ya describe el modelo `openai/gpt-oss-20b`, el catálogo YAML y el esquema filtrado por equipo: comparaban con el `CLAUDE.md` y el prototipo originales. | Corregida (opción A): `CAMBIOS.md` tiene ahora la tabla 1, con lo que se aparta de la memoria preliminar (agrupación por área y reglas 8→18), y la tabla 2, «Decisiones de diseño durante el desarrollo», con las otras tres y su base de comparación. Se reescribió el motivo de la fila del catálogo, que contradecía la memoria. |
 | I-15 | Cifras de la memoria preliminar desfasadas («185 actualmente», «ocho reglas», Tabla 3 sin versión de modelo). | Descartada: la memoria adjuntada es una versión antigua (entrega de planteamiento y estructura) y no se modifica; la memoria de la entrega intermedia recogerá las cifras actuales (458 tests, 18 reglas). |
+
+## 11. Decisión posterior a P10: sustitución de la interfaz (2026-10-25)
+
+No cambia ninguna cifra de este documento; no hay código nuevo. Se registra para que la memoria de la entrega intermedia lo cuente igual que el repositorio.
+
+| Dato | Valor |
+|---|---|
+| Decisión | Sustituir la interfaz de Streamlit por una aplicación web en React que habla con el agente a través de una API local en Python. Agente, ejecutor, catálogo y auditoría no cambian; `cli.py` se conserva. |
+| Estado | **Planificado, no implementado.** Hoy la interfaz sigue siendo `app/streamlit_app.py` (1.263 líneas, sin tests automáticos). |
+| Quién decide | Juan. La IA propuso el reparto por hitos y Juan lo validó. |
+| Respecto a la memoria preliminar | Es un cambio de tecnología: «Planteamiento final y estructura» nombra Streamlit en el apartado 6 (capa 1) y en el apartado 7 (librerías). No cambia el alcance (F24, H5). |
+| Reparto por hitos | H1 (dentro de P12/F06): contrato de eventos y de plan ligado a la confirmación, y lógica del turno fuera de Streamlit · H2: API local y esqueleto en React, con el tiempo de F13 · desde H2, Streamlit congelado · H5 (F24, F25): interfaces completas y empaquetado · Streamlit retirado antes del 2027-04-16. |
+| Regla nueva | Regla 19 de `CLAUDE.md` (las reglas pasan de 18 a 19), aprobada por Juan. |
+| Qué no se afirma | Que Streamlit sea lento: no se ha medido. La justificación se apoya en el diseño de Claude Design (HTML) y en la falta de tests de la vista. |
+| Pendiente de decidir | Ventana de escritorio del instalador (navegador, pywebview o Tauri), en H5; framework de la API y pruebas del frontend, al empezar H2. |
+| Dónde consta | `CAMBIOS.md` (tabla 1), `PLANIFICACION_RESTANTE.md` (cabecera, 3.1, 3.2, 3.4, 3.5, 4.2 y 5), `ESTADO_FUNCIONALIDADES.md` (F24) y `CLAUDE.md` (regla 19). |
 
 Comprobado sin incoherencias: los 27 identificadores F01–F27 están todos; los recuentos de tests citados en ESTADO, PRUEBAS y REGISTRO (16, 26, 150, 10, 25, 14, 60, 99, 3, 24, 9, 8) coinciden con `pytest --collect-only`; los tamaños de commit de REGISTRO_IA coinciden con `git show --shortstat`; las 4 filas de `CAMBIOS.md` coinciden con el código (modelo de Groq en `src/config.py`, WHITELIST derivada del catálogo en `src/executor.py`, esquema de 25 herramientas ≈ 1.819 tokens, fixture autouse en `tests/conftest.py`).
