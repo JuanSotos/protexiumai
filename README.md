@@ -213,7 +213,7 @@ Todo en [`docs/memoria/`](docs/memoria/):
 - [`REGISTRO_IA.md`](docs/memoria/REGISTRO_IA.md) e [`INCIDENCIAS_IA.md`](docs/memoria/INCIDENCIAS_IA.md): uso de la IA y sus incidencias.
 - [`PRUEBAS.md`](docs/memoria/PRUEBAS.md) y [`evidencias/`](docs/memoria/evidencias/): pruebas por fase y salidas de pytest.
 - [`DATOS_PARA_MEMORIA.md`](docs/memoria/DATOS_PARA_MEMORIA.md): cifras extraídas del repositorio.
-- [`PLANIFICACION_RESTANTE.md`](docs/memoria/PLANIFICACION_RESTANTE.md): borrador de planificación hasta junio de 2027.
+- [`PLANIFICACION_RESTANTE.md`](docs/memoria/PLANIFICACION_RESTANTE.md): planificación hasta junio de 2027.
 
 ## Pruebas con efectos: solo en máquinas virtuales
 

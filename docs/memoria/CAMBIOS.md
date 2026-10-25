@@ -21,18 +21,19 @@ Cambios respecto al `CLAUDE.md` y al código originales del prototipo (H0). Son 
 | arquitectura | Prototipo H0 (WHITELIST en código en `src/executor.py`). La memoria preliminar ya plantea un catálogo YAML (capa 4). | La WHITELIST definida en código pasa a ser un catálogo YAML validado (`catalogo/herramientas_llm.yaml`, cargado por `src/catalogo.py`). `executor.WHITELIST` se conserva como vista derivada del catálogo y `src/tools_schema.py` genera el esquema desde ella. | El prototipo H0 definía las herramientas en una WHITELIST en código. Las comprobaciones multiplataforma (Windows/Linux, CIS, marcos normativos) necesitan metadatos (plataforma, privilegios, severidad, marcos) y validación estricta que no caben en un diccionario Python; además el catálogo es revisable sin leer código. | Se añaden `catalogo/` y `src/catalogo.py` y la dependencia PyYAML. El comportamiento de las 25 herramientas no cambia (comprobado con instantáneas de P7: esquema, plantillas, niveles, administrador y timeouts) y la batería previa pasa sin modificar sus asserts. Si el catálogo no valida, la aplicación no arranca. | P8 |
 | arquitectura | Prototipo H0 (esquema del LLM fijo). La memoria preliminar ya plantea un esquema «filtrado según lo que existe en el equipo» (apartado 4). | El esquema de herramientas que recibe el LLM deja de ser fijo: `generar_tools_schema()` solo incluye las herramientas que `catalogo.aplicable()` da por válidas para las capacidades detectadas del equipo (`src/plataforma/`). En un equipo sin herramientas aplicables (Linux, hasta H3) el agente no envía `tools` y avisa en el system prompt. | Los módulos Windows/Linux de H2 y H3 conviven en un mismo catálogo; ofrecer al LLM una herramienta que no puede ejecutarse en el equipo produciría errores y gastaría tokens (límite de 8.000/min de Groq). Los proveedores además rechazan un array `tools` vacío. | Se añade el paquete `src/plataforma/`, la función `aplicable()` y el parámetro opcional `capacidades` en `Agent`. En Windows 10/11 el esquema es idéntico al de P8 (25 herramientas, test de equivalencia en verde). `tests/conftest.py` gana una fixture autouse que simula un Windows 11 Pro para que la batería no dependa del equipo. | P9 |
 
-## 3. Estrategia de uso de la IA: límites, cambios y herramientas (borrador)
+## 3. Estrategia de uso de la IA: límites, cambios y herramientas
 
-Recoge lo que consta en el repositorio; los motivos son los que se deducen de él y el autor debe confirmarlos. Los apartados marcados «pendiente del autor» solo los puede completar Juan.
+Recoge lo que consta en el repositorio y los motivos que el autor ha confirmado. Las herramientas y los modelos usados están en `REGISTRO_IA.md`.
 
 ### 3.1 Cambios en la estrategia
 
 | Cambio | Motivo | Impacto | Fase |
 |---|---|---|---|
 | La IA propone y el humano decide: confirmación obligatoria para toda herramienta de acción o mutante, y los mapeos a marcos solo valen si los verifica el autor (`verificado: false` por defecto). | Una IA puede equivocarse o inventar identificadores; en seguridad, un fallo tiene efectos reales. | Reglas 3, 12 y 15 de `CLAUDE.md`; el cargador del catálogo rechaza un mapeo sin `verificado_por`. | P2; P8 |
-| Las pruebas con efectos sobre el sistema las lanza el autor en máquinas virtuales; la IA solo ejecuta tests simulados y lecturas inocuas. | La IA no debe modificar el equipo de desarrollo y no puede validar por sí sola el comportamiento real. | Regla 17; las evidencias de VM dependen del autor y siguen pendientes. | P7 |
-| Mayor automatización del desarrollo: de fragmentos y módulos con revisión (N2–N3) en P0–P6 a desarrollo agéntico por fase (N4) en P7–P10, con plantillas de evidencias, instantáneas de regresión y revisión del diff por el autor. | Las fases de la entrega intermedia son amplias y verificables con tests; la revisión humana se concentra en el diff y en las decisiones de diseño. | Más trazabilidad (`REGISTRO_IA.md`, `INCIDENCIAS_IA.md`, `PRUEBAS.md`). | P7 |
-| Cambio de modelo de Claude Code según la fase: Sonnet 5 en P0–P6, Opus 5 en tres de los commits posteriores a P6 y Sonnet 5.5 en P7–P10. | No registrado en el repositorio (pendiente del autor). | Se refleja en `REGISTRO_IA.md`. | Varias |
+| Las pruebas con efectos sobre el sistema las lanza el autor en máquinas virtuales; la IA solo ejecuta tests simulados y lecturas inocuas. | La IA no debe modificar el equipo de desarrollo y no puede validar por sí sola el comportamiento real. | Regla 17; las pruebas en VM las ejecutó el autor y sus evidencias están en `PRUEBAS.md` y `docs/memoria/evidencias/`. Sacaron a la luz fallos que los tests simulados no detectaban (INC-08 a INC-10). | P7 |
+| Las ideas y el alcance de cada fase se plantean con Claude en su chat web/app (Opus 5 y Opus 5.5): el autor propone, ambos repasan áreas de mejora y deciden qué implementar y qué no, y Claude redacta el prompt de la fase, que el autor revisa y corrige antes de pasarlo a Claude Code. | Separar la decisión de diseño (del autor) de la implementación (de Claude Code) y dejar cada fase acotada y verificable. | Los prompts de fase P0–P10 son producto de esa conversación y del criterio del autor; consta en `REGISTRO_IA.md`. | P0–P10 |
+| Desarrollo agéntico por fase (N4) con plantillas de evidencias, instantáneas de regresión y revisión del diff por el autor, aplicado ya en los módulos grandes de P2–P4 y de forma sistemática en P7–P10. Los tres commits de código posteriores a P6 fueron N3 (módulo generado y diff revisado). | Las fases de la entrega intermedia son amplias y verificables con tests, y el tiempo disponible es limitado; la revisión humana se concentra en el diff y en las decisiones de diseño. | Más trazabilidad (`REGISTRO_IA.md`, `INCIDENCIAS_IA.md`, `PRUEBAS.md`). | P7 |
+| Cambio de modelo de Claude Code según la fase: Sonnet 5 en P0–P6, Opus 5 en tres de los commits posteriores a P6 y Sonnet 5.5 en P7–P10. | Se usó Opus 5 en las tareas grandes de Post-P6 (ampliación de la WHITELIST a 25 herramientas y reescritura de la vista). Se pasó a Sonnet 5.5 al estar disponible, por ser un modelo más nuevo, y por su velocidad en las fases de P7–P10. | Se refleja en `REGISTRO_IA.md`. | Varias |
 
 ### 3.2 Límites encontrados
 
@@ -47,6 +48,14 @@ Recoge lo que consta en el repositorio; los motivos son los que se deducen de é
 
 ### 3.3 Herramientas y tareas
 
-- **Descartadas o abandonadas:** pendiente del autor. No consta en el repositorio ninguna herramienta de IA descartada.
-- **Tareas en las que la IA no ha resultado útil:** pendiente del autor. Lo que consta es que no puede, por diseño, verificar identificadores de marcos ni ejecutar las pruebas en VM.
-- **Otras herramientas usadas fuera de Claude Code** (Claude (Opus) para arquitectura y documentación, Claude Design / Figma para la interfaz, según la memoria preliminar): pendiente del autor, que debe aportar fechas y grado de automatización para `REGISTRO_IA.md`.
+- **Descartadas o abandonadas:**
+  - **OpenRouter:** el autor valoró usar su API como proveedor LLM y la descartó a favor de Groq por su velocidad.
+  - **`llama-3.3-70b-versatile` en Groq:** era el modelo previsto al inicio; Groq lo retiró y se sustituyó por `openai/gpt-oss-20b` (ver la tabla 2).
+  - **Figma:** aparece en la memoria preliminar junto a Claude Design, pero no se ha usado; el diseño de la interfaz lo hizo Claude Design.
+- **Tareas en las que la IA no ha resultado útil:**
+  - **Identificadores de marcos** (CIS, ATT&CK, ENS): la IA propone identificadores obsoletos o mal asignados (INC-06, INC-07), por lo que los verifica el autor (regla 15).
+  - **Pruebas reales en VM:** la IA no puede ejecutarlas ni ver su resultado real; las ejecuta el autor (regla 17).
+  - **Modelo local pequeño (Ollama, `llama3.2:3b`):** falla algunas llamadas y narra mal el resultado de una acción cancelada (ver la sección 3.2).
+  - **Diseño visual de la interfaz:** la vista de Streamlit generada directamente no daba el resultado buscado, por lo que el diseño se encargó a Claude Design y la IA solo lo implementó a partir de él.
+  - **Datos reales del sistema:** los datos de prueba que genera la IA (por ejemplo, los `os-release` de `tests/fixtures/`) son inventados y solo se consideran válidos los obtenidos de una VM real.
+- **Otras herramientas usadas fuera de Claude Code:** Claude en su chat web/app (planificación y prompts de fase) y Claude Design (diseño de la interfaz). Fechas, modelos y grado de automatización, en `REGISTRO_IA.md`.

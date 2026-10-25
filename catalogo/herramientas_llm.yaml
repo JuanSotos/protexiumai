@@ -334,7 +334,8 @@ entradas:
       resto de mitigaciones que expone Get-ProcessMitigation).
     justificacion: >-
       Cubre el apartado Exploit Protection de «App & browser control» con el cmdlet oficial
-      Get-ProcessMitigation, solo lectura.
+      Get-ProcessMitigation, solo lectura. Se agrupa en el área «defender» por decisión del autor
+      (Exploit Protection forma parte de Windows Security junto a Defender).
     tipo: herramienta
     nivel: lectura
     riesgo: bajo
@@ -344,7 +345,7 @@ entradas:
     requisitos: {privilegios: usuario}
     motor: powershell
     plantilla: "Get-ProcessMitigation -System | ConvertTo-Json -Depth 4"
-    area: sistema
+    area: defender
     timeout_s: 30
 
   - id: get_allowed_firewall_rules
@@ -355,11 +356,14 @@ entradas:
       deshabilita ninguna regla.
     justificacion: >-
       Solo lectura: no crea, habilita ni deshabilita reglas. Devuelve únicamente nombre visible y
-      perfil de cada regla.
+      perfil de cada regla. Los nombres pueden revelar los programas instalados: sensibilidad
+      «personal» (valor del perfil hogar). Decisión del autor, pendiente de implementar en H1
+      (F09/F10): en el perfil sistemas pasará a «técnica» y en el perfil hogar el usuario podrá
+      elegir si se revelan los nombres de las aplicaciones.
     tipo: herramienta
     nivel: lectura
     riesgo: bajo
-    sensibilidad: tecnica
+    sensibilidad: personal
     perfiles: [hogar, sistemas]
     plataforma: {so: windows}
     requisitos: {privilegios: usuario}

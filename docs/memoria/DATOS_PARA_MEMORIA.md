@@ -101,7 +101,7 @@ Repositorio: 13 commits en `master` entre 2026-08-27 y 2026-10-24; 87 ficheros v
 
 ## 2. Catálogo de herramientas
 
-25 entradas, todas de `tipo: herramienta`, motor `powershell`, plataforma Windows, perfiles `hogar` y `sistemas`. Las carpetas `catalogo/windows/` y `catalogo/linux/` están vacías (comprobaciones de H2 y H3). El reparto de `area`, `sensibilidad` y `riesgo` es una propuesta de la IA que Juan debe revisar (REGISTRO_IA, P8).
+25 entradas, todas de `tipo: herramienta`, motor `powershell`, plataforma Windows, perfiles `hogar` y `sistemas`. Las carpetas `catalogo/windows/` y `catalogo/linux/` están vacías (comprobaciones de H2 y H3). El reparto de `area`, `sensibilidad` y `riesgo` lo propuso la IA (P8) y Juan lo ha revisado el 2026-10-25: movió `get_exploit_protection_status` a `defender` y `get_allowed_firewall_rules` a sensibilidad `personal` (en el perfil `sistemas` pasará a técnica y en `hogar` el usuario podrá elegir si se revelan los nombres de las aplicaciones; pendiente de implementar en H1, F09/F10).
 
 ### 2.1 Por nivel
 
@@ -117,23 +117,23 @@ Otras dimensiones: requieren administrador 12 (13 no); riesgo alto 4 (los mutant
 
 | Sensibilidad | Herramientas | Cuáles |
 |---|---:|---|
-| técnica | 20 | el resto |
-| personal | 5 | `get_detected_threats`, `get_active_network_profile`, `get_account_info`, `get_defender_exclusions`, `get_storage_status` |
+| técnica | 19 | el resto |
+| personal | 6 | `get_detected_threats`, `get_active_network_profile`, `get_account_info`, `get_defender_exclusions`, `get_storage_status`, `get_allowed_firewall_rules` |
 
-Cruce con el nivel: lectura/técnica 12, lectura/personal 5, acción/técnica 4, mutante/técnica 4 (ninguna acción ni mutante es de sensibilidad personal).
+Cruce con el nivel: lectura/técnica 11, lectura/personal 6, acción/técnica 4, mutante/técnica 4 (ninguna acción ni mutante es de sensibilidad personal).
 
 ### 2.3 Por área
 
 | Área | Total | lectura | acción | mutante | personal |
 |---|---:|---:|---:|---:|---:|
-| red | 6 | 3 | 0 | 3 | 1 |
+| red | 6 | 3 | 0 | 3 | 2 |
 | malware | 5 | 1 | 3 | 1 | 1 |
-| defender | 4 | 4 | 0 | 0 | 1 |
-| sistema | 4 | 4 | 0 | 0 | 1 |
+| defender | 5 | 5 | 0 | 0 | 1 |
+| sistema | 3 | 3 | 0 | 0 | 1 |
 | dispositivo | 4 | 4 | 0 | 0 | 0 |
 | actualizaciones | 1 | 0 | 1 | 0 | 0 |
 | cuentas | 1 | 1 | 0 | 0 | 1 |
-| **Total** | **25** | **17** | **4** | **4** | **5** |
+| **Total** | **25** | **17** | **4** | **4** | **6** |
 
 ## 3. Tamaño del esquema del LLM
 
@@ -174,7 +174,7 @@ La cobertura se mide solo sobre `src/`; `app/` (2.852 líneas, incluida la vista
 
 ## 5. Incidencias de la IA
 
-`INCIDENCIAS_IA.md` contiene **12 incidencias** (INC-01 a INC-12): las siete primeras de la revisión de P10 y las cinco últimas de las pruebas en la VM. Las causas raíz son hipótesis de la IA que Juan debe confirmar.
+`INCIDENCIAS_IA.md` contiene **12 incidencias** (INC-01 a INC-12): las siete primeras de la revisión de P10 y las cinco últimas de las pruebas en la VM. Las causas raíz las propuso la IA y Juan las ha confirmado, salvo la de INC-06, que sigue como «probable, no verificada».
 
 | Desglose | Resultado |
 |---|---|
@@ -186,15 +186,15 @@ Las siete primeras no afectan al código de `src/`. INC-08 e INC-10 son fallos d
 
 ## 6. Fases y nivel de automatización
 
-Niveles de `REGISTRO_IA.md`: N2 generación supervisada de fragmentos, N3 módulo completo con revisión del diff, N4 desarrollo agéntico completo. Los niveles son una **propuesta** razonada (la escribió la IA a partir del tamaño de cada commit) que Juan debe validar. El tamaño es el de `git show --shortstat`.
+Niveles de `REGISTRO_IA.md`: N2 generación supervisada de fragmentos, N3 módulo completo con revisión del diff, N4 desarrollo agéntico completo. Los niveles los propuso la IA a partir del tamaño de cada commit y **Juan los ha validado y ajustado** (P2–P4 pasan a N4). El tamaño es el de `git show --shortstat`.
 
 | Fase | Fecha | Commit | Tamaño | Nivel |
 |---|---|---|---|---|
 | P0 Estructura inicial | 2026-08-27 | `2728b9a` | 16 ficheros, +162 | N2 |
 | P1 Doble hello world | 2026-08-27 | `7922ebd` | 2 ficheros, +145 | N2 |
-| P2 Capa ejecutora | 2026-08-28 | `6c3d8c2` | 5 ficheros, +689 | N3 |
-| P3 Agente y CLI | 2026-08-28 | `76ffdcd` | 6 ficheros, +631 | N3 |
-| P4 Streamlit | 2026-08-28 | `b87ba23` | 4 ficheros, +339 −9 | N3 |
+| P2 Capa ejecutora | 2026-08-28 | `6c3d8c2` | 5 ficheros, +689 | N4 |
+| P3 Agente y CLI | 2026-08-28 | `76ffdcd` | 6 ficheros, +631 | N4 |
+| P4 Streamlit | 2026-08-28 | `b87ba23` | 4 ficheros, +339 −9 | N4 |
 | P5 Modo privado (Ollama) | 2026-08-28 | `b22a112` | 8 ficheros, +143 −16 | N2 |
 | P6 Demo e inyección | 2026-08-28 | `6d228a1` | 2 ficheros, +354 | N2 |
 | Post-P6: WHITELIST a 25 | 2026-09-01 | `1aee76d` | 5 ficheros, +1.530 −6 | N3 |
@@ -204,9 +204,11 @@ Niveles de `REGISTRO_IA.md`: N2 generación supervisada de fragmentos, N3 módul
 | P7 Línea base | 2026-10-22 | `4b5c408` (junto con P8) | — | N4 |
 | P8 Catálogo YAML | 2026-10-23 | `4b5c408` | 31 ficheros, +3.175 −380 (P7 + P8) | N4 |
 | P9 Plataforma | 2026-10-24 | `2f1723c` | 27 ficheros, +1.534 −12 | N4 |
-| P10 Entrega intermedia | 2026-10-24 y 25 | `f22343c`, `0bf0154`, `68e4bf1`, `b350979`, `50b698b`, `cf19e7d` | sin funcionalidad nueva (3 correcciones de las pruebas en la VM) | N4 (propuesto) |
+| P10 Entrega intermedia | 2026-10-24 y 25 | `f22343c`, `0bf0154`, `68e4bf1`, `b350979`, `50b698b`, `cf19e7d` | sin funcionalidad nueva (3 correcciones de las pruebas en la VM) | N4 |
 
-Recuento: 14 filas con nivel (sin contar P10): N2 = 4 (P0, P1, P5, P6), N3 = 6, N4 = 3 (P7, P8, P9), N/A = 1; con P10, N4 = 4. No hay filas N0 ni N1 en el registro. Todo el código generado figura como aceptado sin cambios.
+Recuento: 14 filas con nivel (sin contar P10): N2 = 4 (P0, P1, P5, P6), N3 = 3 (los tres commits de código Post-P6), N4 = 6 (P2, P3, P4, P7, P8, P9), N/A = 1; con P10, N4 = 7.
+
+Herramientas de IA (confirmadas por Juan): Claude Code (código; Sonnet 5, Opus 5 en tres commits Post-P6, Sonnet 5.5), Claude Design (Opus 5.5, diseño de la interfaz) y Claude en chat web/app (Opus 5 y Opus 5.5, planificación y redacción de los prompts de fase, revisados por Juan). La memoria la escribe Juan sin IA. Detalle en «Otras herramientas de IA» de `REGISTRO_IA.md`. No hay filas N0 ni N1 en el registro. Todo el código generado figura como aceptado sin cambios.
 
 ## 7. Funcionalidades (F01–F27)
 

@@ -1,6 +1,6 @@
-# Planificación restante — BORRADOR para revisión de Juan
+# Planificación restante
 
-> **Estado: BORRADOR.** Lo ha redactado la IA a partir del estado real del repositorio en P10 (2026-10-24) y de la memoria preliminar «Planteamiento final y estructura», cuya Tabla 5 fija las ventanas de cada hito. Las fechas concretas dentro de cada ventana y el reparto de funcionalidades son una **propuesta** que Juan debe validar con su calendario académico y con el tiempo semanal que pueda dedicar (no consta en el repositorio y no se ha supuesto). El contraste con la Tabla 5 está en el apartado 4.
+> **Estado: validada por Juan el 2026-10-25.** La redactó la IA a partir del estado real del repositorio en P10 (2026-10-24) y de la memoria preliminar «Planteamiento final y estructura», cuya Tabla 5 fija las ventanas de cada hito. Supuestos confirmados por Juan: dedicación de **10 a 20 horas semanales**, **sin periodos de baja disponibilidad** que descontar (exámenes, prácticas, trabajo) y **fecha de defensa aún desconocida**. Con la fecha real se revisarán H6 y H7. El contraste con la Tabla 5 está en el apartado 4.
 
 ## 1. Punto de partida (hechos del repositorio)
 
@@ -16,19 +16,19 @@ Capacidades ya disponibles sobre las que se construye: `catalogo.aplicable()` ya
 
 ## 2. Calendario propuesto
 
-Se respeta la ventana de cada hito de la Tabla 5 de la memoria preliminar. Como la propia tabla, el calendario **solapa** hitos consecutivos; el solape solo es viable si el trabajo avanza al ritmo de P7–P9 (tres fases entre el 22 y el 24 de octubre) y si las pruebas en VM de Juan no se acumulan. Las fechas de la defensa y de los exámenes **no constan**: sustituir por las reales.
+Se respeta la ventana de cada hito de la Tabla 5 de la memoria preliminar. Como la propia tabla, el calendario **solapa** hitos consecutivos; el solape solo es viable si el trabajo avanza al ritmo de P7–P9 (tres fases entre el 22 y el 24 de octubre) y si las pruebas en VM de Juan no se acumulan. La fecha de la defensa **todavía no se conoce**: el cierre del 18 de junio de 2027 es el de la ventana de la memoria preliminar y se sustituirá por la real cuando se sepa.
 
-| Hito | Ventana en la Tabla 5 | Propuesta: inicio | Propuesta: fin | Dentro de la ventana |
+| Hito | Ventana en la Tabla 5 | Inicio | Fin | Dentro de la ventana |
 |---|---|---|---|---|
 | H1 resto | Oct.–nov. 2026 | 2026-10-26 | 2026-11-30 | Sí |
 | H2 | Nov. 2026–ene. 2027 | 2026-11-23 | 2027-01-29 | Sí |
-| H3 | Dic. 2026–feb. 2027 | 2027-01-04 | 2027-02-26 | Sí |
+| H3 | Dic. 2026–feb. 2027 | 2027-02-01 | 2027-02-26 | Sí |
 | H4 | Feb.–mar. 2027 | 2027-02-15 | 2027-03-31 | Sí |
 | H5 | Mar.–abr. 2027 | 2027-03-22 | 2027-04-30 | Sí |
 | H6 | Abr.–may. 2027 | 2027-04-19 | 2027-05-21 | Sí |
-| H7 | May.–jun. 2027 | cierre 2027-05-17 (redacción continua desde 2026-11) | 2027-06-18 (propuesta) | Sí |
+| H7 | May.–jun. 2027 | cierre 2027-05-17 (redacción continua desde 2026-11) | 2027-06-18 (provisional hasta conocer la fecha de la defensa) | Sí |
 
-Solapes: H1/H2 una semana, H2/H3 cuatro semanas, H3/H4 y H5/H6 dos semanas, H4/H5 algo más de una y H6/H7 una. H2 atraviesa las vacaciones de Navidad. Si el ritmo real de H1 no alcanza el 30 de noviembre, la alternativa es retrasar el inicio de H3 (que tiene la ventana más ancha) antes que recortar H6 y H7.
+Solapes: H1/H2 una semana, H2/H3 ninguno (por decisión de Juan, dada su dedicación de 10 a 20 horas semanales), H3/H4 y H5/H6 dos semanas, H4/H5 algo más de una y H6/H7 una. H2 atraviesa las vacaciones de Navidad, sin descontar semanas por indicación de Juan. Sin solape, H3 queda en unas cuatro semanas para sus cuatro funcionalidades, por lo que F17 (opcional) es la primera que se sacrifica. Si el ritmo real de H1 no alcanza el 30 de noviembre, se retrasa el inicio de H2 y se acorta H3 (con F17 fuera) antes que recortar H6 y H7.
 
 La memoria (H7) no se deja para el final: cada hito termina con las evidencias de la regla 16 (REGISTRO_IA, ESTADO_FUNCIONALIDADES, PRUEBAS, CAMBIOS y salida de pytest) y `DATOS_PARA_MEMORIA.md` se regenera al cerrar cada uno.
 
@@ -43,7 +43,7 @@ Objetivo: terminar la capa de seguridad y gobierno antes de añadir comprobacion
 | P11 Validador y adaptadores por SO | F05 | Política de validación sobre el catálogo (hoy solo hay validación por enums y lista de denegación en la carga): validar cada llamada en tiempo de ejecución, y adaptadores por motor y sistema (`powershell` con `-NoProfile -NonInteractive` y sin ventana, `registro` con `winreg` de solo lectura, `comando` con `shell=False`, ruta absoluta de `shutil.which`, entorno mínimo y *timeout*; reglas 10 y 11). | Ningún comando se construye fuera de los adaptadores; test que lo demuestre; sin `sudo`/`su`/`pkexec`/`doas`. Un binario ausente da `no_aplicable`, nunca excepción (regla 14). |
 | P12 Remediación reversible | F07, F06, F08 | Ciclo check/plan/apply/verify/rollback sobre el tipo `accion`; plan visible y confirmación **ligada al plan mostrado** (regla 12); token de marcha atrás en la auditoría. Se empieza por las 4 mutantes actuales (firewall) como primer caso. | Una acción sin plan confirmado no se ejecuta; tests de que cambiar el plan invalida la confirmación; rollback probado en VM (lo lanza Juan, regla 17). |
 | P13 Perfiles | F09 (configuración) | Perfiles `hogar` y `sistemas` en la configuración y en el filtrado del catálogo (el campo y `aplicable()` ya existen). | Mismas herramientas con distinta presentación y distinto filtrado; las interfaces completas quedan para H5. |
-| P14 Enrutador y anonimizador | F10 | Enrutador por sensibilidad del dato (`router.py`, como en el apartado 4 de la memoria; el campo `sensibilidad` ya está en el catálogo): lo `personal` se procesa en local o pasa por el anonimizador (`anonimizador.py`) antes de salir a la nube. | Tests con datos personales sintéticos: nunca llegan al cliente de Groq; el proveedor local los recibe. |
+| P14 Enrutador y anonimizador | F10 | Enrutador por sensibilidad del dato (`router.py`, como en el apartado 4 de la memoria; el campo `sensibilidad` ya está en el catálogo): lo `personal` se procesa en local o pasa por el anonimizador (`anonimizador.py`) antes de salir a la nube. Decisión de Juan para `get_allowed_firewall_rules`: en el perfil `sistemas` es técnica y en `hogar` es personal, con opción del usuario para revelar los nombres de las aplicaciones (hoy el catálogo la marca `personal`). | Tests con datos personales sintéticos: nunca llegan al cliente de Groq; el proveedor local los recibe. |
 | Cierre | F27, F02 | Ampliar `tests/test_injection.py` (hoy 3 tests) con inyección en las salidas nuevas; tests de `cargar_perfil()` (hoy sin ellos). | Cierra la incoherencia I-7 y el 70 % de `config.py`. |
 
 Dependencias de Juan: revisar el reparto de áreas/sensibilidad/riesgo de P8, completar `mapeo_marcos.csv` (CIS Benchmark, CCN-STIC, D3FEND y las 11 herramientas sin mapeo), y lanzar en VM las pruebas con efectos y la detección en Linux/Windows 10 pendientes de P9.
@@ -55,18 +55,18 @@ Dependencias de Juan: revisar el reparto de áreas/sensibilidad/riesgo de P8, co
 | F11 | 30–40 comprobaciones CIS nivel 1 en `catalogo/windows/*.yaml` (tipo `comprobacion`, motores `registro` y `powershell`, estados normalizados). | Los mapeos CIS/CCN/ATT&CK los aporta Juan con `verificado: true`; la IA solo propone (regla 15). |
 | Agrupación por área | Exponer al LLM las comprobaciones por área (`cuentas`, `red`, `defender`, `dispositivo`, `sistema`, `actualizaciones`, `malware`), no una a una. | Mantener el esquema bajo 3.000 tokens (test existente). |
 | F12 | Completar la integración con Defender: cuarentena y restauración. | Tamper Protection impide `Set-MpPreference`; se actúa por las vías permitidas. Requiere VM. |
-| F13 | HardeningKitty en modo Audit (opcional). | Dependencia externa: valorar licencia y si se instala o se documenta. |
+| F13 | HardeningKitty en modo Audit (opcional: solo si sobra tiempo). | Dependencia externa: valorar licencia y si se instala o se documenta. |
 | F14 | Índice de configuración. | Se calcula a partir de severidad y peso ya definidos en el esquema. |
 
 Criterio de cierre: Windows 10 y 11 (Home y Pro) probadas en VM; cobertura de `src/` ≥ 90 %.
 
-### 3.3 H3 — Núcleo Linux — del 4 de enero al 26 de febrero de 2027
+### 3.3 H3 — Núcleo Linux — del 1 al 26 de febrero de 2027
 
 | Funcionalidad | Trabajo |
 |---|---|
 | F15 | Auditoría con Lynis. |
 | F16 | ClamAV bajo demanda. |
-| F17 | rkhunter (opcional). |
+| F17 | rkhunter (opcional: solo si sobra tiempo). |
 | F18 | Comprobaciones nativas por familia (debian, rhel, arch, suse) en `catalogo/linux/*.yaml`. |
 
 Primero, ejecutar `python -m src.plataforma` en VMs reales (Ubuntu, Debian, Fedora o Rocky, Kali) y guardar la salida en `evidencias/vm/`: la detección de P9 solo se ha probado con ficheros simulados. Después, adaptadores Linux con `subprocess` en lista, `shell=False` y entorno fijo. El agente deja de enviar un esquema vacío en Linux.
@@ -91,7 +91,7 @@ Claves de VirusTotal y similares: solo en `.env`, nunca en el repositorio (regla
 | F25 | Instalador de Windows y paquetes de Linux. |
 | F02 (resto) | Motor local integrado con `llama-cpp-python`, para no depender de Ollama aparte. |
 
-Riesgo: comprobar con tiempo que `llama-cpp-python` se instala en las versiones de Python y de sistema objetivo (ruedas precompiladas o compilación); si no, el plan B es mantener Ollama como motor local y documentarlo.
+Riesgo: comprobar con tiempo que `llama-cpp-python` se instala en las versiones de Python y de sistema objetivo (ruedas precompiladas o compilación); si no, el plan B, confirmado por Juan, es mantener Ollama como motor local, documentarlo y registrarlo en `CAMBIOS.md` como cambio de alcance.
 
 ### 3.6 H6 — Evaluación — del 19 de abril al 21 de mayo de 2027
 
@@ -99,7 +99,7 @@ F26: evaluación en VMs (Windows 10/11 y distribuciones de H3) y *benchmark* nub
 
 ### 3.7 H7 — Memoria y defensa — cierre del 17 de mayo al 18 de junio de 2027
 
-Memoria completa a partir de `docs/memoria/`, regeneración de `DATOS_PARA_MEMORIA.md`, ensayos con el snapshot «Demo lista» (`docs/demo_escenarios.md`) y defensa. Las últimas semanas hasta la defensa son colchón.
+Memoria completa a partir de `docs/memoria/`, regeneración de `DATOS_PARA_MEMORIA.md`, ensayos con el snapshot «Demo lista» (`docs/demo_escenarios.md`) y defensa. La fecha de la defensa aún no se conoce; las últimas semanas hasta ella son colchón.
 
 ## 4. Contraste con la Tabla 5 de la memoria preliminar
 
@@ -147,4 +147,4 @@ No hay desviaciones de calendario ni de alcance respecto a la Tabla 5. Solo dos 
 | Mapeos a marcos verificados solo por Juan | Bloquea la columna de marcos de H2/H3. | Trabajo por lotes durante H1; la IA propone con `verificado: false`. |
 | Dependencias externas (HardeningKitty, Lynis, rkhunter, YARA-X, llama-cpp-python) | Licencias, versiones y disponibilidad. | Marcarlas opcionales donde el plan lo permite y registrar en `CAMBIOS.md` cualquier sustitución. |
 | Dependencias sin versión fijada | Una actualización puede romper la instalación. | Fijar versiones antes de los instaladores (H5). |
-| Calendario académico desconocido | Las fechas de este borrador pueden no ser viables. | Ajustar con Juan antes de congelar el plan. |
+| Fecha de la defensa desconocida | H6 y H7 podrían tener que adelantarse. | Revisar la planificación en cuanto se conozca la fecha; el colchón de H7 es la reserva. |

@@ -8,7 +8,7 @@ Sin funcionalidad nueva. Fase parcial: las pruebas en máquina virtual se hicier
 
 - `README.md` completo: requisitos, instalación, configuración, modo privado, ejecución, tests, estructura, aviso de pruebas en VM y limitaciones.
 - Batería final: 458 tests en verde y cobertura de `src/` del 96 % (`docs/memoria/evidencias/P10_pytest_final.txt`, `P10_junit.xml`, regenerados tras las correcciones de la VM; la primera batería fue de 454).
-- Nuevos documentos de memoria: `DATOS_PARA_MEMORIA.md` (cifras extraídas del repositorio) y `PLANIFICACION_RESTANTE.md` (borrador hasta junio de 2027).
+- Nuevos documentos de memoria: `DATOS_PARA_MEMORIA.md` (cifras extraídas del repositorio) y `PLANIFICACION_RESTANTE.md` (planificación hasta junio de 2027, validada por el autor).
 - Revisión de coherencia de `ESTADO_FUNCIONALIDADES.md`, `CAMBIOS.md` y `REGISTRO_IA.md` entre sí y con el código; las incoherencias halladas quedan listadas en `DATOS_PARA_MEMORIA.md`.
 - Borradores de apoyo a la memoria: sección de validación del código generado por IA en `PRUEBAS.md`, estrategia de uso de la IA en `CAMBIOS.md`, doce incidencias en `INCIDENCIAS_IA.md` (INC-01 a INC-07 documentales, INC-08 a INC-12 de las pruebas en la VM) y mapeos de 14 herramientas a CIS Controls v8.1, ATT&CK y ENS, verificados por el autor, en `catalogo/mapeo_marcos.csv` (razonamiento y perfil en `catalogo/_mapeo_marcos_razonamiento.md`).
 - Corrección hallada en las pruebas en la VM (INC-08): la salida de cada herramienta que se reenvía al LLM se recorta a 6.000 caracteres con aviso (`src/agent.py`), para no superar el límite de tokens del plan gratuito de Groq. 2 tests nuevos (456 en total).
