@@ -1,6 +1,6 @@
 # Datos para la memoria (P10, 2026-10-25)
 
-Cifras extraídas del repositorio en el estado de la entrega intermedia (rama `master`, tras las correcciones de las pruebas en la VM, último commit de código `cf19e7d`). Las cifras de este documento se regeneraron el 25/10/2026 con la batería de 458 tests; la composición por fichero y tipo y la cobertura son las de esa ejecución. Nada está estimado: cada cifra sale de un comando o de un fichero que se cita. Donde una cifra es una aproximación (los tokens) o una clasificación hecha por reglas (los tipos de test) se dice expresamente.
+Cifras extraídas del repositorio en el estado de la entrega intermedia (rama `master`, tras las correcciones de las pruebas en la VM, último commit de código `cf19e7d`; último commit anterior al cierre de P10 `2cfe497`). Las cifras de este documento se regeneraron el 25/10/2026 con la batería de 458 tests; la composición por fichero y tipo y la cobertura son las de esa ejecución. Nada está estimado: cada cifra sale de un comando o de un fichero que se cita. Donde una cifra es una aproximación (los tokens) o una clasificación hecha por reglas (los tipos de test) se dice expresamente.
 
 ## 0. Cómo se obtuvieron
 
@@ -222,7 +222,7 @@ De `ESTADO_FUNCIONALIDADES.md`: **3 completadas** (F01, F03, F04), **4 en curso*
 | Propuestas de mapeo de la IA pendientes de verificar | **0** (las 14 se verificaron y corrigieron; las 11 restantes no tienen propuesta; razonamiento y perfil en `catalogo/_mapeo_marcos_razonamiento.md`) |
 | Filas en `catalogo/mapeo_marcos.csv` | 14 |
 | Entradas del catálogo con el campo `marcos` en el YAML | 0 |
-| Entradas del catálogo sin mapeo (`verificado: false` por defecto) | 11 de 25 |
+| Entradas del catálogo sin mapeo (`verificado: false` por defecto) | 11 de 25 (límite documentado de la entrega intermedia, aceptado por Juan el 2026-10-25) |
 
 Los 25 identificadores heredados son herramientas del LLM, no comprobaciones; los mapeos CIS/CCN/ATT&CK corresponden sobre todo a las comprobaciones de H2 y H3, que aún no existen. Según la regla 15 el CSV lo rellena Juan. Durante la verificación la IA cometió dos errores (identificadores de ATT&CK obsoletos y una medida del ENS mal asignada), registrados como INC-06 e INC-07; CIS Controls v8.1 se contrastó sin errores. CIS Benchmark, CCN-STIC y D3FEND siguen sin mapeo. Los mapeos son orientativos, no una declaración de conformidad.
 

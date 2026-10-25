@@ -6,7 +6,7 @@ El prototipo cubre tres módulos: diagnóstico en lenguaje natural, respuesta gu
 
 ## Estado actual
 
-Documentación de la entrega intermedia en preparación (fase P10: las pruebas en máquina virtual se hicieron el 24 y 25 de octubre de 2026 y sus evidencias están en `docs/memoria/evidencias/`; queda por completar el registro de herramientas de IA y la validación de la planificación). Hay 3 funcionalidades completadas, 4 en curso y 20 pendientes de las 27 planificadas (F01–F27). El detalle, con el estado y el origen de cada una, está en [`docs/memoria/ESTADO_FUNCIONALIDADES.md`](docs/memoria/ESTADO_FUNCIONALIDADES.md).
+Entrega intermedia (fase P10, octubre de 2026): las pruebas en máquina virtual se hicieron el 24 y 25 de octubre de 2026 y sus evidencias están en `docs/memoria/evidencias/`. Hay 3 funcionalidades completadas, 4 en curso y 20 pendientes de las 27 planificadas (F01–F27). El detalle, con el estado y el origen de cada una, está en [`docs/memoria/ESTADO_FUNCIONALIDADES.md`](docs/memoria/ESTADO_FUNCIONALIDADES.md).
 
 Lo que existe hoy:
 

@@ -233,9 +233,9 @@ Hallazgos de la VM, con detalle en `INCIDENCIAS_IA.md`: error 413 de Groq por la
 
 Sin probar en la VM: Linux (la detección de plataforma solo se ha probado con ficheros simulados), Windows 10, y el modo privado con Ollama. La captura `vm_04_firewall_antes_normal.png` es del estado original del cortafuegos, antes de desactivar el perfil Private para preparar el Escenario 3.
 
-## Validación específica del código generado por IA (borrador de P10)
+## Validación específica del código generado por IA
 
-Resumen de cómo se ha comprobado el código y la documentación generados por la IA (Claude Code), con lo que consta en el repositorio. Está sujeto a la confirmación del autor; las pruebas en VM ya se han realizado (sección anterior) y sus incidencias están incorporadas.
+Resumen de cómo se ha comprobado el código y la documentación generados por la IA (Claude Code), con lo que consta en el repositorio. Las pruebas en VM ya se han realizado (sección anterior) y sus incidencias están incorporadas. El autor ha confirmado las causas de las incidencias (salvo la de INC-06).
 
 ### Controles aplicados
 
@@ -254,7 +254,7 @@ Resumen de cómo se ha comprobado el código y la documentación generados por l
 
 ### Errores o comportamientos incorrectos detectados y correcciones
 
-Hay 12 incidencias registradas; el detalle, con causa probable y corrección, está en `INCIDENCIAS_IA.md`:
+Hay 12 incidencias registradas; el detalle, con causa y corrección, está en `INCIDENCIAS_IA.md`:
 - INC-01 a INC-07: errores de documentación o de evidencias generadas por IA, detectados en la revisión de coherencia y en la verificación de los mapeos.
 - INC-08 a INC-10: fallos de código o de test hallados en la VM y **corregidos** por el autor con la IA (`src/agent.py`, `tests/test_plataforma.py`, `src/executor.py`), cada uno con su test de regresión.
 - INC-11 e INC-12: el modelo interpreta mal valores numéricos y fechas que las herramientas devuelven sin traducir. **No están corregidos**: son limitaciones conocidas.
