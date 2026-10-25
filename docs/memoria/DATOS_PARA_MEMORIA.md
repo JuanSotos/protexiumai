@@ -208,7 +208,7 @@ Niveles de `REGISTRO_IA.md`: N2 generación supervisada de fragmentos, N3 módul
 
 Recuento: 14 filas con nivel (sin contar P10): N2 = 4 (P0, P1, P5, P6), N3 = 3 (los tres commits de código Post-P6), N4 = 6 (P2, P3, P4, P7, P8, P9), N/A = 1; con P10, N4 = 7.
 
-Herramientas de IA (confirmadas por Juan): Claude Code (código; Sonnet 5, Opus 5 en tres commits Post-P6, Sonnet 5.5), Claude Design (Opus 5.5, diseño de la interfaz) y Claude en chat web/app (Opus 5 y Opus 5.5, planificación y redacción de los prompts de fase, revisados por Juan). La memoria la escribe Juan sin IA. Detalle en «Otras herramientas de IA» de `REGISTRO_IA.md`. No hay filas N0 ni N1 en el registro. Todo el código generado figura como aceptado sin cambios.
+Herramientas de IA (confirmadas por Juan): Claude Code (código; Sonnet 5, Opus 5 en tres commits Post-P6, Sonnet 5.5), Claude Design (Opus 5.5, diseño de la interfaz) y Claude en chat web/app (Opus 5 y Opus 5.5, planificación y redacción de los prompts de fase, revisados por Juan). El borrador de la memoria lo redactó Claude (chat, Opus 5.5) y Juan lo corrigió en varias iteraciones y a mano. Detalle en «Otras herramientas de IA» de `REGISTRO_IA.md`. No hay filas N0 ni N1 en el registro. Todo el código generado figura como aceptado sin cambios.
 
 ## 7. Funcionalidades (F01–F27)
 
