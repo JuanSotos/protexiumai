@@ -13,3 +13,7 @@ start_full_scan,,,,10.1,,,,op.exp.6,Juan Sotos,2026-10-24
 start_custom_scan,,,,10.1,,,,op.exp.6,Juan Sotos,2026-10-24
 update_signatures,,,,10.2,,T1685,,op.exp.6,Juan Sotos,2026-10-24
 get_bitlocker_status,,,,3.6,,,,mp.eq.3,Juan Sotos,2026-10-24
+get_exploit_protection_status,,,,10.5,,T1203;T1068,,op.exp.6,Juan Sotos,2026-10-30
+get_core_isolation_status,,,,10.5,,T1003.001;T1547.008,,op.exp.6,Juan Sotos,2026-10-30
+get_secure_boot_status,,,,,,T1542.003,,op.exp.6,Juan Sotos,2026-10-30
+get_tpm_status,,,,,,T1542.001;T1542.003,,op.exp.6,Juan Sotos,2026-10-30
