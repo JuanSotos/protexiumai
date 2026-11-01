@@ -52,7 +52,7 @@ def test_whitelist_contiene_exactamente_las_25_herramientas():
 
 
 def test_execute_rechaza_tool_id_desconocido():
-    with patch("src.executor.subprocess.run") as mock_run:
+    with patch("src.adaptadores.powershell.subprocess.run") as mock_run:
         resultado = executor.execute("borrar_disco", {})
 
     assert resultado["ok"] is False
@@ -61,7 +61,7 @@ def test_execute_rechaza_tool_id_desconocido():
 
 
 def test_execute_rechaza_parametro_no_declarado():
-    with patch("src.executor.subprocess.run") as mock_run:
+    with patch("src.adaptadores.powershell.subprocess.run") as mock_run:
         resultado = executor.execute("start_quick_scan", {"foo": "bar"})
 
     assert resultado["ok"] is False
@@ -69,7 +69,7 @@ def test_execute_rechaza_parametro_no_declarado():
 
 
 def test_execute_rechaza_parametro_faltante():
-    with patch("src.executor.subprocess.run") as mock_run:
+    with patch("src.adaptadores.powershell.subprocess.run") as mock_run:
         resultado = executor.execute("set_firewall_profile", {"profile": "Private"})
 
     assert resultado["ok"] is False
@@ -77,7 +77,7 @@ def test_execute_rechaza_parametro_faltante():
 
 
 def test_execute_rechaza_valor_fuera_de_enum():
-    with patch("src.executor.subprocess.run") as mock_run:
+    with patch("src.adaptadores.powershell.subprocess.run") as mock_run:
         resultado = executor.execute(
             "set_firewall_profile", {"profile": "Evil", "enabled": "True"}
         )
@@ -87,7 +87,7 @@ def test_execute_rechaza_valor_fuera_de_enum():
 
 
 def test_set_block_all_incoming_rechaza_parametro_faltante():
-    with patch("src.executor.subprocess.run") as mock_run:
+    with patch("src.adaptadores.powershell.subprocess.run") as mock_run:
         resultado = executor.execute("set_block_all_incoming", {"profile": "Private"})
 
     assert resultado["ok"] is False
@@ -95,7 +95,7 @@ def test_set_block_all_incoming_rechaza_parametro_faltante():
 
 
 def test_set_block_all_incoming_rechaza_valor_fuera_de_enum():
-    with patch("src.executor.subprocess.run") as mock_run:
+    with patch("src.adaptadores.powershell.subprocess.run") as mock_run:
         resultado = executor.execute(
             "set_block_all_incoming", {"profile": "Evil", "allow_inbound_rules": "False"}
         )
@@ -105,7 +105,7 @@ def test_set_block_all_incoming_rechaza_valor_fuera_de_enum():
 
 
 def test_comando_set_firewall_profile_es_exacto():
-    with patch("src.executor.subprocess.run", return_value=_proceso_ok()) as mock_run, \
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok()) as mock_run, \
          patch("src.executor._es_administrador", return_value=True):
         resultado = executor.execute(
             "set_firewall_profile", {"profile": "Private", "enabled": "True"}
@@ -124,7 +124,7 @@ def test_comando_set_firewall_profile_es_exacto():
 
 
 def test_comando_set_block_all_incoming_es_exacto():
-    with patch("src.executor.subprocess.run", return_value=_proceso_ok()) as mock_run, \
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok()) as mock_run, \
          patch("src.executor._es_administrador", return_value=True):
         resultado = executor.execute(
             "set_block_all_incoming", {"profile": "Private", "allow_inbound_rules": "False"}
@@ -160,7 +160,7 @@ def test_comando_set_block_all_incoming_es_exacto():
     ],
 )
 def test_execute_bloquea_sin_admin_para_herramientas_que_lo_requieren(tool_id, params):
-    with patch("src.executor.subprocess.run") as mock_run, \
+    with patch("src.adaptadores.powershell.subprocess.run") as mock_run, \
          patch("src.executor._es_administrador", return_value=False):
         resultado = executor.execute(tool_id, params)
 
@@ -170,7 +170,7 @@ def test_execute_bloquea_sin_admin_para_herramientas_que_lo_requieren(tool_id, p
 
 
 def test_execute_permite_cuando_admin_y_requerido():
-    with patch("src.executor.subprocess.run", return_value=_proceso_ok()) as mock_run, \
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok()) as mock_run, \
          patch("src.executor._es_administrador", return_value=True):
         resultado = executor.execute("remove_all_threats", {})
 
@@ -179,7 +179,7 @@ def test_execute_permite_cuando_admin_y_requerido():
 
 
 def test_lectura_no_comprueba_admin():
-    with patch("src.executor.subprocess.run", return_value=_proceso_ok('{"AMServiceEnabled": true}')), \
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok('{"AMServiceEnabled": true}')), \
          patch("src.executor._es_administrador", return_value=False):
         resultado = executor.execute("get_defender_status", {})
 
@@ -189,7 +189,7 @@ def test_lectura_no_comprueba_admin():
 
 @pytest.mark.parametrize("stdout_vacio", ["", "null"])
 def test_get_detected_threats_normaliza_vacio_a_lista_vacia(stdout_vacio):
-    with patch("src.executor.subprocess.run", return_value=_proceso_ok(stdout_vacio)):
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok(stdout_vacio)):
         resultado = executor.execute("get_detected_threats", {})
 
     assert resultado["ok"] is True
@@ -198,7 +198,7 @@ def test_get_detected_threats_normaliza_vacio_a_lista_vacia(stdout_vacio):
 
 def test_get_detected_threats_normaliza_objeto_unico_a_lista():
     objeto = {"ThreatName": "EICAR"}
-    with patch("src.executor.subprocess.run", return_value=_proceso_ok(json.dumps(objeto))):
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok(json.dumps(objeto))):
         resultado = executor.execute("get_detected_threats", {})
 
     assert resultado["ok"] is True
@@ -207,7 +207,7 @@ def test_get_detected_threats_normaliza_objeto_unico_a_lista():
 
 def test_get_firewall_status_no_normaliza_objeto():
     objeto = {"Name": "Domain", "Enabled": True}
-    with patch("src.executor.subprocess.run", return_value=_proceso_ok(json.dumps(objeto))):
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok(json.dumps(objeto))):
         resultado = executor.execute("get_firewall_status", {})
 
     assert resultado["ok"] is True
@@ -215,7 +215,7 @@ def test_get_firewall_status_no_normaliza_objeto():
 
 
 def test_comando_get_firewall_status_es_exacto():
-    with patch("src.executor.subprocess.run", return_value=_proceso_ok()) as mock_run:
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok()) as mock_run:
         resultado = executor.execute("get_firewall_status", {})
 
     assert resultado["ok"] is True
@@ -234,7 +234,7 @@ def test_comando_get_firewall_status_es_exacto():
 
 
 def test_comando_get_active_network_profile_es_exacto():
-    with patch("src.executor.subprocess.run", return_value=_proceso_ok()) as mock_run:
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok()) as mock_run:
         resultado = executor.execute("get_active_network_profile", {})
 
     assert resultado["ok"] is True
@@ -253,7 +253,7 @@ def test_comando_get_active_network_profile_es_exacto():
 
 
 def test_get_active_network_profile_no_comprueba_admin():
-    with patch("src.executor.subprocess.run", return_value=_proceso_ok()) as mock_run, \
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok()) as mock_run, \
          patch("src.executor._es_administrador", return_value=False):
         resultado = executor.execute("get_active_network_profile", {})
 
@@ -263,7 +263,7 @@ def test_get_active_network_profile_no_comprueba_admin():
 
 @pytest.mark.parametrize("stdout_vacio", ["", "null"])
 def test_get_active_network_profile_normaliza_vacio_a_lista_vacia(stdout_vacio):
-    with patch("src.executor.subprocess.run", return_value=_proceso_ok(stdout_vacio)):
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok(stdout_vacio)):
         resultado = executor.execute("get_active_network_profile", {})
 
     assert resultado["ok"] is True
@@ -272,7 +272,7 @@ def test_get_active_network_profile_normaliza_vacio_a_lista_vacia(stdout_vacio):
 
 def test_get_active_network_profile_normaliza_objeto_unico_a_lista():
     objeto = {"Name": "Red de casa", "InterfaceAlias": "Wi-Fi", "NetworkCategory": "Private"}
-    with patch("src.executor.subprocess.run", return_value=_proceso_ok(json.dumps(objeto))):
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok(json.dumps(objeto))):
         resultado = executor.execute("get_active_network_profile", {})
 
     assert resultado["ok"] is True
@@ -284,7 +284,7 @@ def test_get_active_network_profile_no_normaliza_lista_ya_poblada():
         {"Name": "Red de casa", "InterfaceAlias": "Wi-Fi", "NetworkCategory": "Private"},
         {"Name": "VPN corporativa", "InterfaceAlias": "Ethernet 2", "NetworkCategory": "Domain"},
     ]
-    with patch("src.executor.subprocess.run", return_value=_proceso_ok(json.dumps(lista))):
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok(json.dumps(lista))):
         resultado = executor.execute("get_active_network_profile", {})
 
     assert resultado["ok"] is True
@@ -293,7 +293,7 @@ def test_get_active_network_profile_no_normaliza_lista_ya_poblada():
 
 def test_comando_get_account_info_es_exacto():
     with patch(
-        "src.executor.subprocess.run",
+        "src.adaptadores.powershell.subprocess.run",
         return_value=_proceso_ok('{"Usuario": "PC\\\\vboxuser", "EsAdministradorLocal": false}'),
     ) as mock_run:
         resultado = executor.execute("get_account_info", {})
@@ -318,7 +318,7 @@ def test_comando_get_account_info_es_exacto():
 
 
 def test_get_account_info_no_comprueba_admin():
-    with patch("src.executor.subprocess.run", return_value=_proceso_ok()) as mock_run, \
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok()) as mock_run, \
          patch("src.executor._es_administrador", return_value=False):
         resultado = executor.execute("get_account_info", {})
 
@@ -327,7 +327,7 @@ def test_get_account_info_no_comprueba_admin():
 
 
 def test_comando_start_full_scan_es_exacto():
-    with patch("src.executor.subprocess.run", return_value=_proceso_ok()) as mock_run, \
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok()) as mock_run, \
          patch("src.executor._es_administrador", return_value=True):
         resultado = executor.execute("start_full_scan", {})
 
@@ -345,7 +345,7 @@ def test_comando_start_full_scan_es_exacto():
 
 @pytest.mark.parametrize("clave", ["Descargas", "Escritorio", "Documentos"])
 def test_comando_start_custom_scan_es_exacto(clave):
-    with patch("src.executor.subprocess.run", return_value=_proceso_ok()) as mock_run, \
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok()) as mock_run, \
          patch("src.executor._es_administrador", return_value=True):
         resultado = executor.execute("start_custom_scan", {"ruta": clave})
 
@@ -367,7 +367,7 @@ def test_comando_start_custom_scan_es_exacto(clave):
 
 
 def test_start_custom_scan_rechaza_ruta_fuera_de_enum():
-    with patch("src.executor.subprocess.run") as mock_run, \
+    with patch("src.adaptadores.powershell.subprocess.run") as mock_run, \
          patch("src.executor._es_administrador", return_value=True):
         resultado = executor.execute("start_custom_scan", {"ruta": "C:\\Windows\\System32"})
 
@@ -376,7 +376,7 @@ def test_start_custom_scan_rechaza_ruta_fuera_de_enum():
 
 
 def test_comando_get_allowed_threats_es_exacto():
-    with patch("src.executor.subprocess.run", return_value=_proceso_ok()) as mock_run:
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok()) as mock_run:
         resultado = executor.execute("get_allowed_threats", {})
 
     assert resultado["ok"] is True
@@ -395,7 +395,7 @@ def test_comando_get_allowed_threats_es_exacto():
 
 
 def test_comando_get_defender_preferences_es_exacto():
-    with patch("src.executor.subprocess.run", return_value=_proceso_ok()) as mock_run:
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok()) as mock_run:
         resultado = executor.execute("get_defender_preferences", {})
 
     assert resultado["ok"] is True
@@ -414,7 +414,7 @@ def test_comando_get_defender_preferences_es_exacto():
 
 
 def test_comando_get_exploit_protection_status_es_exacto():
-    with patch("src.executor.subprocess.run", return_value=_proceso_ok()) as mock_run:
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok()) as mock_run:
         resultado = executor.execute("get_exploit_protection_status", {})
 
     assert resultado["ok"] is True
@@ -430,7 +430,7 @@ def test_comando_get_exploit_protection_status_es_exacto():
 
 
 def test_get_exploit_protection_status_no_comprueba_admin():
-    with patch("src.executor.subprocess.run", return_value=_proceso_ok()) as mock_run, \
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok()) as mock_run, \
          patch("src.executor._es_administrador", return_value=False):
         resultado = executor.execute("get_exploit_protection_status", {})
 
@@ -439,7 +439,7 @@ def test_get_exploit_protection_status_no_comprueba_admin():
 
 
 def test_comando_get_defender_exclusions_es_exacto():
-    with patch("src.executor.subprocess.run", return_value=_proceso_ok()) as mock_run, \
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok()) as mock_run, \
          patch("src.executor._es_administrador", return_value=True):
         resultado = executor.execute("get_defender_exclusions", {})
 
@@ -465,7 +465,7 @@ def test_get_defender_exclusions_admin_devuelve_datos_reales():
         "ExclusionProcess": ["backup.exe"],
     }
     with patch(
-        "src.executor.subprocess.run", return_value=_proceso_ok(json.dumps(objeto))
+        "src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok(json.dumps(objeto))
     ), patch("src.executor._es_administrador", return_value=True):
         resultado = executor.execute("get_defender_exclusions", {})
 
@@ -474,7 +474,7 @@ def test_get_defender_exclusions_admin_devuelve_datos_reales():
 
 
 def test_comando_get_allowed_firewall_rules_es_exacto():
-    with patch("src.executor.subprocess.run", return_value=_proceso_ok()) as mock_run:
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok()) as mock_run:
         resultado = executor.execute("get_allowed_firewall_rules", {})
 
     assert resultado["ok"] is True
@@ -494,7 +494,7 @@ def test_comando_get_allowed_firewall_rules_es_exacto():
 
 @pytest.mark.parametrize("stdout_vacio", ["", "null"])
 def test_get_allowed_firewall_rules_normaliza_vacio_a_lista_vacia(stdout_vacio):
-    with patch("src.executor.subprocess.run", return_value=_proceso_ok(stdout_vacio)):
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok(stdout_vacio)):
         resultado = executor.execute("get_allowed_firewall_rules", {})
 
     assert resultado["ok"] is True
@@ -503,7 +503,7 @@ def test_get_allowed_firewall_rules_normaliza_vacio_a_lista_vacia(stdout_vacio):
 
 def test_get_allowed_firewall_rules_normaliza_objeto_unico_a_lista():
     objeto = {"DisplayName": "Core Networking - DNS", "Profile": "Domain, Private, Public"}
-    with patch("src.executor.subprocess.run", return_value=_proceso_ok(json.dumps(objeto))):
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok(json.dumps(objeto))):
         resultado = executor.execute("get_allowed_firewall_rules", {})
 
     assert resultado["ok"] is True
@@ -515,7 +515,7 @@ def test_get_allowed_firewall_rules_no_normaliza_lista_ya_poblada():
         {"DisplayName": "Core Networking - DNS", "Profile": "Domain, Private, Public"},
         {"DisplayName": "mDNS", "Profile": "Private"},
     ]
-    with patch("src.executor.subprocess.run", return_value=_proceso_ok(json.dumps(lista))):
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok(json.dumps(lista))):
         resultado = executor.execute("get_allowed_firewall_rules", {})
 
     assert resultado["ok"] is True
@@ -523,7 +523,7 @@ def test_get_allowed_firewall_rules_no_normaliza_lista_ya_poblada():
 
 
 def test_comando_restore_firewall_defaults_es_exacto():
-    with patch("src.executor.subprocess.run", return_value=_proceso_ok("")) as mock_run, \
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok("")) as mock_run, \
          patch("src.executor._es_administrador", return_value=True):
         resultado = executor.execute("restore_firewall_defaults", {})
 
@@ -540,7 +540,7 @@ def test_comando_restore_firewall_defaults_es_exacto():
 
 
 def test_comando_get_core_isolation_status_es_exacto():
-    with patch("src.executor.subprocess.run", return_value=_proceso_ok()) as mock_run:
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok()) as mock_run:
         resultado = executor.execute("get_core_isolation_status", {})
 
     assert resultado["ok"] is True
@@ -559,7 +559,7 @@ def test_comando_get_core_isolation_status_es_exacto():
 
 
 def test_get_core_isolation_status_no_comprueba_admin():
-    with patch("src.executor.subprocess.run", return_value=_proceso_ok()) as mock_run, \
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok()) as mock_run, \
          patch("src.executor._es_administrador", return_value=False):
         resultado = executor.execute("get_core_isolation_status", {})
 
@@ -568,7 +568,7 @@ def test_get_core_isolation_status_no_comprueba_admin():
 
 
 def test_comando_get_secure_boot_status_es_exacto():
-    with patch("src.executor.subprocess.run", return_value=_proceso_ok()) as mock_run, \
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok()) as mock_run, \
          patch("src.executor._es_administrador", return_value=True):
         resultado = executor.execute("get_secure_boot_status", {})
 
@@ -590,7 +590,7 @@ def test_comando_get_secure_boot_status_es_exacto():
 def test_get_secure_boot_status_admin_devuelve_datos_reales():
     objeto = {"SecureBootEnabled": True}
     with patch(
-        "src.executor.subprocess.run", return_value=_proceso_ok(json.dumps(objeto))
+        "src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok(json.dumps(objeto))
     ), patch("src.executor._es_administrador", return_value=True):
         resultado = executor.execute("get_secure_boot_status", {})
 
@@ -599,7 +599,7 @@ def test_get_secure_boot_status_admin_devuelve_datos_reales():
 
 
 def test_comando_get_tpm_status_es_exacto():
-    with patch("src.executor.subprocess.run", return_value=_proceso_ok()) as mock_run, \
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok()) as mock_run, \
          patch("src.executor._es_administrador", return_value=True):
         resultado = executor.execute("get_tpm_status", {})
 
@@ -628,7 +628,7 @@ def test_get_tpm_status_admin_devuelve_datos_reales():
         "ManufacturerVersion": "7.2",
     }
     with patch(
-        "src.executor.subprocess.run", return_value=_proceso_ok(json.dumps(objeto))
+        "src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok(json.dumps(objeto))
     ), patch("src.executor._es_administrador", return_value=True):
         resultado = executor.execute("get_tpm_status", {})
 
@@ -637,7 +637,7 @@ def test_get_tpm_status_admin_devuelve_datos_reales():
 
 
 def test_comando_get_bitlocker_status_es_exacto():
-    with patch("src.executor.subprocess.run", return_value=_proceso_ok()) as mock_run, \
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok()) as mock_run, \
          patch("src.executor._es_administrador", return_value=True):
         resultado = executor.execute("get_bitlocker_status", {})
 
@@ -659,7 +659,7 @@ def test_comando_get_bitlocker_status_es_exacto():
 @pytest.mark.parametrize("stdout_vacio", ["", "null"])
 def test_get_bitlocker_status_normaliza_vacio_a_lista_vacia(stdout_vacio):
     with patch(
-        "src.executor.subprocess.run", return_value=_proceso_ok(stdout_vacio)
+        "src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok(stdout_vacio)
     ), patch("src.executor._es_administrador", return_value=True):
         resultado = executor.execute("get_bitlocker_status", {})
 
@@ -675,7 +675,7 @@ def test_get_bitlocker_status_normaliza_objeto_unico_a_lista():
         "EncryptionPercentage": 100,
     }
     with patch(
-        "src.executor.subprocess.run", return_value=_proceso_ok(json.dumps(objeto))
+        "src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok(json.dumps(objeto))
     ), patch("src.executor._es_administrador", return_value=True):
         resultado = executor.execute("get_bitlocker_status", {})
 
@@ -699,7 +699,7 @@ def test_get_bitlocker_status_no_normaliza_lista_ya_poblada():
         },
     ]
     with patch(
-        "src.executor.subprocess.run", return_value=_proceso_ok(json.dumps(lista))
+        "src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok(json.dumps(lista))
     ), patch("src.executor._es_administrador", return_value=True):
         resultado = executor.execute("get_bitlocker_status", {})
 
@@ -708,7 +708,7 @@ def test_get_bitlocker_status_no_normaliza_lista_ya_poblada():
 
 
 def test_comando_get_storage_status_es_exacto():
-    with patch("src.executor.subprocess.run", return_value=_proceso_ok()) as mock_run:
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok()) as mock_run:
         resultado = executor.execute("get_storage_status", {})
 
     assert resultado["ok"] is True
@@ -727,7 +727,7 @@ def test_comando_get_storage_status_es_exacto():
 
 
 def test_get_storage_status_no_comprueba_admin():
-    with patch("src.executor.subprocess.run", return_value=_proceso_ok()) as mock_run, \
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok()) as mock_run, \
          patch("src.executor._es_administrador", return_value=False):
         resultado = executor.execute("get_storage_status", {})
 
@@ -737,7 +737,7 @@ def test_get_storage_status_no_comprueba_admin():
 
 @pytest.mark.parametrize("stdout_vacio", ["", "null"])
 def test_get_storage_status_normaliza_vacio_a_lista_vacia(stdout_vacio):
-    with patch("src.executor.subprocess.run", return_value=_proceso_ok(stdout_vacio)):
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok(stdout_vacio)):
         resultado = executor.execute("get_storage_status", {})
 
     assert resultado["ok"] is True
@@ -746,7 +746,7 @@ def test_get_storage_status_normaliza_vacio_a_lista_vacia(stdout_vacio):
 
 def test_get_storage_status_normaliza_objeto_unico_a_lista():
     objeto = {"DriveLetter": "C", "FileSystemLabel": "", "SizeRemaining": 64594350080, "Size": 498969079808}
-    with patch("src.executor.subprocess.run", return_value=_proceso_ok(json.dumps(objeto))):
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok(json.dumps(objeto))):
         resultado = executor.execute("get_storage_status", {})
 
     assert resultado["ok"] is True
@@ -758,7 +758,7 @@ def test_get_storage_status_no_normaliza_lista_ya_poblada():
         {"DriveLetter": "D", "FileSystemLabel": "Nuevo vol", "SizeRemaining": 716779298816, "Size": 2000381014016},
         {"DriveLetter": "C", "FileSystemLabel": "", "SizeRemaining": 64594350080, "Size": 498969079808},
     ]
-    with patch("src.executor.subprocess.run", return_value=_proceso_ok(json.dumps(lista))):
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok(json.dumps(lista))):
         resultado = executor.execute("get_storage_status", {})
 
     assert resultado["ok"] is True
@@ -766,7 +766,7 @@ def test_get_storage_status_no_normaliza_lista_ya_poblada():
 
 
 def test_comando_get_battery_status_es_exacto():
-    with patch("src.executor.subprocess.run", return_value=_proceso_ok()) as mock_run:
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok()) as mock_run:
         resultado = executor.execute("get_battery_status", {})
 
     assert resultado["ok"] is True
@@ -785,7 +785,7 @@ def test_comando_get_battery_status_es_exacto():
 
 
 def test_get_battery_status_no_comprueba_admin():
-    with patch("src.executor.subprocess.run", return_value=_proceso_ok()) as mock_run, \
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok()) as mock_run, \
          patch("src.executor._es_administrador", return_value=False):
         resultado = executor.execute("get_battery_status", {})
 
@@ -795,7 +795,7 @@ def test_get_battery_status_no_comprueba_admin():
 
 @pytest.mark.parametrize("stdout_vacio", ["", "null"])
 def test_get_battery_status_maneja_equipo_sin_bateria_como_data_none(stdout_vacio):
-    with patch("src.executor.subprocess.run", return_value=_proceso_ok(stdout_vacio)):
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok(stdout_vacio)):
         resultado = executor.execute("get_battery_status", {})
 
     assert resultado["ok"] is True
@@ -804,7 +804,7 @@ def test_get_battery_status_maneja_equipo_sin_bateria_como_data_none(stdout_vaci
 
 def test_get_battery_status_no_normaliza_objeto_a_lista():
     objeto = {"EstimatedChargeRemaining": 80, "BatteryStatus": 2}
-    with patch("src.executor.subprocess.run", return_value=_proceso_ok(json.dumps(objeto))):
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok(json.dumps(objeto))):
         resultado = executor.execute("get_battery_status", {})
 
     assert resultado["ok"] is True
@@ -812,7 +812,7 @@ def test_get_battery_status_no_normaliza_objeto_a_lista():
 
 
 def test_comando_get_time_service_status_es_exacto():
-    with patch("src.executor.subprocess.run", return_value=_proceso_ok()) as mock_run:
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok()) as mock_run:
         resultado = executor.execute("get_time_service_status", {})
 
     assert resultado["ok"] is True
@@ -828,7 +828,7 @@ def test_comando_get_time_service_status_es_exacto():
 
 
 def test_get_time_service_status_no_comprueba_admin():
-    with patch("src.executor.subprocess.run", return_value=_proceso_ok()) as mock_run, \
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok()) as mock_run, \
          patch("src.executor._es_administrador", return_value=False):
         resultado = executor.execute("get_time_service_status", {})
 
@@ -838,7 +838,7 @@ def test_get_time_service_status_no_comprueba_admin():
 
 def test_get_time_service_status_devuelve_objeto_tal_cual():
     objeto = {"Status": 4, "StartType": 2}
-    with patch("src.executor.subprocess.run", return_value=_proceso_ok(json.dumps(objeto))):
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok(json.dumps(objeto))):
         resultado = executor.execute("get_time_service_status", {})
 
     assert resultado["ok"] is True
@@ -846,7 +846,7 @@ def test_get_time_service_status_devuelve_objeto_tal_cual():
 
 
 def test_execute_permite_start_full_scan_cuando_admin():
-    with patch("src.executor.subprocess.run", return_value=_proceso_ok()) as mock_run, \
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok()) as mock_run, \
          patch("src.executor._es_administrador", return_value=True):
         resultado = executor.execute("start_full_scan", {})
 
@@ -855,7 +855,7 @@ def test_execute_permite_start_full_scan_cuando_admin():
 
 
 def test_execute_permite_start_custom_scan_cuando_admin():
-    with patch("src.executor.subprocess.run", return_value=_proceso_ok()) as mock_run, \
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok()) as mock_run, \
          patch("src.executor._es_administrador", return_value=True):
         resultado = executor.execute("start_custom_scan", {"ruta": "Documentos"})
 
@@ -864,7 +864,7 @@ def test_execute_permite_start_custom_scan_cuando_admin():
 
 
 def test_audit_registra_ejecucion_exitosa_start_full_scan(ruta_audit_temporal):
-    with patch("src.executor.subprocess.run", return_value=_proceso_ok()), \
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok()), \
          patch("src.executor._es_administrador", return_value=True):
         executor.execute("start_full_scan", {})
 
@@ -880,7 +880,7 @@ def test_audit_registra_ejecucion_exitosa_start_full_scan(ruta_audit_temporal):
 
 
 def test_audit_registra_rechazo_start_custom_scan_sin_admin(ruta_audit_temporal):
-    with patch("src.executor.subprocess.run") as mock_run, \
+    with patch("src.adaptadores.powershell.subprocess.run") as mock_run, \
          patch("src.executor._es_administrador", return_value=False):
         executor.execute("start_custom_scan", {"ruta": "Descargas"})
 
@@ -893,7 +893,7 @@ def test_audit_registra_rechazo_start_custom_scan_sin_admin(ruta_audit_temporal)
 
 
 def test_audit_registra_ejecucion_exitosa_set_block_all_incoming(ruta_audit_temporal):
-    with patch("src.executor.subprocess.run", return_value=_proceso_ok()), \
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok()), \
          patch("src.executor._es_administrador", return_value=True):
         executor.execute(
             "set_block_all_incoming", {"profile": "Private", "allow_inbound_rules": "False"}
@@ -909,7 +909,7 @@ def test_audit_registra_ejecucion_exitosa_set_block_all_incoming(ruta_audit_temp
 
 
 def test_audit_registra_rechazo_set_block_all_incoming_sin_admin(ruta_audit_temporal):
-    with patch("src.executor.subprocess.run") as mock_run, \
+    with patch("src.adaptadores.powershell.subprocess.run") as mock_run, \
          patch("src.executor._es_administrador", return_value=False):
         executor.execute(
             "set_block_all_incoming", {"profile": "Private", "allow_inbound_rules": "False"}
@@ -924,7 +924,7 @@ def test_audit_registra_rechazo_set_block_all_incoming_sin_admin(ruta_audit_temp
 
 
 def test_audit_registra_ejecucion_exitosa_restore_firewall_defaults(ruta_audit_temporal):
-    with patch("src.executor.subprocess.run", return_value=_proceso_ok("")), \
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok("")), \
          patch("src.executor._es_administrador", return_value=True):
         executor.execute("restore_firewall_defaults", {})
 
@@ -938,7 +938,7 @@ def test_audit_registra_ejecucion_exitosa_restore_firewall_defaults(ruta_audit_t
 
 
 def test_audit_registra_rechazo_restore_firewall_defaults_sin_admin(ruta_audit_temporal):
-    with patch("src.executor.subprocess.run") as mock_run, \
+    with patch("src.adaptadores.powershell.subprocess.run") as mock_run, \
          patch("src.executor._es_administrador", return_value=False):
         executor.execute("restore_firewall_defaults", {})
 
@@ -952,7 +952,7 @@ def test_audit_registra_rechazo_restore_firewall_defaults_sin_admin(ruta_audit_t
 
 def test_execute_maneja_timeout():
     with patch(
-        "src.executor.subprocess.run",
+        "src.adaptadores.powershell.subprocess.run",
         side_effect=subprocess.TimeoutExpired(cmd=["powershell.exe"], timeout=15),
     ):
         resultado = executor.execute("get_defender_status", {})
@@ -962,7 +962,7 @@ def test_execute_maneja_timeout():
 
 
 def test_execute_maneja_powershell_no_encontrado():
-    with patch("src.executor.subprocess.run", side_effect=FileNotFoundError()):
+    with patch("src.adaptadores.powershell.subprocess.run", side_effect=FileNotFoundError()):
         resultado = executor.execute("get_defender_status", {})
 
     assert resultado["ok"] is False
@@ -971,7 +971,7 @@ def test_execute_maneja_powershell_no_encontrado():
 
 def test_execute_maneja_returncode_no_cero():
     proceso = Mock(returncode=1, stdout="", stderr="algo falló")
-    with patch("src.executor.subprocess.run", return_value=proceso):
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=proceso):
         resultado = executor.execute("get_defender_status", {})
 
     assert resultado["ok"] is False
@@ -979,7 +979,7 @@ def test_execute_maneja_returncode_no_cero():
 
 
 def test_execute_maneja_json_invalido():
-    with patch("src.executor.subprocess.run", return_value=_proceso_ok("no es json")):
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok("no es json")):
         resultado = executor.execute("get_defender_status", {})
 
     assert resultado["ok"] is False
@@ -997,7 +997,7 @@ def _leer_lineas_audit(ruta_audit_temporal) -> list[dict]:
 
 
 def test_audit_registra_ejecucion_exitosa(ruta_audit_temporal):
-    with patch("src.executor.subprocess.run", return_value=_proceso_ok()):
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok()):
         executor.execute("get_defender_status", {})
 
     lineas = _leer_lineas_audit(ruta_audit_temporal)
@@ -1011,7 +1011,7 @@ def test_audit_registra_ejecucion_exitosa(ruta_audit_temporal):
     "tool_id", ["get_storage_status", "get_battery_status", "get_time_service_status"]
 )
 def test_audit_registra_ejecucion_exitosa_grupo6(ruta_audit_temporal, tool_id):
-    with patch("src.executor.subprocess.run", return_value=_proceso_ok()):
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok()):
         executor.execute(tool_id, {})
 
     lineas = _leer_lineas_audit(ruta_audit_temporal)
@@ -1031,7 +1031,7 @@ def test_audit_registra_rechazo_con_motivo(ruta_audit_temporal):
 
 
 def test_audit_acumula_varias_llamadas(ruta_audit_temporal):
-    with patch("src.executor.subprocess.run", return_value=_proceso_ok()):
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok()):
         executor.execute("get_defender_status", {})
     executor.execute("desconocido", {})
 
@@ -1042,7 +1042,7 @@ def test_audit_acumula_varias_llamadas(ruta_audit_temporal):
 
 
 def test_audit_propaga_proveedor(ruta_audit_temporal):
-    with patch("src.executor.subprocess.run", return_value=_proceso_ok()):
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok()):
         executor.execute("get_defender_status", {}, proveedor="ollama")
 
     lineas = _leer_lineas_audit(ruta_audit_temporal)
@@ -1051,7 +1051,7 @@ def test_audit_propaga_proveedor(ruta_audit_temporal):
 
 
 def test_audit_proveedor_por_defecto_es_none(ruta_audit_temporal):
-    with patch("src.executor.subprocess.run", return_value=_proceso_ok()):
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok()):
         executor.execute("get_defender_status", {})
 
     lineas = _leer_lineas_audit(ruta_audit_temporal)
@@ -1059,7 +1059,7 @@ def test_audit_proveedor_por_defecto_es_none(ruta_audit_temporal):
 
 
 def test_execute_aborta_mutante_si_falla_auditoria_previa():
-    with patch("src.executor.subprocess.run") as mock_run, \
+    with patch("src.adaptadores.powershell.subprocess.run") as mock_run, \
          patch("src.executor._es_administrador", return_value=True), \
          patch.object(audit, "registrar_auditoria", side_effect=OSError("disco lleno")):
         resultado = executor.execute("remove_all_threats", {})
@@ -1069,7 +1069,7 @@ def test_execute_aborta_mutante_si_falla_auditoria_previa():
 
 
 def test_la_salida_de_powershell_se_decodifica_con_la_codificacion_de_la_consola():
-    with patch("src.executor.subprocess.run", return_value=_proceso_ok()) as mock_run:
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_ok()) as mock_run:
         executor.execute("get_defender_status", {})
 
     argumentos = mock_run.call_args.kwargs

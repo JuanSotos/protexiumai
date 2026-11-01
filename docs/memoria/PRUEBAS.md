@@ -233,6 +233,48 @@ Hallazgos de la VM, con detalle en `INCIDENCIAS_IA.md`: error 413 de Groq por la
 
 Sin probar en la VM: Linux (la detección de plataforma solo se ha probado con ficheros simulados), Windows 10, y el modo privado con Ollama. La captura `vm_04_firewall_antes_normal.png` es del estado original del cortafuegos, antes de desactivar el perfil Private para preparar el Escenario 3.
 
+## P11 — Validador, política en tiempo de ejecución y adaptadores (2026-11-01)
+
+Nuevos `src/politica.py` (F05) y paquete `src/adaptadores/` (`powershell`, `registro`, `comando`). `src/executor.py` deja de importar `subprocess` y orquesta: política → construcción por el adaptador → política sobre lo construido → privilegios → auditoría → adaptador. Sin herramientas nuevas en el catálogo real: los motores `registro` y `comando` se prueban con catálogos YAML temporales.
+
+### Tests añadidos
+
+**208 tests nuevos** en seis ficheros nuevos y dos en `tests/test_injection.py`. Todos mockean `subprocess.run`, `shutil.which` o `winreg`: ninguno ejecuta nada sobre el sistema.
+
+| Fichero | Tests | Qué verifica | Tipo |
+|---|---:|---|---|
+| `tests/test_politica.py` | 41 | Orden y motivo de cada decisión (`tool_id_desconocido`, `motor_reservado`, `motor_no_soportado`, `no_aplicable`, parámetros con los mensajes de antes, `denegado_por_politica`, `hive_desconocido`); no aplicable por sistema, build, edición, perfil y binario; `sudo`/`su`/`pkexec`/`doas` en cualquier posición de argv, también como ruta; tokens denegados dentro de un elemento y repartidos entre elementos; `suma` no casa con `su`. | unitario / negativo |
+| `tests/test_adaptador_powershell.py` | 16 | Línea exacta con `-NoProfile -NonInteractive`, `creationflags=CREATE_NO_WINDOW` en Windows (y sin él fuera), codificación OEM, `powershell.exe` ausente → `no_aplicable`, timeout, código de salida distinto de 0 y JSON inválido → `error`, normalización de listas. | unitario / negativo |
+| `tests/test_adaptador_registro.py` | 22 | Con un `winreg` falso que falla ante cualquier función de escritura: solo `OpenKey` con `KEY_READ \| KEY_WOW64_64KEY` y `QueryValueEx`; los cinco hives; tipos DWORD, SZ, BINARY (a hexadecimal) y MULTI_SZ; clave o valor inexistente → `{"existe": false, "valor": null, "tipo": null}`; acceso denegado → `requiere_privilegios`; sin `winreg` → `no_aplicable`; hive fuera del mapa → no se llama a `winreg`. | unitario / negativo |
+| `tests/test_adaptador_comando.py` | 14 | `shell=False`, argv en lista con la ruta absoluta de `shutil.which` sobre `PATH_FIJO`, `env == ENTORNO_FIJO`, timeout aplicado, binario ausente o ruta relativa → `no_aplicable`, sustitución elemento a elemento (un valor nunca se mezcla con otro elemento). | unitario / negativo |
+| `tests/test_executor_motores.py` | 54 | Las 25 herramientas reales (desde `whitelist_p7.json`) pasan solo por el adaptador `powershell` con la invocación exacta; herramientas `registro` y `comando` de principio a fin; una entrada alterada en memoria con `IEX` se rechaza, se audita y no llega al adaptador; motor incoherente, `motor: python`, otro perfil, herramienta de Windows en Linux, `root` sin serlo, `sudo` (lo frena el cargador y también la política); clave `estado` en todos los caminos. | integración simulada / negativo |
+| `tests/test_regla1_ejecucion.py` | 59 | Regla 1 por AST sobre `src/`, `app/` y `api/` (si existe): fuera de `src/adaptadores/` nadie importa `subprocess`/`pty` ni usa `os.system`, `os.popen`, `os.exec*`, `os.spawn*`, `os.startfile`, `asyncio.create_subprocess_*` o `ShellExecute`/`CreateProcess`/`WinExec`; dentro, solo `powershell.py` y `comando.py` lanzan procesos; `winreg` solo en el adaptador de registro y en la detección (`LECTURA_REGISTRO_DETECCION`), ambos sin funciones ni constantes de escritura. Incluye 33 casos sintéticos que prueban que el detector caza cada patrón y no da falsos positivos. | estático |
+| `tests/test_injection.py` | +2 | Con el executor y el adaptador reales: un texto con forma de orden en la salida de PowerShell vuelve como dato y no provoca otra ejecución; en un turno completo, el LLM que «obedece» pide `set_firewall_profile`, el usuario rechaza y PowerShell solo se lanza para la lectura. | integración simulada / inyección |
+
+**Cambios en tests existentes (aprobados por el autor en el plan; ningún assert cambia):** los 77 `patch("src.executor.subprocess.run")` de `tests/test_executor.py` y el `monkeypatch` de `tests/test_catalogo_regresion.py` apuntan ahora a `src.adaptadores.powershell.subprocess.run`, porque `executor` ya no importa `subprocess` (regla 1). En `test_executor_rechaza_una_herramienta_que_no_sabe_ejecutar` el YAML de entrada pasa de `motor: comando`, que ahora sí se ejecuta, a `motor: python`, con el mismo `match`.
+
+Comprobación de que el test de la regla 1 detecta fallos: aplicado al `src/executor.py` anterior a P11 (`git show HEAD:src/executor.py`), el detector devuelve `['import subprocess']`.
+
+### Resultado
+- Línea base antes de los cambios: **458 passed**.
+- Tras P11: **666 passed** = 458 + 208, sin fallos (`evidencias/P11_pytest.txt`, anonimizada: `rootdir: <repo>`, sin rutas absolutas ni nombre del equipo). Comando: `python -m pytest --cov=src --cov-report=term-missing`. `tests/test_repo_sin_secretos.py` sigue en verde con la nueva evidencia.
+- Regresión: `schema_p7.json` y `whitelist_p7.json` siguen coincidiendo y el esquema sigue por debajo de 3.000 tokens.
+- `python -m src.plataforma` sigue funcionando en el equipo de desarrollo.
+- Entorno: el `venv/` no tenía `pytest-cov`; se instaló con `pip install -r requirements-dev.txt` (sin cambiar ningún fichero de dependencias).
+
+### Cobertura de los módulos tocados
+
+| Módulo | Cobertura |
+|---|---:|
+| `src/politica.py` | 100 % |
+| `src/adaptadores/` (`__init__`, `base`, `powershell`, `registro`, `comando`) | 100 % |
+| `src/executor.py` | 100 % (95 % en P10) |
+| `src/agent.py` | 92 % (sin cambios) |
+| **Total `src/`** | **97 %** (1.114 sentencias, 33 sin cubrir) |
+
+### Pruebas manuales en VM
+Ninguna en P11 (regla 17). Pendientes para el autor en la VM con Windows 11: comprobar que PowerShell ya no abre ninguna ventana al lanzar las herramientas desde Streamlit (`CREATE_NO_WINDOW`) y repetir los tres escenarios de la demo para confirmar que el comportamiento no cambia. El adaptador `registro` y el `comando` no tienen todavía ninguna entrada en el catálogo real: su prueba real llegará con las comprobaciones de H2 (Windows) y los adaptadores de H3 (VM Linux).
+
 ## Validación específica del código generado por IA
 
 Resumen de cómo se ha comprobado el código y la documentación generados por la IA (Claude Code), con lo que consta en el repositorio. Las pruebas en VM ya se han realizado (sección anterior) y sus incidencias están incorporadas. El autor ha confirmado las causas de las incidencias (salvo la de INC-06).

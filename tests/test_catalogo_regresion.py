@@ -14,6 +14,7 @@ from typing import Any
 import pytest
 
 from src import catalogo, executor
+from src.adaptadores import powershell
 from src.tools_schema import generar_tools_schema
 
 FIXTURES = Path(__file__).parent / "fixtures"
@@ -120,8 +121,7 @@ def test_executor_rechaza_una_herramienta_que_no_sabe_ejecutar(tmp_path):
         "    perfiles: [hogar]\n"
         "    plataforma: {so: linux}\n"
         "    requisitos: {privilegios: usuario}\n"
-        "    motor: comando\n"
-        "    argv: [uname]\n"
+        "    motor: python\n"
         "    area: sistema\n",
         encoding="utf-8",
     )
@@ -138,7 +138,7 @@ def test_el_comando_generado_sigue_siendo_la_plantilla_con_los_valores_validados
         stderr = ""
 
     monkeypatch.setattr(executor, "_es_administrador", lambda: True)
-    monkeypatch.setattr(executor.subprocess, "run", lambda comando, **_: llamadas.append(comando) or Proceso())
+    monkeypatch.setattr(powershell.subprocess, "run", lambda comando, **_: llamadas.append(comando) or Proceso())
 
     resultado = executor.execute("set_firewall_profile", {"profile": "Public", "enabled": "False"})
 

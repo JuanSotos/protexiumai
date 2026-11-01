@@ -78,7 +78,7 @@ def _registrar_cancelacion(tool_id: str, params: dict[str, Any], proveedor: str)
     """
     spec = executor.WHITELIST.get(tool_id)
     comando = None
-    if spec is not None:
+    if spec is not None and spec.plantilla is not None:
         try:
             comando = spec.plantilla.format(**params) if spec.parametros else spec.plantilla
         except (KeyError, ValueError):

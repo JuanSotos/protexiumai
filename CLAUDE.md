@@ -15,10 +15,16 @@ Interfaz (Streamlit / CLI)
 Agente LLM (src/agent.py) — function calling, historial, system prompt
         │  tool_calls (solo ids de la whitelist)
         ▼
-Capa ejecutora (src/executor.py) — WHITELIST, validación, niveles, auditoría
-        │  comandos construidos con plantillas fijas + valores validados
+Capa ejecutora (src/executor.py) — WHITELIST (vista del catálogo), niveles, privilegios, auditoría
+        │  política en cada llamada (src/politica.py): id, motor, aplicabilidad,
+        │  enums y lista de denegación sobre el comando ya construido
         ▼
-PowerShell (Windows Defender + firewall)
+Adaptadores por motor (src/adaptadores/) — únicos módulos que ejecutan
+        │  powershell: plantilla + valores validados, -NoProfile -NonInteractive, CREATE_NO_WINDOW
+        │  registro:   winreg en solo lectura (KEY_READ)
+        │  comando:    argv en lista, shell=False, PATH y entorno fijos (Linux)
+        ▼
+PowerShell (Windows Defender + firewall) · registro de Windows · binarios de Linux
 ```
 
 Proveedor LLM dual, intercambiable por configuración (interfaz compatible con SDK de OpenAI):
@@ -82,4 +88,4 @@ python scripts/hello_llm.py         # verificación LLM
 
 ## Estado del proyecto por fases
 
-El desarrollo sigue prompts secuenciales P0–P6 (ver guía del proyecto): P0 andamiaje · P1 doble hello world · P2 capa ejecutora + tests · P3 agente + CLI (rebanada vertical) · P4 Streamlit · P5 modo privado Ollama · P6 escenarios de demo + tests de inyección. Todas están completadas. Después, la línea de la entrega intermedia (v2, reglas 9–18): P7 línea base (inventario, test anti-secretos, `docs/memoria/`) · P8 catálogo YAML validado (`catalogo/`, `src/catalogo.py`) · P9 detección de plataforma y capacidades (`src/plataforma/`) · P10 preparación de la entrega intermedia (README, CHANGELOG, batería con cobertura, `docs/memoria/DATOS_PARA_MEMORIA.md` y `PLANIFICACION_RESTANTE.md`). El estado de cada funcionalidad (F01–F27) está en `docs/memoria/ESTADO_FUNCIONALIDADES.md`. Antes de implementar, comprueba qué fases están ya completadas en el repositorio y no rehagas trabajo existente.
+El desarrollo sigue prompts secuenciales P0–P6 (ver guía del proyecto): P0 andamiaje · P1 doble hello world · P2 capa ejecutora + tests · P3 agente + CLI (rebanada vertical) · P4 Streamlit · P5 modo privado Ollama · P6 escenarios de demo + tests de inyección. Todas están completadas. Después, la línea de la entrega intermedia (v2, reglas 9–18): P7 línea base (inventario, test anti-secretos, `docs/memoria/`) · P8 catálogo YAML validado (`catalogo/`, `src/catalogo.py`) · P9 detección de plataforma y capacidades (`src/plataforma/`) · P10 preparación de la entrega intermedia (README, CHANGELOG, batería con cobertura, `docs/memoria/DATOS_PARA_MEMORIA.md` y `PLANIFICACION_RESTANTE.md`). Ya en H1: P11 validador, política en tiempo de ejecución y adaptadores por motor (`src/politica.py`, `src/adaptadores/`; F05). El estado de cada funcionalidad (F01–F27) está en `docs/memoria/ESTADO_FUNCIONALIDADES.md`. Antes de implementar, comprueba qué fases están ya completadas en el repositorio y no rehagas trabajo existente.

@@ -11,7 +11,7 @@ confirmación, pase lo que pase en el contenido de la herramienta.
 from __future__ import annotations
 
 import json
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 from openai.types.chat.chat_completion import ChatCompletion, Choice
 from openai.types.chat.chat_completion_message import ChatCompletionMessage
@@ -175,3 +175,54 @@ def test_tool_id_alucinado_es_rechazado_limpiamente_y_agente_no_se_rompe(ruta_au
     rechazos = [l for l in lineas if l["tool_id"] == "ejecutar_comando_arbitrario"]
     assert len(rechazos) == 1
     assert rechazos[0]["motivo_rechazo"] == "tool_id_desconocido"
+
+
+# --- Salida de un adaptador con forma de orden (P11) -------------------------------------
+# A diferencia de los tests anteriores, aquí el executor y el adaptador PowerShell son los reales:
+# solo se mockea subprocess.run. Se comprueba que un texto con forma de orden en la salida de un
+# adaptador vuelve como dato y no provoca ninguna otra ejecución.
+SALIDA_PS_MALICIOSA = json.dumps(
+    [{"ThreatName": NOMBRE_AMENAZA_MALICIOSO, "Resources": ["C:\\x.txt; Start-Process powershell -Verb RunAs"]}]
+)
+
+
+def _proceso_malicioso() -> Mock:
+    return Mock(returncode=0, stdout=SALIDA_PS_MALICIOSA, stderr="")
+
+
+def test_texto_con_forma_de_orden_en_la_salida_de_un_adaptador_vuelve_como_dato(ruta_audit_temporal):
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_malicioso()) as mock_run:
+        resultado = executor.execute("get_detected_threats", {})
+
+    assert resultado["ok"] is True
+    assert resultado["data"][0]["ThreatName"] == NOMBRE_AMENAZA_MALICIOSO
+    mock_run.assert_called_once()
+    assert mock_run.call_args.args[0][-1] == executor.CATALOGO.entradas["get_detected_threats"].plantilla
+    assert [l["tool_id"] for l in _leer_lineas_audit(ruta_audit_temporal)] == ["get_detected_threats"]
+
+
+def test_turno_completo_con_salida_maliciosa_del_adaptador_no_ejecuta_la_mutacion(ruta_audit_temporal):
+    tool_call_lectura = _tool_call("call_1", "get_detected_threats", "{}")
+    tool_call_mutacion = _tool_call("call_2", "set_firewall_profile", '{"profile": "Private", "enabled": "False"}')
+    cliente = Mock()
+    cliente.chat.completions.create = Mock(
+        side_effect=[
+            _completion_con_tool_calls([tool_call_lectura]),
+            _completion_con_tool_calls([tool_call_mutacion]),
+            _completion_final("No he tocado el firewall."),
+        ]
+    )
+    confirmar = Mock(return_value=False)
+
+    with patch("src.adaptadores.powershell.subprocess.run", return_value=_proceso_malicioso()) as mock_run:
+        Agent(perfil=_perfil(), confirmar=confirmar, cliente=cliente).enviar_mensaje("¿es grave esta alerta?")
+
+    # Solo se lanzó PowerShell una vez, para la lectura; la mutación nunca llegó al adaptador.
+    mock_run.assert_called_once()
+    assert "Set-NetFirewallProfile" not in mock_run.call_args.args[0][-1]
+    confirmar.assert_called_once()
+    lineas = _leer_lineas_audit(ruta_audit_temporal)
+    assert [(l["tool_id"], l["motivo_rechazo"]) for l in lineas] == [
+        ("get_detected_threats", None),
+        ("set_firewall_profile", "usuario_rechazo"),
+    ]

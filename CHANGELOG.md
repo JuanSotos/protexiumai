@@ -1,6 +1,20 @@
 # Changelog
 
-Historial de ProtexiumAI por fase, reconstruido a partir de `git log` y `git show --shortstat` (fechas y tamaños son los de cada commit). Las fases siguen la numeración del proyecto (P0–P10); los cuatro commits entre P6 y P7 se agrupan como «Post-P6». Los cambios respecto a la entrega preliminar, con su motivo, están en [`docs/memoria/CAMBIOS.md`](docs/memoria/CAMBIOS.md).
+Historial de ProtexiumAI por fase, reconstruido a partir de `git log` y `git show --shortstat` (fechas y tamaños son los de cada commit). Las fases siguen la numeración del proyecto (P0–P11); los cuatro commits entre P6 y P7 se agrupan como «Post-P6». Los cambios respecto a la entrega preliminar, con su motivo, están en [`docs/memoria/CAMBIOS.md`](docs/memoria/CAMBIOS.md).
+
+## P11 — Validador, política en tiempo de ejecución y adaptadores (F05)
+
+Commit pendiente (lo hará Juan), 2026-11-01. Sin herramientas nuevas en el catálogo real: las 25 generan los mismos comandos y el mismo esquema que en P10.
+
+- Nuevo `src/politica.py` (F05): en cada llamada, y antes de tocar nada, comprueba el id, la coherencia del motor con el sistema, la aplicabilidad al equipo y al perfil (`no_aplicable`, no un error) y los parámetros (mismos mensajes que antes). Después vuelve a aplicar la lista de denegación sobre lo ya construido, rechaza `sudo`, `su`, `pkexec` y `doas` en cualquier posición de argv y los hives fuera del mapa cerrado. Así detecta también un catálogo alterado en memoria después de cargarlo. Cada rechazo se audita con su motivo (`denegado_por_politica`, `no_aplicable`, `motor_no_soportado`, `motor_reservado`, `hive_desconocido`).
+- Nuevo paquete `src/adaptadores/`, con una interfaz común (`construir` puro y `ejecutar`), los únicos módulos que ejecutan herramientas:
+  - `powershell`: `-NoProfile -NonInteractive` y, en Windows, `CREATE_NO_WINDOW` (regla 11). Conserva la decodificación OEM (INC-10) y el parseo JSON.
+  - `registro`: solo lectura con `KEY_READ | KEY_WOW64_64KEY`. Una clave o un valor inexistente se devuelve como dato, `{"existe": false, …}`.
+  - `comando`: argv en lista, `shell=False`, ruta absoluta con `shutil.which` sobre un PATH fijo, entorno `LC_ALL=C` y timeout (regla 10). Solo en Linux en H1.
+- `src/executor.py` deja de importar `subprocess`: orquesta política, privilegios (sin elevar; `root` en Linux), auditoría y adaptador. `construir_whitelist()` acepta los motores `registro` y `comando`. Un `powershell.exe`, un binario o un `winreg` ausente da `no_aplicable` (regla 14).
+- El resultado de `execute()` gana la clave `estado` (`ok`, `no_aplicable`, `requiere_privilegios`, `error`) sin quitar ni renombrar ninguna.
+- Test general de la regla 1 por AST sobre `src/`, `app/` y la futura API (`tests/test_regla1_ejecucion.py`). Solo los adaptadores pueden ejecutar, y el registro solo se abre en el adaptador y en la detección de capacidades, ambos sin escritura.
+- 208 tests nuevos (666 en total) y cobertura de `src/` del 97 % (`politica.py`, `adaptadores/` y `executor.py` al 100 %): `docs/memoria/evidencias/P11_pytest.txt`. Los mocks de `subprocess.run` en los tests del executor apuntan ahora al adaptador PowerShell, y ningún assert existente cambia.
 
 ## P10 — Preparación de la entrega intermedia (2026-10-24 y 25)
 

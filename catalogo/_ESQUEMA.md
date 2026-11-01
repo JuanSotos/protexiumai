@@ -89,6 +89,17 @@ Toda clave no listada aquí es un error («campo desconocido»).
 
 Los **privilegios no excluyen** una entrada: una que exija `admin` o `root` sigue siendo aplicable aunque el proceso no esté elevado, y más adelante se marcará como `requiere_privilegios` (regla 14). `src/tools_schema.py` usa `aplicable` para enviar al LLM solo las herramientas del equipo: en Windows 10/11 las 25 actuales, en Linux ninguna.
 
+## Ejecución por motor (P11)
+
+`src/executor.py` no ejecuta nada por sí mismo: en cada llamada pasa la entrada por la política (`src/politica.py`) y delega en el adaptador de su motor (`src/adaptadores/`). La política repite aquí, sobre el comando ya construido, la lista de denegación que el cargador aplica al arrancar.
+
+| Motor | Adaptador | Ejecución | Ausente → |
+|---|---|---|---|
+| `powershell` | `powershell.py` | `powershell.exe -NoProfile -NonInteractive -Command <plantilla>`, sin ventana (`CREATE_NO_WINDOW`) y con la salida decodificada en OEM. | `no_aplicable` |
+| `registro` | `registro.py` | `winreg.OpenKey(…, KEY_READ \| KEY_WOW64_64KEY)` + `QueryValueEx`. Devuelve `{existe, valor, tipo}`; una clave o un valor inexistente es `{"existe": false, "valor": null, "tipo": null}`, no un error. | `no_aplicable` (sin `winreg`) |
+| `comando` | `comando.py` | Solo Linux en H1. `argv[0]` se resuelve con `shutil.which` sobre un PATH fijo y se ejecuta con `shell=False`, el entorno `LC_ALL=C` + PATH fijo y timeout. Los parámetros se sustituyen elemento a elemento. `sudo`, `su`, `pkexec` y `doas` se rechazan siempre. | `no_aplicable` |
+| `python` | — | Reservado: se rechaza (`motor_reservado`). | — |
+
 ## Plantillas, argv y marcadores
 
 - Los comandos se construyen **solo** con la plantilla/argv del catálogo y los valores de `parametros` (reglas 2 y 13). Nada del LLM ni del usuario se concatena.

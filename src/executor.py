@@ -1,44 +1,53 @@
-"""Capa ejecutora: WHITELIST de cmdlets de PowerShell (derivada del catálogo YAML), validación de parámetros, niveles de acción y ejecución segura."""
+"""Capa ejecutora: WHITELIST derivada del catálogo YAML, política en cada llamada, privilegios, auditoría y despacho al adaptador de cada motor.
+
+Este módulo no ejecuta nada por sí mismo ni importa `subprocess` (regla 1): orquesta. Para cada
+llamada aplica la política (`src/politica.py`), comprueba privilegios sin elevar, audita y delega
+la ejecución en el adaptador del motor de la herramienta (`src/adaptadores/`).
+"""
 
 from __future__ import annotations
 
 import ctypes
-import json
-import subprocess
 import sys
 import time
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Any, Literal
 
-from src import audit, catalogo
+from src import adaptadores, audit, catalogo, politica
+from src.adaptadores import powershell
+from src.plataforma import deteccion
+
+# Motores que el executor sabe ejecutar: los que tienen adaptador. `python` está reservado.
+MOTORES_EJECUTABLES = tuple(adaptadores.ADAPTADORES)
 
 
 @dataclass(frozen=True)
 class ToolSpec:
-    """Especificación de una herramienta PowerShell permitida en la WHITELIST."""
+    """Especificación de una herramienta permitida en la WHITELIST (vista derivada del catálogo)."""
 
     id: str
     descripcion: str
-    plantilla: str
+    plantilla: str | None
     parametros: dict[str, list[str]] = field(default_factory=dict)
     nivel: Literal["lectura", "accion", "mutante"] = "lectura"
     requiere_admin: bool = False
     timeout_s: int = 30
+    motor: str = "powershell"
 
 
 def construir_whitelist(cat: catalogo.Catalogo) -> dict[str, ToolSpec]:
     """Deriva la WHITELIST del catálogo: una ToolSpec por herramienta expuesta al LLM.
 
-    El executor solo sabe ejecutar PowerShell en Windows; una herramienta con otro motor u
-    otro sistema se rechaza al arrancar en lugar de ignorarse en silencio.
+    Una herramienta con un motor sin adaptador (hoy, `python`) se rechaza al arrancar en lugar de
+    ignorarse en silencio.
     """
     whitelist: dict[str, ToolSpec] = {}
     for entrada in cat.herramientas_llm().values():
-        if entrada.motor != "powershell" or entrada.plataforma.so != "windows" or entrada.plantilla is None:
+        if entrada.motor not in MOTORES_EJECUTABLES:
             raise catalogo.CatalogoError(
                 f"{entrada.origen}: entrada '{entrada.id}': el executor solo ejecuta herramientas "
-                "con motor 'powershell' en Windows."
+                "con motor 'powershell', 'registro' o 'comando'."
             )
         whitelist[entrada.id] = ToolSpec(
             id=entrada.id,
@@ -48,18 +57,23 @@ def construir_whitelist(cat: catalogo.Catalogo) -> dict[str, ToolSpec]:
             nivel=entrada.nivel,  # type: ignore[arg-type]  (validado por el cargador)
             requiere_admin=entrada.requisitos.privilegios in ("admin", "root"),
             timeout_s=entrada.timeout_s,
+            motor=entrada.motor,
         )
     return whitelist
 
 
-# Vista derivada del catálogo (catalogo/herramientas_llm.yaml), única fuente de verdad. Si el
-# catálogo no valida, la importación falla: nunca se ejecuta con una WHITELIST a medias.
-WHITELIST: dict[str, ToolSpec] = construir_whitelist(catalogo.cargar_catalogo())
+# Catálogo cargado (catalogo/, única fuente de verdad) y su vista derivada. Si el catálogo no
+# valida, la importación falla: nunca se ejecuta con una WHITELIST a medias. La política consulta
+# CATALOGO en cada llamada, así que una alteración posterior en memoria también se detecta.
+CATALOGO: catalogo.Catalogo = catalogo.cargar_catalogo()
+WHITELIST: dict[str, ToolSpec] = construir_whitelist(CATALOGO)
 
-# Codificación con la que PowerShell escribe su salida al estar redirigida: la página de códigos OEM
-# de la consola (cp850 en un Windows en español), no la ANSI (cp1252) que Python usaría por defecto.
-# Sin esto, «ó», «á» e «í» llegan como «¢», un espacio duro y «¡» (INC-10).
-CODIFICACION_SALIDA = "oem" if sys.platform == "win32" else "utf-8"
+# Perfil activo para decidir la aplicabilidad. Hasta que exista la selección de perfil, el de
+# por defecto (`hogar`), el mismo con el que se genera el esquema del LLM.
+PERFIL_ACTIVO: str = catalogo.PERFIL_POR_DEFECTO
+
+# Se conserva aquí por compatibilidad: la decodificación de la salida vive en el adaptador.
+CODIFICACION_SALIDA = powershell.CODIFICACION_SALIDA
 
 
 def _es_administrador() -> bool:
@@ -70,30 +84,19 @@ def _es_administrador() -> bool:
         return False
 
 
-_TOOLS_LISTA = {
-    "get_detected_threats",
-    "get_active_network_profile",
-    "get_allowed_firewall_rules",
-    "get_bitlocker_status",
-    "get_storage_status",
-}
+def _capacidades() -> deteccion.Capacidades:
+    """Capacidades de este equipo (detectadas una sola vez, en solo lectura)."""
+    return deteccion.capacidades_del_equipo()
 
 
-def _normalizar_datos_lista(tool_id: str, datos: Any) -> Any:
-    """Normaliza salidas de ConvertTo-Json que semánticamente son listas.
-
-    ConvertTo-Json produce null/vacío para 0 elementos y un objeto suelto (no un
-    array) para exactamente 1 elemento. Solo las herramientas de _TOOLS_LISTA
-    devuelven una cantidad variable de elementos (0, 1 o varios), así que solo a
-    esas se les aplica esta normalización.
-    """
-    if tool_id not in _TOOLS_LISTA:
-        return datos
-    if datos is None:
-        return []
-    if isinstance(datos, dict):
-        return [datos]
-    return datos
+def _tiene_privilegios(entrada: catalogo.Entrada, capacidades: deteccion.Capacidades) -> bool:
+    """True si la entrada no exige privilegios o el proceso ya los tiene. Nunca intenta elevar."""
+    privilegios = entrada.requisitos.privilegios
+    if privilegios == "admin":
+        return _es_administrador()
+    if privilegios == "root":
+        return capacidades.es_root
+    return True
 
 
 def _construir_resultado(
@@ -103,12 +106,14 @@ def _construir_resultado(
     comando: str | None,
     timestamp: str,
     duracion_s: float,
+    estado: str,
     data: Any = None,
     error: str | None = None,
 ) -> dict[str, Any]:
     """Construye el dict de resultado con la forma común a éxitos y rechazos."""
     resultado: dict[str, Any] = {
         "ok": ok,
+        "estado": estado,
         "tool_id": tool_id,
         "comando": comando,
         "timestamp": timestamp,
@@ -129,10 +134,10 @@ def _auditar(
 ) -> None:
     """Registra la auditoría de una llamada.
 
-    Si estricto=False (lectura y rechazos que nunca tocaron PowerShell), un
+    Si estricto=False (lectura y rechazos que nunca llegaron al adaptador), un
     fallo al escribir el log solo se avisa por stderr. Si estricto=True
     (herramientas accion/mutante a punto de ejecutarse), el fallo se propaga
-    para que execute() aborte antes de invocar subprocess: ninguna acción o
+    para que execute() aborte antes de invocar al adaptador: ninguna acción o
     mutación se ejecuta si no puede quedar registrada.
     """
     try:
@@ -153,19 +158,29 @@ def _auditar(
 
 
 def execute(tool_id: str, params: dict[str, Any], *, proveedor: str | None = None) -> dict[str, Any]:
-    """Ejecuta de forma segura una herramienta de la WHITELIST y audita la llamada."""
+    """Ejecuta de forma segura una herramienta del catálogo y audita la llamada.
+
+    Flujo: política sobre la llamada → construcción por el adaptador → política sobre lo
+    construido → privilegios (sin elevar) → auditoría estricta previa (accion/mutante) →
+    ejecución por el adaptador → auditoría del resultado.
+    """
     inicio = time.monotonic()
     marca_tiempo = datetime.now(timezone.utc).isoformat()
 
-    def _rechazar(mensaje: str, motivo: str, comando: str | None = None) -> dict[str, Any]:
-        resultado = _construir_resultado(
-            ok=False,
+    def _resultado(*, estado: str, comando: str | None, data: Any = None, error: str | None = None) -> dict[str, Any]:
+        return _construir_resultado(
+            ok=estado == "ok",
             tool_id=tool_id,
             comando=comando,
             timestamp=marca_tiempo,
             duracion_s=time.monotonic() - inicio,
-            error=mensaje,
+            estado=estado,
+            data=data,
+            error=error,
         )
+
+    def _rechazar(mensaje: str, motivo: str, estado: str = "error", comando: str | None = None) -> dict[str, Any]:
+        resultado = _resultado(estado=estado, comando=comando, error=mensaje)
         _auditar(
             tool_id=tool_id,
             params=params,
@@ -176,60 +191,36 @@ def execute(tool_id: str, params: dict[str, Any], *, proveedor: str | None = Non
         )
         return resultado
 
-    # 1) tool_id desconocido
-    spec = WHITELIST.get(tool_id)
-    if spec is None:
-        return _rechazar(f"Herramienta desconocida: '{tool_id}'.", "tool_id_desconocido")
+    # 1) política sobre la llamada: id, motor, aplicabilidad y parámetros
+    capacidades = _capacidades()
+    entrada = CATALOGO.herramientas_llm().get(tool_id)
+    decision = politica.evaluar_llamada(tool_id, entrada, params, capacidades, PERFIL_ACTIVO)
+    if not decision.permitida or entrada is None:
+        return _rechazar(decision.mensaje, decision.motivo or politica.MOTIVO_DESCONOCIDO, decision.estado)
 
-    # 2) validación de parámetros: ni de más, ni de menos, ni fuera del enum cerrado
-    claves_recibidas = set(params.keys())
-    claves_declaradas = set(spec.parametros.keys())
+    # 2) construir la invocación SOLO a partir de la plantilla/argv/clave del catálogo + valores
+    #    validados, y volver a pasar la política sobre lo construido (lista de denegación)
+    adaptador = adaptadores.adaptador_para(entrada.motor)
+    invocacion = adaptador.construir(entrada, params)
+    decision = politica.evaluar_invocacion(invocacion)
+    if not decision.permitida:
+        return _rechazar(decision.mensaje, decision.motivo or politica.MOTIVO_DENEGADO, comando=invocacion.texto)
 
-    no_declaradas = claves_recibidas - claves_declaradas
-    if no_declaradas:
+    # 3) comprobación de privilegios (sin intento de elevación)
+    if not _tiene_privilegios(entrada, capacidades):
+        quien = "de root" if entrada.requisitos.privilegios == "root" else "de administrador"
         return _rechazar(
-            f"Parámetro(s) no declarado(s) para '{tool_id}': {sorted(no_declaradas)}.",
-            "parametro_no_declarado",
-        )
-
-    faltantes = claves_declaradas - claves_recibidas
-    if faltantes:
-        return _rechazar(
-            f"Falta(n) parámetro(s) obligatorio(s) para '{tool_id}': {sorted(faltantes)}.",
-            "parametro_faltante",
-        )
-
-    for nombre, valor in params.items():
-        permitidos = spec.parametros[nombre]
-        if valor not in permitidos:
-            return _rechazar(
-                f"Valor '{valor}' no permitido para '{nombre}' (permitidos: {permitidos}).",
-                "valor_fuera_de_enum",
-            )
-
-    # 3) construir el comando SOLO a partir de la plantilla fija + valores validados
-    comando_str = spec.plantilla.format(**params) if spec.parametros else spec.plantilla
-
-    # 4) comprobación de administrador (sin intento de elevación)
-    if spec.requiere_admin and not _es_administrador():
-        return _rechazar(
-            f"'{tool_id}' requiere privilegios de administrador. "
+            f"'{tool_id}' requiere privilegios {quien}. "
             "Ejecuta el proceso en una terminal elevada; ProtexiumAI no eleva permisos automáticamente.",
             "requiere_admin",
-            comando=comando_str,
+            estado="requiere_privilegios",
+            comando=invocacion.texto,
         )
 
-    # 5) auditoría estricta previa para accion/mutante: si no se puede registrar,
-    #    se aborta antes de tocar PowerShell.
-    if spec.nivel != "lectura":
-        intento = _construir_resultado(
-            ok=False,
-            tool_id=tool_id,
-            comando=comando_str,
-            timestamp=marca_tiempo,
-            duracion_s=time.monotonic() - inicio,
-            error="en curso",
-        )
+    # 4) auditoría estricta previa para accion/mutante: si no se puede registrar,
+    #    se aborta antes de llegar al adaptador.
+    if entrada.nivel != "lectura":
+        intento = _resultado(estado="error", comando=invocacion.texto, error="en curso")
         try:
             _auditar(
                 tool_id=tool_id,
@@ -240,87 +231,17 @@ def execute(tool_id: str, params: dict[str, Any], *, proveedor: str | None = Non
                 proveedor=proveedor,
             )
         except OSError as error:
-            return _construir_resultado(
-                ok=False,
-                tool_id=tool_id,
-                comando=comando_str,
-                timestamp=marca_tiempo,
-                duracion_s=time.monotonic() - inicio,
+            return _resultado(
+                estado="error",
+                comando=invocacion.texto,
                 error=(
                     f"No se ha podido registrar la auditoría antes de ejecutar "
                     f"'{tool_id}'; ejecución abortada por seguridad ({error})."
                 ),
             )
 
-    # 6) ejecución
-    comando_completo = ["powershell.exe", "-NoProfile", "-NonInteractive", "-Command", comando_str]
-    try:
-        proceso = subprocess.run(
-            comando_completo,
-            capture_output=True,
-            encoding=CODIFICACION_SALIDA,
-            errors="replace",
-            timeout=spec.timeout_s,
-        )
-    except FileNotFoundError:
-        resultado = _construir_resultado(
-            ok=False,
-            tool_id=tool_id,
-            comando=comando_str,
-            timestamp=marca_tiempo,
-            duracion_s=time.monotonic() - inicio,
-            error="No se ha encontrado powershell.exe. Este equipo requiere Windows con PowerShell en el PATH.",
-        )
-        _auditar(tool_id=tool_id, params=params, resultado=resultado, motivo_rechazo=None, estricto=False, proveedor=proveedor)
-        return resultado
-    except subprocess.TimeoutExpired:
-        resultado = _construir_resultado(
-            ok=False,
-            tool_id=tool_id,
-            comando=comando_str,
-            timestamp=marca_tiempo,
-            duracion_s=time.monotonic() - inicio,
-            error=f"El comando ha tardado más de {spec.timeout_s} segundos y se ha cancelado.",
-        )
-        _auditar(tool_id=tool_id, params=params, resultado=resultado, motivo_rechazo=None, estricto=False, proveedor=proveedor)
-        return resultado
-
-    if proceso.returncode != 0:
-        error_ps = proceso.stderr.strip() or "sin detalles adicionales"
-        resultado = _construir_resultado(
-            ok=False,
-            tool_id=tool_id,
-            comando=comando_str,
-            timestamp=marca_tiempo,
-            duracion_s=time.monotonic() - inicio,
-            error=f"PowerShell devolvió un error al ejecutar '{tool_id}' ({error_ps}).",
-        )
-        _auditar(tool_id=tool_id, params=params, resultado=resultado, motivo_rechazo=None, estricto=False, proveedor=proveedor)
-        return resultado
-
-    salida = proceso.stdout.strip()
-    try:
-        datos = json.loads(salida) if salida else None
-    except json.JSONDecodeError:
-        resultado = _construir_resultado(
-            ok=False,
-            tool_id=tool_id,
-            comando=comando_str,
-            timestamp=marca_tiempo,
-            duracion_s=time.monotonic() - inicio,
-            error=f"La salida de PowerShell para '{tool_id}' no es un JSON válido: {salida!r}",
-        )
-        _auditar(tool_id=tool_id, params=params, resultado=resultado, motivo_rechazo=None, estricto=False, proveedor=proveedor)
-        return resultado
-
-    datos = _normalizar_datos_lista(tool_id, datos)
-    resultado = _construir_resultado(
-        ok=True,
-        tool_id=tool_id,
-        comando=comando_str,
-        timestamp=marca_tiempo,
-        duracion_s=time.monotonic() - inicio,
-        data=datos,
-    )
+    # 5) ejecución por el adaptador del motor y auditoría del resultado
+    salida = adaptador.ejecutar(invocacion)
+    resultado = _resultado(estado=salida.estado, comando=invocacion.texto, data=salida.datos, error=salida.error)
     _auditar(tool_id=tool_id, params=params, resultado=resultado, motivo_rechazo=None, estricto=False, proveedor=proveedor)
     return resultado
