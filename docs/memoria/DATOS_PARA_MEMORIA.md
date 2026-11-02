@@ -218,13 +218,13 @@ De `ESTADO_FUNCIONALIDADES.md`: **3 completadas** (F01, F03, F04), **4 en curso*
 
 | Concepto | Cifra |
 |---|---:|
-| Herramientas con mapeo **verificado** (`verificado: true`, con `verificado_por`) | **14 de 25** (CIS Controls v8.1, ATT&CK y ENS; verificados por Juan Sotos el 2026-10-24) |
-| Propuestas de mapeo de la IA pendientes de verificar | **0** (las 14 se verificaron y corrigieron; las 11 restantes no tienen propuesta; razonamiento y perfil en `catalogo/_mapeo_marcos_razonamiento.md`) |
-| Filas en `catalogo/mapeo_marcos.csv` | 14 |
+| Herramientas con mapeo **verificado** (`verificado: true`, con `verificado_por`) | **25 de 25** (CIS Controls v8.1, ATT&CK y ENS; verificados por Juan Sotos: 14 el 2026-10-24, 4 el 2026-10-30 y 7 el 2026-11-02; `get_battery_status` sin marco aplicable) |
+| Propuestas de mapeo de la IA pendientes de verificar | **0** (todas las propuestas se verificaron, corrigieron o descartaron; razonamiento, perfil y criterios 1 a 15 en `catalogo/_mapeo_marcos_razonamiento.md`) |
+| Filas en `catalogo/mapeo_marcos.csv` | 25 |
 | Entradas del catálogo con el campo `marcos` en el YAML | 0 |
-| Entradas del catálogo sin mapeo (`verificado: false` por defecto) | 11 de 25 (límite documentado de la entrega intermedia, aceptado por Juan el 2026-10-25) |
+| Entradas del catálogo sin mapeo (`verificado: false` por defecto) | 0 de 25 desde el 2026-11-02 (en la entrega intermedia eran 11, límite documentado aceptado por Juan el 2026-10-25) |
 
-Los 25 identificadores heredados son herramientas del LLM, no comprobaciones; los mapeos CIS/CCN/ATT&CK corresponden sobre todo a las comprobaciones de H2 y H3, que aún no existen. Según la regla 15 el CSV lo rellena Juan. Durante la verificación la IA cometió dos errores (identificadores de ATT&CK obsoletos y una medida del ENS mal asignada), registrados como INC-06 e INC-07; CIS Controls v8.1 se contrastó sin errores. CIS Benchmark, CCN-STIC y D3FEND siguen sin mapeo. Los mapeos son orientativos, no una declaración de conformidad.
+Los 25 identificadores heredados son herramientas del LLM, no comprobaciones; los mapeos CIS/CCN/ATT&CK corresponden sobre todo a las comprobaciones de H2 y H3, que aún no existen. Según la regla 15 el CSV lo rellena Juan. Durante la verificación la IA cometió dos errores (identificadores de ATT&CK obsoletos y una medida del ENS mal asignada), registrados como INC-06 e INC-07; CIS Controls v8.1 se contrastó sin errores. CIS Benchmark, CCN-STIC y D3FEND siguen sin mapeo. Las cifras de esta tabla se actualizaron el 2026-11-02, tras el segundo lote de mapeos; el resto del documento sigue en el estado de la entrega intermedia. Los mapeos son orientativos, no una declaración de conformidad.
 
 ## 9. Seguridad (comprobaciones de P10)
 

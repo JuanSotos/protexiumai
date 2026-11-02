@@ -311,4 +311,4 @@ Estas incidencias son las primeras sobre el código de `src/`; hasta P9 no const
 - `cargar_perfil()` de `src/config.py` no tiene tests propios (cobertura de `config.py`: 70 %).
 - La vista de Streamlit (`app/streamlit_app.py`) no tiene tests automáticos; `app/` no se incluye en la medición de cobertura.
 - Los tests de inyección comprueban que el sistema no ejecuta nada sin confirmación, no si un modelo real «obedecería» el texto inyectado.
-- Los mapeos a marcos cubren 14 de las 25 herramientas y tres marcos (CIS Controls v8.1, ATT&CK y ENS); CIS Benchmark, CCN-STIC y D3FEND no están mapeados (regla 15). Son orientativos, no una declaración de conformidad.
+- Los mapeos a marcos cubren las 25 herramientas (desde el 2026-11-02) y tres marcos (CIS Controls v8.1, ATT&CK y ENS); CIS Benchmark, CCN-STIC y D3FEND no están mapeados (regla 15). Son orientativos, no una declaración de conformidad.

@@ -17,3 +17,10 @@ get_exploit_protection_status,,,,10.5,,T1203;T1068,,op.exp.6,Juan Sotos,2026-10-
 get_core_isolation_status,,,,10.5,,T1003.001;T1547.008,,op.exp.6,Juan Sotos,2026-10-30
 get_secure_boot_status,,,,,,T1542.003,,op.exp.6,Juan Sotos,2026-10-30
 get_tpm_status,,,,,,T1542.001;T1542.003,,op.exp.6,Juan Sotos,2026-10-30
+get_account_info,,,,5.4,,T1548.002;T1078.003,,op.acc.4,Juan Sotos,2026-11-02
+get_active_network_profile,,,,4.4;4.5,,T1686.003,,mp.com.1,Juan Sotos,2026-11-02
+get_allowed_threats,,,,10.1,,T1685,,op.exp.6,Juan Sotos,2026-11-02
+get_defender_preferences,,,,10.1,,T1685;T1486,,op.exp.6,Juan Sotos,2026-11-02
+get_storage_status,,,,,,,,op.pl.4,Juan Sotos,2026-11-02
+get_battery_status,,,,,,,,,Juan Sotos,2026-11-02
+get_time_service_status,,,,8.4,,,,op.exp.8,Juan Sotos,2026-11-02
